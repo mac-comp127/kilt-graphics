@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -93,10 +94,14 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Removes the object from being drawn
      * @param gObject
+     * @throws NoSuchElementException if gObject is not a part of the graphics group.
      */
     public void remove(GraphicsObject gObject){
         gObject.removeObserver(this);
-        gObjects.remove(gObject);
+        boolean success = gObjects.remove(gObject);
+        if (!success){
+            throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
+        }
         changed();
     }
 

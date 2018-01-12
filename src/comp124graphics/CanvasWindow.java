@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -86,10 +87,14 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
     /**
      * Removes the object from being drawn
      * @param gObject
+     * @throws NoSuchElementException if gObject has not been added to the canvas
      */
     public void remove(GraphicsObject gObject){
         gObject.removeObserver(this);
-        gObjects.remove(gObject);
+        boolean success = gObjects.remove(gObject);
+        if (!success){
+            throw new NoSuchElementException("The object you want to remove has not been added to the canvaswindow. Perhaps it was already removed or was added to a GraphicsGroup instead of the canvas.");
+        }
         repaint();
     }
 
