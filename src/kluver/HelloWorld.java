@@ -6,6 +6,6 @@ package kluver;
 public class HelloWorld {
 
     public static void main(String[] args) {
-        System.out.print("Hello World!");
+        System.out.print("Hello Kluver's Students! What up?");
     }
 }
