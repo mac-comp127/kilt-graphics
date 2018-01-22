@@ -15,5 +15,7 @@ public class BasicStuff {
         System.out.println("Enter your age:");
         age = scan.nextInt();
         System.out.println("Your age is "+age);
+
+        age = (int)(age + 2.0);
     }
 }
