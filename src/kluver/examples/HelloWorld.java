@@ -1,4 +1,4 @@
-package kluver;
+package kluver.examples;
 
 /**
  * Created by dkluver on 1/18/18.
