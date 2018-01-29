@@ -21,8 +21,8 @@ public class SumRange {
             upper = input.nextInt();
         } while (upper < lower);
 
-        int sum =0 ;
-        for(int i = lower; i<= upper; i++) {
+        int sum = 0;
+        for(int i = lower; i <= upper; i++) {
             sum = sum + i;
         }
 
