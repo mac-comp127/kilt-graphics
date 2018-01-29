@@ -12,13 +12,13 @@ public class Loops {
     public static void cheerleadHard(String cheer) {
         for(int index = 0; index < cheer.length(); index++) {
             char letter = cheer.charAt(index);
-            System.out.println("GIMME A(N) [[ " + letter + " ]]!");
+            System.out.println("GIMME A(N) [[ " + Character.toUpperCase(letter) + " ]]!");
         }
     }
 
     public static void cheerleadEasy(String cheer) {
         for(char letter : cheer.toCharArray()) {
-            System.out.println("GIMME A(N) [[ " + letter + " ]]!");
+            System.out.println("GIMME A(N) [[ " + Character.toUpperCase(letter) + " ]]!");
         }
     }
 }
