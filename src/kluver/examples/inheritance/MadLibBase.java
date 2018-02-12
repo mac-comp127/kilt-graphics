@@ -2,13 +2,15 @@ package kluver.examples.inheritance;
 
 import java.util.Scanner;
 
-public class MadLibBase {
+public abstract class MadLibBase {
 
     private Scanner scan;
 
     public MadLibBase() {
-        scan = new Scanner((System.in));
+        scan = new Scanner(System.in);
     }
+
+    public abstract String getStory();
 
     protected String getWord(String prompt) {
         System.out.print(prompt+": ");
@@ -33,5 +35,10 @@ public class MadLibBase {
 
     protected String getAdverb() {
         return getWord("an adverb");
+    }
+
+    @Override
+    public String toString() {
+        return getStory();
     }
 }

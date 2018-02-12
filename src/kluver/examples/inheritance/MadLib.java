@@ -2,7 +2,11 @@ package kluver.examples.inheritance;
 
 import java.util.Scanner;
 
-public class MadLib extends MadLibBase{
+public class MadLib extends MadLibBase {
+
+    public MadLib(){
+
+    }
 
     public String getStory() {
         // get re-used words
@@ -16,8 +20,25 @@ public class MadLib extends MadLibBase{
                 +name+" could also "+getVerb()+" which "+name+" used to save the day!";
     }
 
+    @Override
+    protected String getVerb() {
+        return getWord("An action term, (i.e. a verb)");
+    }
+
     public static void main(String[] args) {
         MadLib madlib = new MadLib();
-        System.out.println(madlib.getStory());
+        System.out.println(madlib);
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
