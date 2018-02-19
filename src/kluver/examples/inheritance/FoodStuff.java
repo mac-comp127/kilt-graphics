@@ -20,6 +20,15 @@ public class FoodStuff extends Product {
         return Instant.now().isAfter(expirationDate.toInstant());
     }
 
+    @Override
+    public void sell() {
+        if(checkIfSafe()) {
+            super.sell();
+        } else {
+            System.out.println("no, its disgusting!");
+        }
+    }
+
     public String toString() {
         return "foodStuff: name="+this.getName()+", expires: "+expirationDate;
     }
