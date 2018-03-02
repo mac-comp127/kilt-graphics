@@ -10,9 +10,13 @@ public class XBoxMain {
     public  static void main(String[] args) {
         CanvasWindow canvas = new CanvasWindow("Test", 500,500);
 
-        GraphicsGroup g = new GraphicsGroup(400,0);
+        GraphicsGroup g = new GraphicsGroup(400, 0);
         Ellipse e = new Ellipse(0,400, 100, 100);
         g.add(e);
         canvas.add(g);
+
+        XBox xb = new XBox(100,200, 300, 300) ;
+        canvas.add(xb);
+
     }
 }
