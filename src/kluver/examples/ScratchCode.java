@@ -1,10 +1,8 @@
 package kluver.examples;
 
+import java.awt.geom.Point2D;
+import java.util.*;
+
 public class ScratchCode {
 
-    public static void main(String[] args) {
-        for (int i = 0; i<10; i++) {
-            System.out.println(i/10.0);
-        }
-    }
 }
