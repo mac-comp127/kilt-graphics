@@ -36,7 +36,9 @@ public class Polygon extends GraphicsObject implements Colorable, FillColorable 
     private double height;
 
     /**
-     * Create a polygon from a given list of points
+     * Create a polygon from a given list of points.
+     * The list of points must not be null, and there must be at least 3 points.
+     * You cannot make a polygon with fewer than 3 points.
      *
      */
     public Polygon(List<Point2D.Double> points) {
