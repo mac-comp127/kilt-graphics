@@ -13,7 +13,7 @@ import java.util.List;
  * Created by dkluver on 11/17/17.
  */
 public class ShapeWall extends GraphicsGroup {
-    List<Point2D.Double> points;
+    private List<Point2D.Double> points;
 
     public void drawPoly(int nSides) {
         GraphicsText gt = new GraphicsText(Integer.toString(nSides),50,50);
