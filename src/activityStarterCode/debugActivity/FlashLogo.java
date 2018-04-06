@@ -57,6 +57,5 @@ public class FlashLogo extends GraphicsGroup {
         CanvasWindow window = new CanvasWindow("flash logo", 255, 255);
         FlashLogo fl = new FlashLogo();
         fl.draw();
-        window.add(fl);
     }
 }
