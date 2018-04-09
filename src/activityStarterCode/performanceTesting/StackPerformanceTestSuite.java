@@ -17,18 +17,16 @@ public class StackPerformanceTestSuite implements PerformanceTestSuite {
 
     public List<String> getHeadings() {
         return Arrays.asList(
-            "ArrayDeque",
-            "ArrayDeque preallocated",
-            "LinkedList",
-            "ArrayList from head",
-            "ArrayList from tail"
+            "Grow & shrink ArrayDeque",
+            "Grow & shrink LinkedList",
+            "Grow & shrink ArrayList from head",
+            "Grow & shrink ArrayList from tail"
         );
     }
 
     public List<Runnable> makeTasks(int size) {
         return Arrays.asList(
             new GrowAndShrinkStackTask(size, new ArrayDeque<>()),
-            new GrowAndShrinkStackTask(size, new ArrayDeque<>(size)),
             new GrowAndShrinkStackTask(size, new LinkedList<>()),
             new GrowAndShrinkListFromHeadTask(size, new ArrayList<>(size)),
             new GrowAndShrinkListFromTailTask(size, new ArrayList<>(size))

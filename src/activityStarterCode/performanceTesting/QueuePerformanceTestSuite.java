@@ -16,10 +16,10 @@ public class QueuePerformanceTestSuite implements PerformanceTestSuite {
 
     public List<String> getHeadings() {
         return Arrays.asList(
-            "ArrayDeque",
-            "LinkedList using Deque API",
-            "ArrayList",
-            "LinkedList using List API"
+            "Cycle ArrayDeque",
+            "Cycle LinkedList using Deque API",
+            "Cycle ArrayList",
+            "Cycle LinkedList using List API"
         );
     }
 

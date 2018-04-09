@@ -8,7 +8,7 @@ import java.util.List;
 public class RandomAccessPerformanceTestSuite implements PerformanceTestSuite {
     public static void main(String[] args) {
         PerformanceTester tester = new PerformanceTester(new RandomAccessPerformanceTestSuite());
-        tester.testAcrossSizes(50, 1000);
+        tester.testAcrossSizes(10, 200);
         tester.dumpResults();
     }
 

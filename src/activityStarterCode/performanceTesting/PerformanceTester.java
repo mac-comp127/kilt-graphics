@@ -1,6 +1,7 @@
 package activityStarterCode.performanceTesting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -8,8 +9,9 @@ import java.util.List;
  */
 public class PerformanceTester {
     private static final double MIN_TASK_TEST_TIME = 0.1;  // seconds
+    private static final int MIN_REPS = 50;
     private static final int MAX_REPS = 1000000;
-    private static final int RUNS_FOR_MEDIAN = 5;
+    private static final int NUM_PASSES_FOR_MEDIAN = 5;
 
     private final PerformanceTestSuite suite;
     private List<PerformanceResult> results = new ArrayList<>();
@@ -40,25 +42,6 @@ public class PerformanceTester {
     }
 
     /**
-     * Prints accumulated timings to stdout in a tab-separated format suitable for pasting into a spreadsheet.
-     */
-    public void dumpResults() {
-        System.out.println();
-        System.out.println(suite.getClass().getName() + " Results");
-        System.out.println();
-        System.out.print("size\t");
-        System.out.println(String.join("\t", suite.getHeadings()));
-        for(PerformanceResult result : results) {
-            System.out.print(result.getSize());
-            for(double timing : result.getTimings()) {
-                System.out.print("\t");
-                System.out.print(timing);
-            }
-            System.out.println();
-        }
-    }
-
-    /**
      * Computes the median time taken for each task in the suite’s family of tasks at the given size,
      * adding the timings to this tester’s accumulated results.
      */
@@ -77,34 +60,37 @@ public class PerformanceTester {
             System.out.println("size=" + size + " " + headings.get(i));
             result.getTimings().add(
                 computeMedianTaskTime(task));
+            System.out.println();
         }
 
         results.add(result);
     }
 
     /**
-     * Applies several passes of timeTask() to the given task, computing the median time.
+     * Repeats timeTask() with the given task NUM_PASSES_FOR_MEDIAN times, and computes the median time.
      */
     private double computeMedianTaskTime(Runnable task) {
-        List<Double> times = new ArrayList<>(RUNS_FOR_MEDIAN);
-        for(int n = 0; n < RUNS_FOR_MEDIAN; n++) {
-            times.add(timeTask(task));
+        double times[] = new double[NUM_PASSES_FOR_MEDIAN];
+        for(int n = 0; n < NUM_PASSES_FOR_MEDIAN; n++) {
+            times[n] = timeTask(task);
         }
-        return times.get(times.size() / 2);
+        Arrays.sort(times);
+        return times[times.length / 2];
     }
 
     /**
      * Runs the given task repeatedly and times it.
+     *
      * @return The average time per call to task.run(), in microseconds.
      */
     private double timeTask(Runnable task) {
         long start = System.nanoTime(), lastClockMeasurement = start;
 
         long reps = 0;
-        long timingChunk = 100;
+        long timingChunk = MIN_REPS;
         long minTaskTestTimeNanos = Math.round(MIN_TASK_TEST_TIME * 1_000_000_000);
 
-        while(lastClockMeasurement - start < minTaskTestTimeNanos && reps < MAX_REPS) {
+        while(lastClockMeasurement - start <= minTaskTestTimeNanos && reps < MAX_REPS) {
             for(long n = 0; n < timingChunk; n++ ) {
                 task.run();
             }
@@ -115,6 +101,25 @@ public class PerformanceTester {
         double time = (double) (lastClockMeasurement - start) / reps / 1000;
         System.out.format("    %9.3f µs  (%d reps)\n", time, reps);
         return time;
+    }
+
+    /**
+     * Prints accumulated timings to stdout in a tab-separated format suitable for pasting into a spreadsheet.
+     */
+    public void dumpResults() {
+        System.out.println();
+        System.out.println(suite.getClass().getName() + " Results");
+        System.out.println();
+        System.out.print("size\t");
+        System.out.println(String.join("\t", suite.getHeadings()));
+        for(PerformanceResult result : results) {
+            System.out.print(result.getSize());
+            for(double timing : result.getTimings()) {
+                System.out.print("\t");
+                System.out.print(timing);
+            }
+            System.out.println();
+        }
     }
 }
 
