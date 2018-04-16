@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class PerformanceTester {
     private static final double MIN_TASK_TEST_TIME = 0.1;  // seconds
-    private static final int MIN_REPS = 50;
+    private static final int MIN_REPS = 10;
     private static final int MAX_REPS = 1000000;
     private static final int NUM_PASSES_FOR_MEDIAN = 5;
 
@@ -79,7 +79,10 @@ public class PerformanceTester {
     }
 
     /**
-     * Runs the given task repeatedly and times it.
+     * Runs the given task repeatedly and times it. This method will initially call task.run() MIN_REPS times,
+     * then keep running it in larger and larger groups of repetitions until either MIN_TASK_TEST_TIME has elapsed,
+     * or we have run it MAX_REPS. This helps ensure that we get a good average to help eliminate measurement error
+     * for very fast tasks, while not making the performance test take inordinate amounts of time for slow ones.
      *
      * @return The average time per call to task.run(), in microseconds.
      */
