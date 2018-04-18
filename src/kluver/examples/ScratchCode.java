@@ -1,6 +1,9 @@
 package kluver.examples;
 
-import java.awt.geom.Point2D;
+import activityStarterCode.treePractice.BinarySearchTree;
+import comp124graphics.CanvasWindow;
+import kluver.examples.TreeDrawing.TreeDraw;
+
 import java.util.*;
 
 public class ScratchCode {
