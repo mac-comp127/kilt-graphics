@@ -211,6 +211,8 @@ public class Line extends GraphicsObject implements Colorable {
      * @return
      */
     public java.awt.Rectangle getBounds(){
-        return new java.awt.Rectangle((int)getX1(), (int)getY1(), (int)Math.abs(getX2()-getX1()), (int)Math.abs(getY1()-getY2()));
+        int left = (int)Math.min(getX1(), getX2());
+        int top = (int)Math.min(getY1(), getY2());
+        return new java.awt.Rectangle(left, top, (int)Math.abs(getX2()-getX1()), (int)Math.abs(getY1()-getY2()));
     }
 }
