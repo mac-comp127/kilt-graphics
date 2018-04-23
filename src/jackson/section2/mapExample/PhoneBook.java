@@ -1,4 +1,4 @@
-package jackson.section1.mapExample;
+package jackson.section2.mapExample;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -20,7 +20,6 @@ public class PhoneBook {
 
     public String toString(){
         StringBuilder sb = new StringBuilder();
-
         for(Map.Entry<String, String> entry : phoneBook.entrySet()){
             sb.append(entry.getKey());
             sb.append(" ");
@@ -32,11 +31,11 @@ public class PhoneBook {
 
     public static void main(String[] args){
         PhoneBook phoneBook = new PhoneBook();
-        phoneBook.addPerson("Libby Shoop", "123-123-1234");
-        phoneBook.addPerson("Bret Jackson", "612-123-1234");
-        phoneBook.addPerson("Shilad Sen", "304-345-5678");
+        phoneBook.addPerson("Libby Shoop", "213-343-1234");
+        phoneBook.addPerson("Bret Jackson", "123-234-3456");
+        phoneBook.addPerson("Shilad Sen", "234-445-2345");
 
-        System.out.println("Searching for Shilad: "+phoneBook.search("Shilad Sen"));
+        //System.out.println(phoneBook.search("Shilad Sen"));
 
         System.out.println(phoneBook);
     }
