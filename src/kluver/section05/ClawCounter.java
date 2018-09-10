@@ -24,13 +24,14 @@ public class ClawCounter {
 
         System.out.println(); // Note no input parametrs
 
+
         // Get the number of cats
         // Set up an object to help read input from the user
-        Scanner fishdog = new Scanner(System.in);
+        Scanner fishDog = new Scanner(System.in);
 
         System.out.println("How many cats will you be playing with?");
         System.out.print(">> "); // Note - no "ln" on the print.
-        int numCats = fishdog.nextInt();
+        int numCats = fishDog.nextInt();
 
 
         /* These would normally be at the top of the file, but I put them here for educational purposes */
@@ -43,10 +44,9 @@ public class ClawCounter {
         // get cut rate
         System.out.println("What do you think the chance is of getting cut by each claw? (out of 100)");
         System.out.print(">> ");
-        int cutPercent = fishdog.nextInt();
+        int cutPercent = fishDog.nextInt();
 
-
-        double cutChance = cutPercent/100;
+        double cutChance = cutPercent/100.0;
         double expectedCuts = numClaws*cutChance;
         System.out.println("There should be "+numCats+" cats with "+numPaws+" paws with "+numClaws+" claws.");
         System.out.println("Expect "+expectedCuts+" cuts");
