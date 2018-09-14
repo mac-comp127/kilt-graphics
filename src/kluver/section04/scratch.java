@@ -2,8 +2,12 @@ package kluver.section04;
 
 public class scratch {
     public static void main(String[] args) {
-        for (double d = 0.0; d<1; d+=0.1) {
-            System.out.println(d);
+        for (int i = 0; i < 10; i+=1) {
+            System.out.print("!");
+            if (i %2 == 0) {
+                continue;
+            }
+            System.out.print(i);
         }
     }
 }
