@@ -52,14 +52,14 @@ public class CollatzIterator {
 
     public static int collatzSequenceLength(int x) {
         int iters = 0;
-        while(x != 1) {
+        while(x > 1) {
             x = nextCollatz(x);
             iters++;
         }
         return iters;
     }
 
-    private static int nextCollatz(int x) {
+    public static int nextCollatz(int x) {
         if(x % 2 == 0) {
             return x / 2;     // even
         } else {
@@ -68,3 +68,16 @@ public class CollatzIterator {
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
