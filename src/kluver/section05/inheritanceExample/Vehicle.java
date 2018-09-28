@@ -1,7 +1,7 @@
 package kluver.section05.inheritanceExample;
 
 public class Vehicle {
-    private String license;
+    public String license;
 
     public Vehicle(String license) {
         this.license = license;
