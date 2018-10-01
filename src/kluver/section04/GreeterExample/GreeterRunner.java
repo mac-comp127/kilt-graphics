@@ -5,7 +5,7 @@ package kluver.section04.GreeterExample;
  */
 public class GreeterRunner {
     public static void main(String[] args) {
-        Greeter g = new UrduGreeter("Douglas, the Helpful Robot");
+        Greeter g = new EnglishGreeter("Douglas, the Helpful Robot");
         g.doGreeting();
     }
 }

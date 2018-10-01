@@ -1,7 +1,7 @@
 package kluver.section05.inheritanceExample;
 
 public class Vehicle {
-    public String license;
+    private String license;
 
     public Vehicle(String license) {
         this.license = license;
@@ -58,6 +58,15 @@ public class Vehicle {
 
     public String toString() {
         return "Vehicle{license='" + license + "'}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(obj != null && obj instanceof Vehicle) {
+            Vehicle vobj = (Vehicle) obj;
+            return this.license.equals(vobj.license);
+        }
+        return false;
     }
 
     public static void main(String[] args) {
