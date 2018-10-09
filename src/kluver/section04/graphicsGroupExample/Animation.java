@@ -1,26 +1,44 @@
 package kluver.section04.graphicsGroupExample;
 
 import comp124graphics.CanvasWindow;
+import comp124graphics.GraphicsGroup;
 import comp124graphics.Triangle;
+import kluver.section05.graphicsGroupExample.Flower;
 
 import java.awt.*;
-import java.awt.event.WindowEvent;
 
 public class Animation {
     public static void main(String[] args) {
-        CanvasWindow canvas = new CanvasWindow("Animation", 800, 600);
-        Triangle thingToGlide = new Triangle(50,100, 0,150,100,200);
-        thingToGlide.setFillColor(Color.RED);
-        thingToGlide.setFilled(true);
+        CanvasWindow canvas = new CanvasWindow("Animation", 800, 633);
 
-        canvas.add(thingToGlide);
+        int dx = 1;
+        int dy = 1;
 
-        while(thingToGlide.getX()<=canvas.getWidth()) {
-            thingToGlide.move(1,0);
-            canvas.pause(1);
+        Flower flower = new Flower(0,0,400);
+        canvas.add(flower);
+        while(true) {
+            if (flower.getX()+flower.getWidth()>canvas.getWidth() || flower.getX()<0) {
+                dx = -dx;
+            }
+            if (flower.getY()+flower.getHeight()>canvas.getHeight() || flower.getY()<0) {
+                dy = -dy;
+            }
+            flower.move(dx, dy);
+            canvas.pause(10);
         }
-        canvas.closeWindow();
 
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

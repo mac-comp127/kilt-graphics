@@ -4,11 +4,13 @@ import comp124graphics.Ellipse;
 import comp124graphics.GraphicsGroup;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Flower extends GraphicsGroup {
 
-    private static final int PEDALS = 18;
-    private static final Color FLOWER_COLOR = new Color(208, 59, 255, 35);
+    private static final int PEDALS = 30;
+    private static final Color FLOWER_COLOR = new Color(208, 59, 255, 20);
+    private static final double SD = 30;
 
     /**
      * Creates a Flower at position x,y (top,left) with diameter equal to the
@@ -28,9 +30,28 @@ public class Flower extends GraphicsGroup {
             double topY = centerY+size/4.0;
             Ellipse pedal = new Ellipse(leftX, topY, size/2.0, size/2.0);
             pedal.setFilled(true);
-            pedal.setFillColor(FLOWER_COLOR);
+            pedal.setFillColor(makeColor(SD));
             pedal.setStroked(false);
             add(pedal);
+        }
+    }
+
+    private Color makeColor(double sd) {
+        Random rng = new Random();
+        int r = colorClamp(FLOWER_COLOR.getRed()+rng.nextGaussian()*sd);
+        int g = colorClamp(FLOWER_COLOR.getGreen()+rng.nextGaussian()*sd);
+        int b = colorClamp(FLOWER_COLOR.getBlue()+rng.nextGaussian()*sd);
+        int a = FLOWER_COLOR.getAlpha();
+        return new Color(r,g,b,a);
+    }
+
+    private int colorClamp(double v) {
+        if (v<0) {
+            return 0;
+        } else if (v >255) {
+            return 255;
+        } else {
+            return (int) v;
         }
     }
 }
