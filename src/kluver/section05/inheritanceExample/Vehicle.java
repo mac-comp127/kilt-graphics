@@ -60,6 +60,15 @@ public class Vehicle {
         return "Vehicle{license='" + license + "'}";
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj != null && obj instanceof Vehicle) {
+            Vehicle vobj = (Vehicle) obj;
+            return this.license.equals(vobj.license);
+        }
+        return false;
+    }
+
     public static void main(String[] args) {
         String validLicense = "0134285433";
         String invalidLicense = "I'm bob the builder, you can't sue me!";

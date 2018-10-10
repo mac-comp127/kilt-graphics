@@ -1,5 +1,6 @@
 package kluver.section04.inheritanceExample;
 
+
 public class Car extends Vehicle {
     private String color;
 
@@ -14,16 +15,34 @@ public class Car extends Vehicle {
 
     @Override
     public String toString() {
-        return "Car{color='" + color + "'license='" + getLicense() + "'}";
+        return "Car{color='" + color + " 'license='" + getLicense() + "'}";
     }
 
     public static void main(String[] args) {
+        Object o;
         String validLicense = "0134285433";
         String invalidLicense = "I'm bob the builder, you can't sue me!";
         Vehicle moped = new Vehicle(validLicense);
         Car convertible = new Car(invalidLicense, "RED");
 
+        System.out.println(convertible);
+
         moped.goForADrive();
         convertible.goForADrive();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

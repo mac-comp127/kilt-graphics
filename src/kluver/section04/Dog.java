@@ -4,9 +4,14 @@ public class Dog {
     private String name;
     private int age;
 
+    private static int numberOfDogs = 0;
+
     public Dog(String name, int age) {
         this.name = name;
         this.age = age;
+
+        numberOfDogs++;
+        int dogNumber = 2*numberOfDogs;
     }
 
     public Dog(String name) {
@@ -32,5 +37,9 @@ public class Dog {
 
     public void feed() {
         System.out.println("You feed "+name+" they LOVE it");
+    }
+
+    public static void main(String[] args) {
+        Dog dougie = new Dog("Dougie", 12);
     }
 }

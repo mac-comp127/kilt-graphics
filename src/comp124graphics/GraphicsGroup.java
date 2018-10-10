@@ -57,7 +57,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Constructs a new group. Each group has it's own local coordinate system. The group is defaulted
+     * Constructs a new group. Each group has its own local coordinate system. The group is defaulted
      * to be positioned on the canvas at canvas position (0, 0) initially.
      * When later used with CanvasWindow's add(GraphicsObject gObject, double x, double y), this group
      * will get placed at x, y.
@@ -144,7 +144,10 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         if (bounds.isEmpty()) {
             return;
         }
-        imgBuffer = new BufferedImage((int)Math.ceil(bounds.getX()+bounds.getWidth()), (int)Math.ceil(bounds.getY()+bounds.getHeight()), BufferedImage.TYPE_4BYTE_ABGR);
+        imgBuffer = new BufferedImage(
+            Math.max(1, (int) Math.ceil(bounds.getX() + bounds.getWidth())),
+            Math.max(1, (int) Math.ceil(bounds.getY() + bounds.getHeight())),
+            BufferedImage.TYPE_4BYTE_ABGR);
         subCanvas = imgBuffer.createGraphics();
         enableAntialiasing();
         subCanvas.setBackground(new Color(1, 1, 1, 0));

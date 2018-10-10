@@ -6,6 +6,7 @@ public class Car extends Vehicle {
     public Car(String license, String color) {
         super(license);
         this.color = color;
+        super.toString();
     }
 
     public Car(String license) {

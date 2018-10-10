@@ -3,6 +3,7 @@ package comp124graphics;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -222,6 +223,12 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
         return windowFrame;
     }
 
+    /**
+     * Closes the canvas window.
+     */
+    public void closeWindow() {
+        windowFrame.dispatchEvent(new WindowEvent(windowFrame, WindowEvent.WINDOW_CLOSING));
+    }
 }
 
 
