@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class Flower extends GraphicsGroup {
 
-    private static final int PEDALS = 30;
+    private static final int PEDALS = 10;
     private static final Color FLOWER_COLOR = new Color(208, 59, 255, 20);
     private static final double SD = 30;
 
