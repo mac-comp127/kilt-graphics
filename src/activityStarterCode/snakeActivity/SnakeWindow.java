@@ -25,7 +25,7 @@ public class SnakeWindow extends CanvasWindow {
      * @param numberOfSegments - the number of segments for snake.
      */
     public SnakeWindow(int width, int height, int numberOfSegments) {
-        super("Snake Window", width, height);
+        super("SquareShapeMaker Window", width, height);
 
         random = new Random();
 

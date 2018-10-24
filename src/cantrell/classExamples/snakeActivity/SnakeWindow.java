@@ -9,19 +9,29 @@ import comp124graphics.CanvasWindow;
  */
 public class SnakeWindow extends CanvasWindow {
 
-    private Snake snake;
+    private Snake[] snakes;
 
     /**
      * Create a new snake window
      * @param width - the width of the window
      * @param height - the height of the window
-     * @param numberOfSnakeSegments - the number of segments for snake.
+     * @param numberOfSnakes - number of snakes for the window to have
+     * @param numberOfSnakeSegments - the number of segments in each snake.
      */
-    public SnakeWindow(int width, int height, int numberOfSnakeSegments) {
-        super("Snake Window", width, height);
+    public SnakeWindow(int width, int height, int numberOfSnakes, int numberOfSnakeSegments) {
+        super("SquareShapeMaker Window", width, height);
 
-        snake = new Snake(numberOfSnakeSegments);
-        snake.addToCanvas(this);
+        snakes = new Snake[numberOfSnakes];
+        for(int n = 0; n < numberOfSnakes; n++) {
+            ShapeSource snakeShapeSource;
+            if(n % 2 == 0) {
+                snakeShapeSource = new CircleShapeMaker();
+            } else {
+                snakeShapeSource = new SquareShapeMaker();
+            }
+            snakes[n] = new Snake(numberOfSnakeSegments, snakeShapeSource);
+            snakes[n].addToCanvas(this);
+        }
     }
 
     /**
@@ -42,15 +52,17 @@ public class SnakeWindow extends CanvasWindow {
             // incerase the angle for the movement
             degree += step;
 
-            // make the radius change as the snake moves
-            double thisR = r+Math.sin(8*degree)*Snake.SEGMENT_SIZE;
+            for(int n = 0; n < snakes.length; n++) {
+                // make the radius change as the snake moves
+                double thisR = (r * (n+1) / snakes.length) + Math.sin(8*degree)* Snake.SEGMENT_SIZE;
 
-            // compute x and y values
-            double x = Math.sin(degree)*thisR - Snake.SEGMENT_SIZE/2 + getWidth()/2;
-            double y = Math.cos(degree)*thisR - Snake.SEGMENT_SIZE/2 + getHeight()/2;
+                // compute x and y values
+                double x = Math.sin(degree + n)*thisR - Snake.SEGMENT_SIZE/2 + getWidth()/2;
+                double y = Math.cos(degree + n)*thisR - Snake.SEGMENT_SIZE/2 + getHeight()/2;
 
-            // move the head of the snake to this position, and have each segment follow.
-            snake.move(x, y);
+                // move the head of the snake to this position, and have each segment follow.
+                snakes[n].move(x, y);
+            }
             pause(100);
 
         }

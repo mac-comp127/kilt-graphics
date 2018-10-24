@@ -7,7 +7,7 @@ package cantrell.classExamples.snakeActivity;
  */
 public class SnakeRunner {
     public static void main(String[] args) {
-        SnakeWindow sw = new SnakeWindow(800,600, 10);
+        SnakeWindow sw = new SnakeWindow(800, 600, 4, 10);
         sw.run();
     }
 }
