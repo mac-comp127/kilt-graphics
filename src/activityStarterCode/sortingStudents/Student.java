@@ -102,7 +102,7 @@ public class Student {
     @Override
     public boolean equals(Object other) {
         boolean result = false;
-        if (other != null && other instanceof Student) {
+        if (other instanceof Student) {
             Student that = (Student) other;
             result = ((studentName.equals(that.studentName)) &&
                     (studentID == that.studentID));
