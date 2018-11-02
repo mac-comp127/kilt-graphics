@@ -1,13 +1,17 @@
 package kluver.section05.RandomShapeSolutionExample;
 
 import comp124graphics.CanvasWindow;
+import comp124graphics.FillColorable;
 import comp124graphics.GraphicsObject;
 import comp124graphics.Rectangle;
+import org.w3c.dom.css.Rect;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.Random;
 
 /**
@@ -16,14 +20,14 @@ import java.util.Random;
  *
  * Created by shoop on 2/22/16.
  */
-public class RandomShapesProgram extends CanvasWindow implements ActionListener {
+public class RandomShapesProgram extends CanvasWindow implements ActionListener, MouseMotionListener {
     public static final int NUM_SHAPES = 16;
     private Random randGenColor;
     private Random randGenWidth;
     private Random randGenX;
     private Random randGenY;
 
-    GraphicsObject[] graphicsObjects;
+    private GraphicsObject[] graphicsObjects;
 
 
     public RandomShapesProgram() {
@@ -40,6 +44,8 @@ public class RandomShapesProgram extends CanvasWindow implements ActionListener 
 
         add(drawButton);
         drawButton.addActionListener(this);
+
+        this.addMouseMotionListener(this);
 
         run();
     }
@@ -119,4 +125,24 @@ public class RandomShapesProgram extends CanvasWindow implements ActionListener 
         RandomShapesProgram prog = new RandomShapesProgram();
     }
 
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        int x = e.getX();
+        int y = e.getY();
+        GraphicsObject over = getElementAt(x,y);
+        if(over != null) {
+            remove(over);
+            reDrawOne(over);
+
+            if(over instanceof FillColorable) {
+                FillColorable fc = (FillColorable)over;
+                fc.setFillColor(Color.black);
+            }
+        }
+    }
 }

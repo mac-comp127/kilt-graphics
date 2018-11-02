@@ -1,17 +1,12 @@
 package kluver.section04;
 
-public class Dog {
+public class Dog implements Comparable<Dog> {
     private String name;
     private int age;
-
-    private static int numberOfDogs = 0;
 
     public Dog(String name, int age) {
         this.name = name;
         this.age = age;
-
-        numberOfDogs++;
-        int dogNumber = 2*numberOfDogs;
     }
 
     public Dog(String name) {
@@ -35,6 +30,8 @@ public class Dog {
     }
 
 
+
+
     public void feed() {
         System.out.println("You feed "+name+" they LOVE it");
     }
@@ -42,4 +39,26 @@ public class Dog {
     public static void main(String[] args) {
         Dog dougie = new Dog("Dougie", 12);
     }
+
+    @Override
+    public int compareTo(Dog o) {
+        int nameC =  this.name.compareTo(o.name);
+        if(nameC == 0) {
+            return this.age - o.age;
+        } else {
+            return nameC;
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
