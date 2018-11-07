@@ -23,10 +23,15 @@ public class LinkedChainExamples {
     }
 
     public static int countChain(LinearNode<Integer> chain) {
-        //TODO: count the size of the chain
         // approach: count how many times we have to call getNext()
         // before we hit null.
-        return 0; // replace this with something useful.
+
+        int count = 0;
+        while(chain != null) {
+            chain = chain.getNext();
+            count = count + 1;
+        }
+        return count;
     }
 
     public static void main(String[] args) {
