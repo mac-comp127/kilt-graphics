@@ -6,24 +6,24 @@ import java.util.List;
 
 public class ListExample {
     public static void main(String[] args) {
-        List<String> theList = new ArrayList<>(10);
+        List<String> theList = new ArrayList<>();
 
         // add some things
         theList.add("dog");
         theList.add("cat");
         theList.add("wolf");
-        printList1(theList);
+        //printList1(theList);
 
         // add some more things
         theList.add(1, "rat");
         theList.add(1, "bunny");
-        //printList(theList);
+        printList2(theList);
 
         //remove some things
         theList.remove(0);
         theList.remove(1);
         theList.remove(2);
-        //printList(theList);
+        //printList3(theList);
     }
 
     private static void printList1(List<String> theList) {
