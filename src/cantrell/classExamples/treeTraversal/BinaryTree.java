@@ -1,6 +1,9 @@
 package cantrell.classExamples.treeTraversal;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import comp124graphics.CanvasWindow;
+import comp124graphics.GraphicsText;
 
 class BinaryTree<T extends Comparable<T>> {
     private T value;
@@ -24,7 +27,7 @@ class BinaryTree<T extends Comparable<T>> {
         return rightSubtree;
     }
 
-    public void insertValue(T newValue) {
+    public void add(T newValue) {
         if(newValue.compareTo(value) > 0) {
             rightSubtree = insertValueInSubtree(newValue, rightSubtree);
         } else {
@@ -36,20 +39,20 @@ class BinaryTree<T extends Comparable<T>> {
         if(subtree == null) {
             subtree = new BinaryTree<>(newValue, null, null);
         } else {
-            subtree.insertValue(newValue);
+            subtree.add(newValue);
         }
         return subtree;
     }
 
-    public void traverseInOrder() {
+    public void processInOrder(Processor<T> processor) {
         if(leftSubtree != null) {
-            leftSubtree.traverseInOrder();
+            leftSubtree.processInOrder(processor);
         }
 
-        System.out.println(value);
+        processor.process(value);
 
         if(rightSubtree != null) {
-            rightSubtree.traverseInOrder();
+            rightSubtree.processInOrder(processor);
         }
     }
 }
