@@ -33,5 +33,16 @@ public class StudentNames {
         List<String> nameList = new ArrayList<>();
         students.processInOrder(new ListProcessor<String>(nameList));
         System.out.println(nameList);
+
+        // Using contains():
+
+        System.out.println(students.contains("Ellen"));
+        System.out.println(students.contains("Elaine"));
+
+        System.out.println(students.contains("Lily"));
+        System.out.println(students.contains("Lilly"));
+
+        System.out.println(students.contains("Ryan"));
+        System.out.println(students.contains("Bryan"));
     }
 }

@@ -55,6 +55,45 @@ class BinaryTree<T extends Comparable<T>> {
             rightSubtree.processInOrder(processor);
         }
     }
+
+    public boolean contains(T searchValue) {
+        BinaryTree<T> curNode = this;
+
+        while(curNode != null) {
+            if(searchValue.equals(curNode.value)) {
+                return true;
+            }
+
+            if(searchValue.compareTo(curNode.value) > 0) {
+                curNode = curNode.rightSubtree;
+            } else {
+                curNode = curNode.leftSubtree;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Alternative approach:
+     */
+    public boolean containsRecursive(T searchValue) {
+        if(searchValue.equals(value)) {
+            return true;
+        }
+
+        if(searchValue.compareTo(value) > 0) {
+            if(rightSubtree == null) {
+                return false;
+            }
+            return rightSubtree.containsRecursive(searchValue);
+        } else {
+            if(leftSubtree == null) {
+                return false;
+            }
+            return leftSubtree.containsRecursive(searchValue);
+        }
+    }
+
 }
 
 
