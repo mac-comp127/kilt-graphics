@@ -19,11 +19,11 @@ class BinaryTree<T extends Comparable<T>> {
         return value;
     }
 
-    public BinaryTree<T> getLeftSubtree() {
+    private BinaryTree<T> getLeftSubtree() {
         return leftSubtree;
     }
 
-    public BinaryTree<T> getRightSubtree() {
+    private BinaryTree<T> getRightSubtree() {
         return rightSubtree;
     }
 
@@ -93,7 +93,7 @@ class BinaryTree<T extends Comparable<T>> {
             return leftSubtree.containsRecursive(searchValue);
         }
     }
-
 }
+
 
 
