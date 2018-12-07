@@ -44,11 +44,7 @@ public class Person {
 
         // GOLDEN RULE OF HASHCODE:
         //
-        // 💖🧚🦄 If a.equals(b), then a.hashCode() == b.hashCode() 🦄🧚💖
-        //
-        // COROLLARY:
-        //
-        // 🦄🧚💖 If you override equals(), you MUST override hashCode(). 💖🧚🦄
+        // 💖🧚🦄 If a.equals(b), then a.hashCode() == b.hashCode(). 🦄🧚💖
         //
         // Note that the converse does NOT apply: some objects can — must! — have the same hash code,
         // but still not be equal. Why? Because hashCode() returns an int, so there are only so many
@@ -60,6 +56,10 @@ public class Person {
         //
         // The default hashCode() — what you get if you don't override it — gives different hashCodes
         // to different objects, even if they are equal. Yikes!
+        //
+        // COROLLARY TO THE GOLDEN RULE OF HASHCODE:
+        //
+        // 🦄🧚💖 If you override equals(), you MUST override hashCode(). 💖🧚🦄
 
         // This is technically correct, but SLOW because everything ends up in the same bucket:
         //
