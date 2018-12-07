@@ -50,7 +50,7 @@ public class Person {
         // but still not be equal. Why? Because hashCode() returns an int, so there are only so many
         // hash codes to go around. (Pigeonhole Principle FTW!)
 
-        // This is WRONG because it is inconsistent with equals():
+        // This implementation is WRONG because it is inconsistent with equals():
         //
         // return super.hashCode();
         //
@@ -61,20 +61,22 @@ public class Person {
         //
         // 🦄🧚💖 If you override equals(), you MUST override hashCode(). 💖🧚🦄
 
-        // This is technically correct, but SLOW because everything ends up in the same bucket:
+        // This next one is technically correct, but SLOW because everything ends up in the same bucket:
         //
         // return 3;
 
-        // Correct and better! Even though ppl with the same first name end up in the same bucket,
+        // With this one, even though ppl with the same first name end up in the same bucket,
         // at least they're not ALL going to end up in one bucket anymore:
         //
         // return firstName.hashCode();
+        //
+        // Correct and better!
 
-        // Pretty good! Now we're taking first and last name into account:
+        // Now we're taking first and last name into account:
         //
         // return firstName.hashCode() + lastName.hashCode();
 
-        // Even better! Now we're spreading the values around more:
+        // Even better, let's spread the values around more:
         //
         //return firstName.hashCode() + 37 * lastName.hashCode();
 
