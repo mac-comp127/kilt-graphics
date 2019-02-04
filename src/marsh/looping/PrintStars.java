@@ -1,11 +1,10 @@
 package marsh.looping;
 
-import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class PrintStars {
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
 
         System.out.println("This program prints a simple triangle of stars (*)");
 

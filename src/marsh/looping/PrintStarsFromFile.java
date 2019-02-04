@@ -26,7 +26,7 @@ public class PrintStarsFromFile {
         int height = 0;
 
         // Code to print stars
-        do {
+        while (scan.hasNext()) {
             height = scan.nextInt();
             System.out.println("Read " + height + " from number.txt");
 
@@ -36,7 +36,7 @@ public class PrintStarsFromFile {
                 }
                 System.out.println("");
             }
-        } while(height != -1);
+        }
 
     }
 }
