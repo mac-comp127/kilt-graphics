@@ -15,15 +15,15 @@ public class PrintStars {
 
         scan = new Scanner(new File("124-shared/src/marsh/looping/number.txt"));
 
-        int x;
+        int height;
 
         //System.out.print("Enter a number of rows: ");
-        x = scan.nextInt();
+        height = scan.nextInt();
 
-        System.out.println("Read " + x + " from file number.txt");
+        System.out.println("Read " + height + " from file number.txt");
 
-        for (int i = 1; i <= x; i++) {
-            for (int j = 0; j < i; j++) {
+        for (int row = 1; row <= height; row++) {
+            for (int j = 0; j < row; j++) {
                 System.out.print("*");
             }
             System.out.println("");
