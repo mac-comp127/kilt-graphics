@@ -1,3 +1,9 @@
+/**
+ * @author Shilad Sen
+ *
+ * Modified by Abigail Marsh
+ */
+
 package marsh.methods;
 
 import comp124graphics.CanvasWindow;
