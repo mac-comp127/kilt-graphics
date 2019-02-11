@@ -5,7 +5,7 @@ import comp124graphics.Ellipse;
 import comp124graphics.Line;
 import comp124graphics.Rectangle;
 
-import java.awt.*;
+import java.awt.Color;
 
 public class DecomposedDog {
     private Color lineColor;
