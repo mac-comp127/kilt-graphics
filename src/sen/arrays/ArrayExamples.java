@@ -11,7 +11,7 @@ public class ArrayExamples {
         for (int i = nums.length - 1; i > 0; i--) {
             nums[i] = nums[i - 1];
         }
-        nums[0] = 20;
+        nums[0] = x;
 
         System.out.print("[");
         for (int i = 0; i < nums.length; i++) {
