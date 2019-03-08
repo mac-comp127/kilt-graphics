@@ -47,7 +47,10 @@ public class Cat implements Animal, Comparable<Animal> {
 
     @Override
     public int compareTo(Animal other) {
-        int nameCompareResult = this.getName().compareTo(other.getName());
-        return nameCompareResult;
+        int result = this.getName().compareTo(other.getName());
+        if (result == 0) {
+            result = this.getSpecies().compareTo(other.getSpecies());
+        }
+        return result;
     }
 }
