@@ -2,7 +2,7 @@ package sen.animals2;
 
 import java.util.Objects;
 
-public class Cat implements Animal {
+public class Cat implements Animal, Comparable<Animal> {
     private String color;
     private String name;
 
@@ -17,6 +17,10 @@ public class Cat implements Animal {
 
     public String getName() {
         return this.name;
+    }
+
+    public String getSpecies() {
+        return "Felis catus";
     }
 
     @Override
@@ -39,5 +43,14 @@ public class Cat implements Animal {
     @Override
     public int hashCode() {
         return Objects.hash(color);
+    }
+
+    @Override
+    public int compareTo(Animal other) {
+        int result = this.getName().compareTo(other.getName());
+        if (result == 0) {
+            result = this.getSpecies().compareTo(other.getSpecies());
+        }
+        return result;
     }
 }
