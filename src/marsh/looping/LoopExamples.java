@@ -1,8 +1,8 @@
-package marsh.basicjava;
+package marsh.looping;
 
 public class LoopExamples {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
 
         int x = 0;
         if (x == 0) {
