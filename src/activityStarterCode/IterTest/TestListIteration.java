@@ -13,9 +13,9 @@ public class TestListIteration {
     @Test
     public void testDoNTimesCopy() {
         // Create a "source" array with some names
-        List<String> minnesotaReps = Arrays.asList(
+        List<String> minnesotaReps = new ArrayList<>(Arrays.asList(
                 "Hagedorn", "Craig", "Phillips", "McCollum",
-                "Omar", "Emmer", "Peterson", "Stauber");
+                "Omar", "Emmer", "Peterson", "Stauber"));
 
         // Create a copy of the array using a do-n-times loop
         List<String> result = new ArrayList<>();
