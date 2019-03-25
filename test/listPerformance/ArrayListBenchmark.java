@@ -12,7 +12,6 @@ import java.util.List;
  */
 public class ArrayListBenchmark {
     private List<String> list = new ArrayList<>();
-    private long startMillis = 0;    // start of timer
 
     /**
      * This is an example of how to use this class.
@@ -23,7 +22,7 @@ public class ArrayListBenchmark {
     @Test
     public void benchRemoveFromEnd() {
 
-        int[] listSizes = new int[]{100000, 200000, 400000, 800000, 1600000, 3200000};
+        int[] listSizes = new int[] {500000, 100000, 200000, 400000, 800000, 1600000, 3200000};
         int numTrials = 20; // number of trials for EACH list size
 
         for (int size : listSizes) {
@@ -43,8 +42,8 @@ public class ArrayListBenchmark {
                 }
             }
 
-            // End the timer and print out the timing PER TRIAL
-            double elapsed = t.stop() / numTrials;
+            // End the timer and print out the timing PER OPERATION
+            double elapsed = t.stop() / (numTrials * size);
             System.out.println("getByIndex for " + size + " is " + elapsed);
         }
     }
@@ -67,7 +66,7 @@ public class ArrayListBenchmark {
         //          Fill the list to the appropriate size. DO NOT TIME THIS PART.
         //          Write a do-n-times loop that sums up the sizes of the strings
         //          in the list. You should use the list's get() method.
-        //      Print out the time PER TRIAL.
+        //      Print out the time PER OPERATION.
     }
 
     /**
@@ -87,7 +86,7 @@ public class ArrayListBenchmark {
         //          Fill the list to the appropriate size. DO NOT TIME THIS PART.
         //          Write a for-each loop that sums up the sizes of the strings
         //          in the list. You should NOT use the list's get() method.
-        //      Print out the time PER TRIAL.
+        //      Print out the time PER OPERATION.
     }
 
     /**
@@ -106,7 +105,7 @@ public class ArrayListBenchmark {
         //      Run each trial:
         //          Fill the list to the appropriate size. DO NOT TIME THIS PART.
         //          Remove the first element of the list until it is empty
-        //      Print out the time PER TRIAL.
+        //      Print out the time PER OPERATION.
     }
 
     /**
@@ -124,7 +123,7 @@ public class ArrayListBenchmark {
         //      Run each trial:
         //          Get the length of the middle element in the list. Use the
         //          list's get() method.
-        //      Print out the time PER TRIAL.
+        //      Print out the time PER OPERATION.
     }
 
     private void fillList(int numElems) {
@@ -135,20 +134,5 @@ public class ArrayListBenchmark {
         for (int i = 0; i < numElems; i++) {
             list.add("num is " + i);
         }
-    }
-
-    /**
-     * Starts the timer for the benchmark.
-     */
-    private void startTimer() {
-        startMillis = System.currentTimeMillis();
-    }
-
-
-    /**
-     * Ends the timer for the benchmark and return the time in seconds.
-     */
-    private double endTimer() {
-        return (System.currentTimeMillis() - startMillis) / 1000.0;
     }
 }
