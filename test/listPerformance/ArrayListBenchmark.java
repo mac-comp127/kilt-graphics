@@ -22,7 +22,7 @@ public class ArrayListBenchmark {
     @Test
     public void benchRemoveFromEnd() {
 
-        int[] listSizes = new int[] {500000, 100000, 200000, 400000, 800000, 1600000, 3200000};
+        int[] listSizes = new int[] {50000, 100000, 200000, 400000, 800000, 1600000, 3200000};
         int numTrials = 20; // number of trials for EACH list size
 
         for (int size : listSizes) {
