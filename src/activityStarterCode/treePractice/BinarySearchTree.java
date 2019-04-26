@@ -19,38 +19,12 @@ public class BinarySearchTree<E extends Comparable<E>> extends BinaryTree<E> {
     //Methods
 
     /**
-     * Starter method find.
-     *
-     * @param target The Comparable object being sought
-     * @return The object, if found, otherwise null
-     * @pre The target object must implement
-     * the Comparable interface.
+     * TODO: implement me!
+     * @param item
+     * @return
      */
-    E find(E target) {
-        return find(root, target);
-    }
-
-    /**
-     * Recursive find method.
-     *
-     * @param localRoot The local subtree's root
-     * @param target    The object being sought
-     * @return The object, if found, otherwise null
-     */
-    private E find(Node<E> localRoot, E target) {
-        if (localRoot == null) {
-            return null;
-        }
-
-        // Compare the target with the data field at the root.
-        int compResult = target.compareTo(localRoot.data);
-        if (compResult == 0) {
-            return localRoot.data;
-        } else if (compResult < 0) {
-            return find(localRoot.left, target);
-        } else {
-            return find(localRoot.right, target);
-        }
+    public boolean contains(E item) {
+        return false;
     }
 
     /**
