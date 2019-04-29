@@ -1,11 +1,9 @@
 package marsh.maps;
 
 public class Dog extends Animal {
-    private String color;
 
     public Dog(String name, String color) {
-        super(name);
-        this.color = color;
+        super(name, color);
     }
 
     public String vocalize() {
@@ -16,7 +14,7 @@ public class Dog extends Animal {
     public String toString() {
         return "Dog{" +
                 "name='" + getName() + '\'' +
-                ", color='" + color + '\'' +
+                ", color='" + getColor() + '\'' +
                 '}';
     }
 }

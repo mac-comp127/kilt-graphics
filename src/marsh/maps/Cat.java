@@ -3,11 +3,9 @@ package marsh.maps;
 import java.util.Objects;
 
 public class Cat extends Animal {
-    private String color;
 
     public Cat(String name, String color) {
-        super(name);
-        this.color = color;
+        super(name, color);
     }
 
     public String vocalize() {
@@ -18,7 +16,7 @@ public class Cat extends Animal {
     public String toString() {
         return "Cat{" +
                 "name='" + getName() + '\'' +
-                ", color='" + color + '\'' +
+                ", color='" + getColor() + '\'' +
                 '}';
     }
 
@@ -27,12 +25,12 @@ public class Cat extends Animal {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cat cat = (Cat) o;
-        return color.equals(cat.color)
+        return getColor().equals(cat.getColor())
                 && getName().equals(cat.getName());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(color);
+        return Objects.hash(getColor());
     }
 }
