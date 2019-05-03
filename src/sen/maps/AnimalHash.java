@@ -1,11 +1,14 @@
 package sen.maps;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class AnimalMain {
+public class AnimalHash {
     public static void main(String [] args) {
-        Map<String, Animal> pets = new TreeMap<>();
+        System.out.println("fido's hash is " + ("fido".hashCode()));
+
+        Map<String, Animal> pets = new HashMap<>();
         pets.put("fido", new Dog("fido", "brown"));
         pets.put("tom", new Cat("tom", "gray"));
         pets.put("clifford", new Dog("clifford", "red"));
@@ -15,12 +18,5 @@ public class AnimalMain {
 
         System.out.println("size of pets: " + pets.size());
 
-        for (String name : pets.keySet()) {
-            System.out.println(name + " is associated with " + pets.get(name));
-        }
-
-        for (Map.Entry<String, Animal> kv : pets.entrySet()) {
-            System.out.println(kv.getKey() + " is associated with " + kv.getValue());
-        }
     }
 }
