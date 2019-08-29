@@ -19,5 +19,14 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="itextpdf-5.4.0" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/lib/itextpdf-5.4.0.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
