@@ -147,6 +147,11 @@ public class Line extends GraphicsObject implements Strokable {
     }
 
     @Override
+    public int hashCode() {
+        return shape.hashCode();
+    }
+
+    @Override
     public String toString(){
         return "A line at position ("+getX1()+", "+getY1()+") and ("+getX2()+", "+getY2()+")";
     }

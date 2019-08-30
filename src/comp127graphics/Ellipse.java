@@ -2,6 +2,7 @@ package comp127graphics;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.util.Objects;
 
 /**
  * An ellipse that can be drawn on the screen.
@@ -159,6 +160,11 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         }
         Ellipse otherShape = (Ellipse) other;
         return shape.equals(otherShape.shape);
+    }
+
+    @Override
+    public int hashCode() {
+        return shape.hashCode();
     }
 
     @Override

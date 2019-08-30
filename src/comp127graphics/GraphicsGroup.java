@@ -228,6 +228,11 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     @Override
+    public int hashCode() {
+        return Objects.hash(x, y, gObjects);
+    }
+
+    @Override
     public String toString(){
         return "A graphics group at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
     }

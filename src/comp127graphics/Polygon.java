@@ -208,6 +208,11 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         return false;
     }
 
+    @Override
+    public int hashCode() {
+        return shape.hashCode();
+    }
+
     /**
      * Returns a string representation of the Polygon
      */

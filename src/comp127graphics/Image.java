@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 /**
  * A bitmap image that can be drawn to the screen.
@@ -104,19 +105,29 @@ public class Image extends GraphicsObject{
             && y <= this.y + img.getHeight();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
+        }
+        if(o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Image image = (Image) o;
+        return x == image.x
+            && y == image.y
+            && filePath.equals(image.filePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, filePath);
+    }
+
     /**
      * Two images are equal if they are the same file and are at the same position.
      */
-    @Override
-    public boolean equals(Object other){
-        if (other != null && other instanceof Image){
-            Image otherImg = (Image)other;
-            if (this.img.equals(otherImg.img) && this.x==otherImg.x && this.y == otherImg.y){
-                return true;
-            }
-        }
-        return false;
-    }
+
 
     @Override
     public String toString(){

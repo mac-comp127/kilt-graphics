@@ -173,9 +173,13 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         if(!(other instanceof Rectangle)) {
             return false;
         }
-
         Rectangle otherShape = (Rectangle) other;
         return shape.equals(otherShape.shape);
+    }
+
+    @Override
+    public int hashCode() {
+        return shape.hashCode();
     }
 
     /**
