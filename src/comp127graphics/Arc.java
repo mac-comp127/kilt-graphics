@@ -8,7 +8,7 @@ import java.awt.geom.Arc2D;
 /**
  * Used to draw an arc on the CanvasWindow or GraphicsGroup.
  *
- * Created by shoop on 2/9/17.
+ * @author Libby Shoop
  */
 public class Arc extends GraphicsObject implements Strokable {
 
@@ -25,17 +25,6 @@ public class Arc extends GraphicsObject implements Strokable {
     private double sweepAngle;
     private int type;
 
-    // from the Arc@D.Double documentation:
-    //  The arc is a partial section of a full ellipse which inscribes the
-    // framing rectangle of its parent RectangularShape. The angles are specified
-    // relative to the non-square framing rectangle such that 45 degrees always
-    // falls on the line from the center of the ellipse to the upper right corner
-    // of the framing rectangle. As a result, if the framing rectangle is noticeably
-    // longer along one axis than the other, the angles to the start and end of the
-    // arc segment will be skewed farther along the longer axis of the frame.
-
-
-
     // g.drawArc( x-coordinate of top left corner , y-coordinate of top left corner ,
     //            width , height , start angle , angle swept out );
     //   0 start angle is positive x axis
@@ -43,7 +32,7 @@ public class Arc extends GraphicsObject implements Strokable {
     // TODO: need to likely add closed arcs and ability to fill them
 
     /**
-     * This is an arc, based on Java's Arc2D.Double, which is described as follows:
+     * This is an arc, based on Java's Arc2D.Double, which Java describes as follows:
      *
      *  The arc is a partial section of a full ellipse which inscribes the
      *  framing rectangle of its parent RectangularShape. The angles are specified
@@ -78,10 +67,6 @@ public class Arc extends GraphicsObject implements Strokable {
         this.type = Arc2D.OPEN;
     }
 
-    /**
-     * Draws the shape on the screen
-     * @param gc
-     */
     @Override
     public void draw(Graphics2D gc){
         if (isStroked) {
@@ -93,37 +78,21 @@ public class Arc extends GraphicsObject implements Strokable {
         }
     }
 
-    /**
-     * Gets the stroke color used to draw the shape outline
-     * @return stroke color
-     */
     @Override
     public Paint getStrokeColor() {
         return strokeColor;
     }
 
-    /**
-     * Set the stroke outline color for the shape
-     * @param strokeColor for outline
-     */
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
         setStroked(true);
     }
 
-    /**
-     * Gets the width of the outline stroke
-     * @return width of stroke outline
-     */
     public float getStrokeWidth(){
         return stroke.getLineWidth();
     }
 
-    /**
-     * Sets the width of the stroke outline
-     * @param width of outline
-     */
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();

@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 
 /**
- * Represents a line that can be drawn graphically in a canvaswindow
- * Created by bjackson on 9/14/2016.
- * @version 0.5
+ * A line segment that can be drawn on the screen.
+ *
+ * @author Bret Jackson
  */
 public class Line extends GraphicsObject implements Strokable {
 
@@ -16,9 +16,8 @@ public class Line extends GraphicsObject implements Strokable {
     private boolean isStroked = true;
 
     /**
-     * Constructor to create the line object and initialize its instance variables.
-     * The default creates a line starting at position x1,y1 and ending at x2, y2.
-     * The line is drawn with a 1 pixel black stroke outline by default.
+     * Creates a line starting at position (x1,y1) and ending at (x2,y2).
+     * The line has a 1 pixel black stroke outline by default.
      * @param x1 x position of starting point
      * @param y1 y position of starting point
      * @param x2 x position of ending point
@@ -30,10 +29,6 @@ public class Line extends GraphicsObject implements Strokable {
         stroke = new BasicStroke(1.0f);
     }
 
-    /**
-     * Draws the shape on the screen
-     * @param gc
-     */
     public void draw(Graphics2D gc){
         if(isStroked) {
             Paint originalColor = gc.getPaint();
@@ -44,37 +39,21 @@ public class Line extends GraphicsObject implements Strokable {
         }
     }
 
-    /**
-     * Gets the stroke color used to draw the shape outline
-     * @return stroke color
-     */
     @Override
     public Paint getStrokeColor() {
         return strokeColor;
     }
 
-    /**
-     * Set the stroke outline color for the shape
-     * @param strokeColor for outline
-     */
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
         setStroked(true);
     }
 
-    /**
-     * Gets the width of the outline stroke
-     * @return width of stroke outline
-     */
     public float getStrokeWidth(){
         return stroke.getLineWidth();
     }
 
-    /**
-     * Sets the width of the stroke outline
-     * @param width of outline
-     */
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();
@@ -122,11 +101,8 @@ public class Line extends GraphicsObject implements Strokable {
         return shape.getY2();
     }
 
-
     /**
-     * Sets the shape's starting position to x, y
-     * @param x
-     * @param y
+     * Sets the line's starting position to (x, y) without affecting the end position.
      */
     public void setStartPosition(double x, double y){
         shape.setLine(x, y, shape.getX2(), shape.getY2());
@@ -134,9 +110,7 @@ public class Line extends GraphicsObject implements Strokable {
     }
 
     /**
-     * Sets the shape's ending position to x, y
-     * @param x
-     * @param y
+     * Sets the line's ending position to (x, y) without affecting the start position.
      */
     public void setEndPosition(double x, double y){
         shape.setLine(shape.getX1(), shape.getY1(), x, y);
@@ -144,19 +118,13 @@ public class Line extends GraphicsObject implements Strokable {
     }
 
     /**
-     * Sets the line to start at position x, y
-     * @param x
-     * @param y
+     * Moves the line so that it starts at (x,y) and has the same length and direction.
      */
     public void setPosition(double x, double y){
         shape.setLine(x, y, (x-shape.getX1())+shape.getX2(), (y - shape.getY1())+shape.getY2());
         changed();
     }
 
-    /**
-     * Gets the position of the graphical object
-     * @return position
-     */
     public Point getPosition(){
         return new Point(shape.getX1(), shape.getY1());
     }
@@ -166,34 +134,23 @@ public class Line extends GraphicsObject implements Strokable {
     }
 
     /**
-     * Test for equality between line objects.
-     * @param other
-     * @return
+     * Two lines are identical if the have the same start points and the same endpoints, regardless
+     * of appearance.
      */
     @Override
     public boolean equals(Object other){
-        if (other != null && other instanceof Line){
-            Line otherShape = (Line)other;
-            if (this.shape.equals(otherShape.shape)){
-                return true;
-            }
+        if (!(other instanceof Line)) {
+            return false;
         }
-        return false;
+        Line otherShape = (Line)other;
+        return shape.equals(otherShape.shape);
     }
 
-    /**
-     * String representation of the line
-     * @return
-     */
     @Override
     public String toString(){
         return "A line at position ("+getX1()+", "+getY1()+") and ("+getX2()+", "+getY2()+")";
     }
 
-    /**
-     * Returns an axis aligned bounding rectangle for the graphical object.
-     * @return
-     */
     public java.awt.Rectangle getBounds(){
         int left = (int)Math.min(getX1(), getX2());
         int top = (int)Math.min(getY1(), getY2());

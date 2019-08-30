@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -29,11 +30,21 @@ import comp127graphics.events.MouseMotionEvent;
 import comp127graphics.events.MouseMotionEventHandler;
 
 /**
- * Creates a window frame and canvas panel that is used to draw graphical objects.
- * Created by bjackson on 9/13/2016.
- * @version 0.5
+ * A window frame that can contain graphical objects.
+ *
+ * A CanvasWindow will not immediate draw GraphicsObjects you add to it. Instead, it waits until
+ * one of the following things happens:
+ *
+ * 1. Your main() method exits.
+ * 2. An event listener completes.
+ * 3. You explicitly call the CanvasWindow's draw() method.
+ *
+ * You can use draw() to create animations using loops.
+ *
+ * @author Bret Jackson
+ * @author Paul Cantrell
  */
-public class CanvasWindow implements GraphicsObserver {
+public class CanvasWindow {
 
     private final Canvas canvas;
     private final JFrame windowFrame;
@@ -46,6 +57,12 @@ public class CanvasWindow implements GraphicsObserver {
 
     private Point curMousePos, prevMousePos;
 
+    /**
+     * Opens a new window for drawing.
+     * @param title The user-visible title of the window
+     * @param windowWidth The width of the window's content area
+     * @param windowHeight The height of the window's content area
+     */
     public CanvasWindow(String title, int windowWidth, int windowHeight) {
         // We use a Rectangle for the background because canvas.setBackground() triggers spurious
         // repaints, whereas this approach puts background color changes into the same paint cycle
@@ -64,7 +81,7 @@ public class CanvasWindow implements GraphicsObserver {
         windowFrame.pack();
         windowFrame.setVisible(true);
 
-        content.addObserver(this);
+        content.addObserver((g) -> scheduleMainThreadExitCheck());
 
         setUpMousePositionTracking();
 
@@ -77,24 +94,33 @@ public class CanvasWindow implements GraphicsObserver {
         });
     }
 
+    /**
+     * Returns the width of the window's visible content area, not including any title bar and border.
+     */
     public int getWidth() {
         return canvas.getWidth();
     }
 
+    /**
+     * Returns the height of the window's visible content area, not including any title bar and border.
+     */
     public int getHeight() {
         return canvas.getHeight();
     }
 
-    public void setBackground(Color color) {
+    /**
+     * Changes the background color of the window.
+     */
+    public void setBackground(Paint color) {
         background.setFillColor(color);
     }
 
     private void updateBackgroundSize() {
-        background.setWidthAndHeight(canvas.getWidth(), canvas.getHeight());
+        background.setSize(canvas.getWidth(), canvas.getHeight());
     }
 
     /**
-     * Adds the graphics object to the list of objects drawn on the canvas
+     * Adds the given graphics object to the objects that will be drawn on the canvas.
      */
     public void add(GraphicsObject gObject){
         content.add(gObject);
@@ -122,13 +148,17 @@ public class CanvasWindow implements GraphicsObserver {
     }
 
     /**
-     * Removes all of the objects currently drawn on the canvas
+     * Removes all of the objects currently drawn on the canvas. Does not change the background color.
      */
     public void removeAll(){
         content.removeAll();
         content.add(background);
     }
 
+    /**
+     * Immediately draws the currently added graphics objects to the screen. This method is
+     * synchronous: it waits for the drawing to complete before proceeding.
+     */
     public void draw() {
         try {
             synchronized(repaintLock) {
@@ -179,25 +209,22 @@ public class CanvasWindow implements GraphicsObserver {
         return content.getElementAt(x, y);
     }
 
-    /*
-       Checks to see if clicked within a GraphicsGroup object and returns true if so
-     */
-    private boolean isGraphicsGroupAt(GraphicsObject obj, double x, double y) {  // TODO: Where in the course do we use this method?
-        if (obj instanceof GraphicsGroup) {
-            java.awt.Rectangle rect = obj.getBounds();
-            if (rect.getX() <= x && x<= (rect.getX() + rect.getWidth())) {
-                if (rect.getY() <= y && y <= (rect.getY()+rect.getHeight())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+// TODO: Where in the course do we use this method? Can we delete it?
+//    /*
+//       Checks to see if clicked within a GraphicsGroup object and returns true if so
+//     */
+//    private boolean isGraphicsGroupAt(GraphicsObject obj, double x, double y) {
+//        if (obj instanceof GraphicsGroup) {
+//            java.awt.Rectangle rect = obj.getBounds();
+//            if (rect.getX() <= x && x<= (rect.getX() + rect.getWidth())) {
+//                if (rect.getY() <= y && y <= (rect.getY()+rect.getHeight())) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
 
-    /**
-     * Enables antialiasing on the drawn shapes.
-     * @param gc
-     */
     private void enableAntialiasing(Graphics2D gc) {
         gc.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,
@@ -210,11 +237,7 @@ public class CanvasWindow implements GraphicsObserver {
                 RenderingHints.VALUE_STROKE_PURE);
     }
 
-    /**
-     * Implementation of GraphicsObserver method. Notifies Java to repaint the image if any of the objects drawn on the canvas
-     * have changed.
-     */
-    public void graphicChanged(GraphicsObject changedObject) {
+    private void scheduleMainThreadExitCheck() {
         synchronized(repaintLock) {
             if(!mainThreadExitCheckScheduled) {
                 mainThreadExitCheckScheduled = true;
@@ -236,10 +259,6 @@ public class CanvasWindow implements GraphicsObserver {
                 scheduler.scheduleAtFixedRate(mainThreadExitCheck, 50, 100, TimeUnit.MILLISECONDS);
             }
         }
-    }
-
-    private void changed() {
-        graphicChanged(null);
     }
 
     /**
@@ -331,6 +350,9 @@ public class CanvasWindow implements GraphicsObserver {
         });
     }
 
+    /**
+     * Adds a listener that will receive an event when the mouse button goes down inside the window.
+     */
     public void onMouseDown(MouseButtonEventHandler handler) {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
@@ -341,6 +363,9 @@ public class CanvasWindow implements GraphicsObserver {
         });
     }
 
+    /**
+     * Adds a listener that will receive an event when the mouse button goes up inside the window.
+     */
     public void onMouseUp(MouseButtonEventHandler handler) {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
@@ -351,6 +376,10 @@ public class CanvasWindow implements GraphicsObserver {
         });
     }
 
+    /**
+     * Adds a listener that will receive an event when the mouse button goes down and then up inside
+     * the window without moving significantly (i.e. not a drag).
+     */
     public void onClick(MouseButtonEventHandler handler) {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
@@ -361,6 +390,10 @@ public class CanvasWindow implements GraphicsObserver {
         });
     }
 
+    /**
+     * Adds a listener that will receive an event when the mouse moves over the window with the
+     * button up.
+     */
     public void onMouseMove(MouseMotionEventHandler handler) {
         canvas.addMouseMotionListener(new MouseAdapter() {
             @Override
@@ -371,6 +404,10 @@ public class CanvasWindow implements GraphicsObserver {
         });
     }
 
+    /**
+     * Adds a listener that will receive an event when the mouse moves over the window with the
+     * button down.
+     */
     public void onDrag(MouseMotionEventHandler handler) {
         canvas.addMouseMotionListener(new MouseAdapter() {
             @Override

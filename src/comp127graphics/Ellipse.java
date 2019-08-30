@@ -4,9 +4,9 @@ import java.awt.*;
 import java.awt.geom.Ellipse2D;
 
 /**
- * Used to draw an ellipse on the screen.
- * Created by bjackson on 9/13/2016.
- * @version 0.5
+ * An ellipse that can be drawn on the screen.
+ *
+ * @author Bret Jackson
  */
 public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
@@ -18,9 +18,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     private BasicStroke stroke;
 
     /**
-     * Constructor to create the ellipse object and initialize its instance variables.
-     * The default creates an ellipse at position x,y with a bounding rectangle of width and height.
-     * The ellipse is drawn with a 1 pixel black stroke outline by default.
+     * Creates an ellipse whose upper left is at (x,y), and which has the specified width and height.
+     * It has a 1 pixel black stroke outline by default.
      * @param x position
      * @param y position
      * @param width of the bounding rectangle
@@ -35,10 +34,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         isStroked = true;
     }
 
-    /**
-     * Draws the shape on the screen
-     * @param gc
-     */
     public void draw(Graphics2D gc){
         Paint originalColor = gc.getPaint();
         if (isFilled){
@@ -53,19 +48,11 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         gc.setPaint(originalColor); // set the color back to the original
     }
 
-    /**
-     * Gets the color for the filled in rectangle
-     * @return fill color
-     */
     @Override
     public Paint getFillColor() {
         return fillColor;
     }
 
-    /**
-     * Set the fill color to fillColor
-     * @param fillColor Color to fill the rectangle
-     */
     @Override
     public void setFillColor(Paint fillColor) {
         this.fillColor = fillColor;
@@ -73,88 +60,48 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
-    /**
-     * Gets the stroke color used to draw the shape outline
-     * @return stroke color
-     */
     @Override
     public Paint getStrokeColor() {
         return strokeColor;
     }
 
-    /**
-     * Set the stroke outline color for the shape
-     * @param strokeColor for outline
-     */
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
         setStroked(true);
     }
 
-    /**
-     * Gets whether the shape should be drawn filled.
-     * @return true if the shape is filled
-     */
     public boolean isFilled() {
         return isFilled;
     }
 
-    /**
-     * Set whether the shape should be drawn filled
-     * @param filled
-     */
     public void setFilled(boolean filled) {
         isFilled = filled;
         changed();
     }
 
-    /**
-     * Get whether the outline stroke should be drawn
-     * @return true if outline is drawn
-     */
     public boolean isStroked() {
         return isStroked;
     }
 
-    /**
-     * Sets whether the outline stroke should be drawn
-     * @param stroked
-     */
     public void setStroked(boolean stroked) {
         isStroked = stroked;
         changed();
     }
 
-    /**
-     * Gets the width of the outline stroke
-     * @return width of stroke outline
-     */
     public float getStrokeWidth(){
         return stroke.getLineWidth();
     }
 
-    /**
-     * Sets the width of the stroke outline
-     * @param width of outline
-     */
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();
     }
 
-    /**
-     * Get the shape's x position
-     * @return x position
-     */
     public double getX(){
         return shape.getX();
     }
 
-    /**
-     * Get the shape's y position
-     * @return y position
-     */
     public double getY(){
         return shape.getY();
     }
@@ -176,9 +123,7 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Sets the shape's position to x, y
-     * @param x
-     * @param y
+     * Moves the ellipse's upper left corner to (x,y), preserving its size.
      */
     public void setPosition(double x, double y){
         shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
@@ -186,17 +131,14 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Gets the position of the graphical object
-     * @return position
+     * Returns the ellipse's upper left corner.
      */
     public Point getPosition(){
         return new Point(shape.getX(), shape.getY());
     }
 
     /**
-     * Set the width and height of the ellipse's bounding rectangle
-     * @param width
-     * @param height
+     * Changes the width and height of the ellipse, preserving the position of its upper left corner.
      */
     public void setWidthAndHeight(double width, double height){
         shape.setFrame(shape.getX(), shape.getY(), width, height);
@@ -208,36 +150,23 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Tests two ellipse objects for equality.
-     * @param other
-     * @return
+     * Two ellipses are equal if the have the same position and size, regardless of appearance.
      */
     @Override
     public boolean equals(Object other){
-        if (other != null && other instanceof Ellipse){
-            Ellipse otherShape = (Ellipse) other;
-            if (this.shape.equals(otherShape.shape)){
-                return true;
-            }
+        if (!(other instanceof Ellipse)) {
+            return false;
         }
-        return false;
+        Ellipse otherShape = (Ellipse) other;
+        return shape.equals(otherShape.shape);
     }
 
-    /**
-     * Returns a string representation of the Ellipse
-     * @return
-     */
     @Override
     public String toString(){
-        return "An ellipse at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
+        return "Ellipse at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
     }
 
-    /**
-     * Returns an axis aligned bounding rectangle for the graphical object.
-     * @return
-     */
     public java.awt.Rectangle getBounds(){
         return new java.awt.Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
     }
-
 }

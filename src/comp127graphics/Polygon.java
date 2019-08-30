@@ -1,21 +1,23 @@
 package comp127graphics;
 
+import java.util.Arrays;
 import java.util.List;
 import java.awt.*;
+import java.util.stream.Stream;
 
 import static java.lang.Math.*;
 
 
 /**
- * Used to draw an arbitrary polygon on a CanvasWindow or in a GraphicsGroup.
+ * An arbitrary polygon, possibly self-intersecting.
  *
  * The polygon is internally represented as a list of points, with an edge of the
  * polygon connecting each adjacent pair of points in the list, and an extra edge
  * connecting the first and last point in the list. As such the order of the list
  * is important. Incorrectly ordering the list can lead to self-intersecting
- * polygon, which are neat, but it is also hard to predict how they will get filled.
+ * polygon, which are neat, but possibly not what you want.
  *
- * Created by Kluver on 11/9/17.
+ * @author Daniel Kluver
  */
 public class Polygon extends GraphicsObject implements Strokable, Fillable {
 
@@ -32,7 +34,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     private double height;
 
     /**
-     * Convenience method to create a triangle from individual coordinates.
+     * Convenience method to create a triangle from three individual coordinates.
      */
     public static Polygon makeTriangle(double x0, double y0, double x1, double y1, double x2, double y2) {
         return new Polygon(
@@ -79,9 +81,6 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         this(List.of(points));
     }
 
-    /**
-     * Draws the polygon on the screen
-     */
     public void draw(Graphics2D gc){
         Paint originalColor = gc.getPaint();
         if (isFilled){
@@ -96,19 +95,11 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         gc.setPaint(originalColor); // set the color back to the original
     }
 
-    /**
-     * Gets the color for the filled in polygon
-     * @return fill color
-     */
     @Override
     public Paint getFillColor() {
         return fillColor;
     }
 
-    /**
-     * Set the fill color to fillColor
-     * @param fillColor Color to fill the polygon
-     */
     @Override
     public void setFillColor(Paint fillColor) {
         this.fillColor = fillColor;
@@ -116,111 +107,74 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
-    /**
-     * Gets the stroke color used to draw the shape outline
-     * @return stroke color
-     */
     @Override
     public Paint getStrokeColor() {
         return strokeColor;
     }
 
-    /**
-     * Set the stroke outline color for the shape
-     * @param strokeColor for outline
-     */
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
         setStroked(true);
     }
 
-    /**
-     * Gets whether the shape should be drawn filled.
-     * @return true if the shape is filled
-     */
     public boolean isFilled() {
         return isFilled;
     }
 
-    /**
-     * Set whether the shape should be drawn filled
-     */
     public void setFilled(boolean filled) {
         isFilled = filled;
         changed();
     }
 
-    /**
-     * Get whether the outline stroke should be drawn
-     * @return true if outline is drawn
-     */
     public boolean isStroked() {
         return isStroked;
     }
 
-    /**
-     * Sets whether the outline stroke should be drawn
-     */
     public void setStroked(boolean stroked) {
         isStroked = stroked;
         changed();
     }
 
-    /**
-     * Gets the width of the outline stroke
-     * @return width of stroke outline
-     */
     public float getStrokeWidth(){
         return stroke.getLineWidth();
     }
 
-    /**
-     * Sets the width of the stroke outline
-     * @param width of outline
-     */
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();
     }
 
     /**
-     * Get the shape's x position
-     * @return x position
+     * Returns the leftmost position of the polygon's vertices.
      */
     public double getX(){
         return x;
     }
 
     /**
-     * Get the shape's y position
-     * @return y position
+     * Returns the topmost position of the polygon's vertices.
      */
     public double getY(){
         return y;
     }
 
     /**
-     * Get the width of the shape, measured as the x distance from the leftmost
-     * point to the rightmost point
-     * @return shape width
+     * Returns the width of the shape, measured as the x distance from the leftmost
+     * point to the rightmost point.
      */
     public double getWidth(){
         return width;
     }
 
     /**
-     * Get the height of the shape, measured as the y distance from the bottom
-     * point to the top point.
-     * @return shape height
+     * Returns the width of the shape, measured as the x distance from the topmost
+     * point to the bottommost point.
      */
     public double getHeight(){
         return height;
     }
 
-    /**
-     * Sets the shape's position to x, y
-     */
     public void setPosition(double x, double y){
         double dx = x - getX();
         double dy = y - getY();
@@ -242,7 +196,8 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Tests for equality between two Polygon objects.
+     * Tests whether the given object is a Polygon with the same shape.
+     * Ignores appearance, i.e. color and stroke width.
      */
     @Override
     public boolean equals(Object other){
@@ -258,12 +213,9 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      */
     @Override
     public String toString(){
-        return "A polygon with "+shape.npoints+" points at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
+        return "Polygon with "+shape.npoints+" points at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
     }
 
-    /**
-     * Returns an axis aligned bounding rectangle for the graphical object.
-     */
     public java.awt.Rectangle getBounds(){
         return shape.getBounds();
     }

@@ -10,9 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Used to draw an image on the screen.
- * Created by bjackson on 9/15/2016.
- * @version 0.5
+ * A bitmap image that can be drawn to the screen.
+ *
+ * @author Bret Jackson
  */
 public class Image extends GraphicsObject{
     private BufferedImage img;
@@ -21,8 +21,9 @@ public class Image extends GraphicsObject{
     private String filePath;
 
     /**
-     * Constructor to create the Image object and initialize its instance variables.
+     * Creates a bitmap image from the given file.
      * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP
+     *
      * @param x position
      * @param y position
      * @param filePath filepath to image file to load.
@@ -46,51 +47,38 @@ public class Image extends GraphicsObject{
         }
     }
 
-    /**
-     * Draws the image on the screen
-     * @param gc
-     */
     public void draw(Graphics2D gc){
         gc.drawImage(img, x, y, null);
     }
 
     /**
-     * Get the shape's x position
-     * @return x position
+     * Returns the position of the image's left edge.
      */
     public double getX(){
         return x;
     }
 
     /**
-     * Get the shape's y position
-     * @return y position
+     * Returns the position of the image's top edge.
      */
     public double getY(){
         return y;
     }
 
     /**
-     * Get the width of the rectangle
-     * @return rectangle width
+     * Get the width of the image
      */
     public double getWidth(){
         return img.getWidth();
     }
 
     /**
-     * Get the height of the rectangle
-     * @return rectangle height
+     * Get the height of the image
      */
     public double getHeight(){
         return img.getHeight();
     }
 
-    /**
-     * Sets the shape's position to x, y
-     * @param x
-     * @param y
-     */
     public void setPosition(int x, int y){
         this.x = x;
         this.y = y;
@@ -101,17 +89,13 @@ public class Image extends GraphicsObject{
         setPosition((int)Math.round(x), (int)Math.round(y));
     }
 
-    /**
-     * Gets the position of the graphical object
-     * @return position
-     */
-    public Point getPosition(){
+    public Point getPosition() {
         return new Point(x, y);
     }
 
     /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
+     * Tests whether the point (x, y) touches the image.
+     * Does not take into account image transparency.
      */
     public boolean testHit(double x, double y){
         return x >= this.x
@@ -121,9 +105,7 @@ public class Image extends GraphicsObject{
     }
 
     /**
-     * Two images are equal if they are the same file and same position.
-     * @param other
-     * @return
+     * Two images are equal if they are the same file and are at the same position.
      */
     @Override
     public boolean equals(Object other){
@@ -136,19 +118,11 @@ public class Image extends GraphicsObject{
         return false;
     }
 
-    /**
-     * Returns a string representation of the Image object
-     * @return
-     */
     @Override
     public String toString(){
-        return "An image at position ("+x+", "+y+") with file "+filePath;
+        return "Image at position ("+x+", "+y+") with file "+filePath;
     }
 
-    /**
-     * Returns an axis aligned bounding rectangle for the graphical object.
-     * @return
-     */
     public java.awt.Rectangle getBounds(){
         return new java.awt.Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
     }

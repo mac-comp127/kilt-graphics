@@ -4,18 +4,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
- * This is a graphical object that is used to group other graphical objects together.
- * It defines it's own coordinate system so that objects that the x,y position of objects added to it are relative
- * to its origin placed on the canvaswindow.
- * Created by bjackson on 9/15/2016.
+ * A group of graphical objects that can be added, moved, and removed as a single unit.
+ * The group defines its own coordinate system, so the positions of objects added to it are relative
+ * to the whole group's position.
  *
- * @version 0.5
+ * @author Bret Jackson
  */
 public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
-
     /**
      * Holds the objects to be drawn in calls to paintComponent
      */
@@ -43,8 +42,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     private Graphics2D subCanvas;
 
     /**
-     * Constructs a new group. Each group has it's own local coordinate system. The group is then positioned on the canvas
-     * at canvas position (x, y) when it is added.
+     * Constructs a new group. Each group has its own local coordinate system. The group is
+     * positioned on the canvas at canvas position (x, y) when it is added.
      * @param x
      * @param y
      */
@@ -56,8 +55,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Constructs a new group. Each group has its own local coordinate system. The group is defaulted
-     * to be positioned on the canvas at canvas position (0, 0) initially.
+     * Constructs a new group positioned at (0, 0).
      * When later used with CanvasWindow's add(GraphicsObject gObject, double x, double y), this group
      * will get placed at x, y.
      */
@@ -66,8 +64,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Adds the graphical object to the list of objects drawn on the canvas
-     * @param gObject
+     * Adds given graphical object to the list of objects drawn on the canvas. The last object added
+     * is the one that will appear on top.
      */
     public void add(GraphicsObject gObject){
         gObject.addObserver(this);
@@ -92,7 +90,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     /**
      * Removes the object from being drawn
-     * @param gObject
      * @throws NoSuchElementException if gObject is not a part of the graphics group.
      */
     public void remove(GraphicsObject gObject){
@@ -105,7 +102,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Removes all of the objects currently drawn on the canvas
+     * Removes all of the objects in this group
      */
     public void removeAll(){
         Iterator<GraphicsObject> it = gObjects.iterator();
@@ -118,7 +115,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     *  * Returns the topmost graphical object underneath position x, y. If no such object exists it returns null.
+     * Returns the topmost graphical object underneath position x, y. If no such object exists, it returns null.
      * @param x position in the coordinate space of the container of this group
      * @param y position in the coordinate space of the container of this group
      * @return object at (x,y) or null if it does not exist.
@@ -134,10 +131,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         return null;
     }
 
-    /**
-     * Draws the rectangle on the screen
-     * @param gc
-     */
+    @Override
     public void draw(Graphics2D gc){
         // Don't bother drawing if nothing has been added or everything would be drawn off screen.
         if (bounds.isEmpty()) {
@@ -169,41 +163,35 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
 
     /**
-     * Get the shape's x position
-     * @return x position
+     * Get the x position of the group's local coordinate system relative to the group's container.
      */
     public double getX(){
         return x;
     }
 
     /**
-     * Get the shape's y position
-     * @return y position
+     * Get the y position of the group's local coordinate system relative to the group's container.
      */
     public double getY(){
         return y;
     }
 
     /**
-     * Get the width of the rectangle
-     * @return rectangle width
+     * Get the width of the rectangle that encloses all the elements in the group.
      */
     public double getWidth(){
         return bounds.getWidth();
     }
 
     /**
-     * Get the height of the rectangle
-     * @return rectangle height
+     * Get the height of the rectangle that encloses all the elements in the group.
      */
     public double getHeight(){
         return bounds.getHeight();
     }
 
     /**
-     * Sets the shape's position to x, y
-     * @param x
-     * @param y
+     * Moves the entire group's coordinate system to (x,y).
      */
     public void setPosition(double x, double y){
         this.x = x;
@@ -212,30 +200,31 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Gets the position of the graphical object
-     * @return position
+     * Get the position of the group's local coordinate system relative to the group's container.
      */
     public Point getPosition(){
         return new Point(x, y);
     }
 
     /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
+     * Tests whether the point (x, y) hits some shape inside this group.
      */
     public boolean testHit(double x, double y){
         return getElementAt(x, y) != null;
     }
 
     @Override
-    public boolean equals(Object other){
-        if (other != null && other instanceof GraphicsGroup){
-            GraphicsGroup otherShape = (GraphicsGroup) other;
-            if (this.x == otherShape.x && this.y == otherShape.y && this.gObjects.equals(otherShape.gObjects)){
-                return true;
-            }
+    public boolean equals(Object o) {
+        if(this == o) {
+            return true;
         }
-        return false;
+        if(o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        GraphicsGroup that = (GraphicsGroup) o;
+        return Double.compare(that.x, x) == 0
+            && Double.compare(that.y, y) == 0
+            && gObjects.equals(that.gObjects);
     }
 
     @Override
@@ -251,6 +240,9 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         return new java.awt.Rectangle((int) Math.ceil(this.x + bounds.getX()), (int) Math.ceil(this.y + bounds.getY()), (int) Math.ceil(bounds.getWidth()), (int) Math.ceil(bounds.getHeight()));
     }
 
+    /**
+     * Returns an iterator over the contents of this group, in the order they will be drawn.
+     */
     public Iterator<GraphicsObject> iterator(){
         return gObjects.iterator();
     }

@@ -7,9 +7,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 /**
- * Represents a string of text that is drawn in a canvas window
- * Created by bjackson on 10/10/2016.
- * @version 0.5
+ * A string of text that can be drawn to the screen
+ *
+ * @author Bret Jackson
  */
 public class GraphicsText extends GraphicsObject implements Fillable {
 
@@ -21,10 +21,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     private boolean filled = true;
 
     /**
-     * Constructs the graphical text at position x,y
-     * @param text
-     * @param x
-     * @param y
+     * Creates drawable text at position (x,y)
      */
     public GraphicsText(String text, float x, float y){
         this.x = x;
@@ -34,10 +31,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         font = new Font("SanSerif", Font.PLAIN, 14);
     }
 
-    /**
-     * Draws the graphicsobject on the screen
-     * @param gc
-     */
     public void draw(Graphics2D gc){
 
         Font curFont = gc.getFont();
@@ -55,21 +48,12 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         gc.setPaint(curColor);
     }
 
-    /**
-     * Sets the position of the graphical object
-     * @param x position
-     * @param y position
-     */
     public void setPosition(double x, double y){
         this.x = (float) x;
         this.y = (float) y;
         changed();
     }
 
-    /**
-     * Gets the position of the object on the canvas.
-     * @return
-     */
     public Point getPosition(){
         return new Point(x, y);
     }
@@ -152,10 +136,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         return textShape != null && textShape.contains(x, y);
     }
 
-    /**
-     * Returns an axis aligned bounding rectangle for the graphical object.
-     * @return
-     */
     public java.awt.Rectangle getBounds(){
         return new java.awt.Rectangle((int)Math.round(x), (int)Math.round(y), (int)Math.round(getWidth()), (int)Math.round(getHeight()));
     }

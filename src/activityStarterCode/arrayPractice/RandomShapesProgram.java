@@ -98,7 +98,7 @@ public class RandomShapesProgram extends CanvasWindow {
         double y = randGenY.nextDouble()*690 + 10;
         comp127graphics.Rectangle rect = (Rectangle) shape;
         rect.setFillColor(color);
-        rect.setWidthAndHeight(width, width);
+        rect.setSize(width, width);
         rect.setPosition(x, y);
         add(rect);
     }

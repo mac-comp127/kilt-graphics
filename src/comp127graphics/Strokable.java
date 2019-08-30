@@ -3,11 +3,9 @@ package comp127graphics;
 import java.awt.*;
 
 /**
- * Colorable interface. Classes implementing this interface have the ability to be colored with separate outline and stroke
- * colors.
+ * A graphical object that has an outline, which can have a color and thickness.
  *
- * Created by bjackson on 9/12/17.
- * @version 0.1
+ * @author Bret Jackson
  */
 public interface Strokable {
 

@@ -6,26 +6,56 @@ import java.util.Objects;
  * A point in two-dimensional space.
  *
  * This class is immutable. All methods return a new Point.
+ *
+ * @author Paul Cantrell
  */
-public final class Point {
-    public static final Point
-        ORIGIN = new Point(0, 0),
-        UNIT_X = new Point(1, 0),
-        UNIT_Y = new Point(0, 1),
-        MIN = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY),
-        MAX = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+public final class Point {    
+    /**
+     * The point (0,0).
+     */
+    public static final Point ORIGIN = new Point(0, 0);
+    
+    /**
+     * The point (1,0).
+     */
+    public static final Point UNIT_X = new Point(1, 0);
+    
+    /**
+     * The point (0,1).
+     */
+    public static final Point UNIT_Y = new Point(0, 1);
+    
+    /**
+     * A point at (-∞,-∞).
+     */
+    public static final Point MIN = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
+    
+    /**
+     * A point at (∞,∞).
+     */
+    public static final Point MAX = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
+    
 
     private final double x, y;
 
+    /**
+     * Creates a point with the given horizontal and vertical components.
+     */
     public Point(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * The vertical position of this point.
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * The horizontal position of this point.
+     */
     public double getY() {
         return y;
     }
@@ -136,6 +166,9 @@ public final class Point {
             p1.subtract(p0).scale(alpha));
     }
 
+    /**
+     * Two points are equal if they have the same coordinates.
+     */
     @Override
     public boolean equals(Object o) {
         if(this == o) {

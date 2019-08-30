@@ -2,8 +2,8 @@ package comp127graphics;
 
 /**
  * Observer pattern interface used to notify a canvas to repaint if a graphical object has changed.
- * Created by bjackson on 9/13/2016.
- * @version 0.5
+ *
+ * @author Bret Jackson
  */
 public interface GraphicsObserver {
 

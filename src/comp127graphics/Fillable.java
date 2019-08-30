@@ -2,6 +2,11 @@ package comp127graphics;
 
 import java.awt.*;
 
+/**
+ * A graphical object with an interior than can be filled with a color or pattern.
+ *
+ * @author Bret Jackson
+ */
 public interface Fillable {
 
     /**
