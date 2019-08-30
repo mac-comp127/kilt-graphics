@@ -67,6 +67,10 @@ public class CanvasWindow implements GraphicsObserver {
         return canvas.getHeight();
     }
 
+    public void setBackground(Color color) {
+        canvas.setBackground(color);
+    }
+
     /**
      * Adds the graphics object to the list of objects drawn on the canvas
      */
