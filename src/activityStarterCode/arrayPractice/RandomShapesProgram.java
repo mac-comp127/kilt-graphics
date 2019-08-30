@@ -16,7 +16,7 @@ import java.util.Random;
  *
  * Created by shoop on 2/22/16.
  */
-public class RandomShapesProgram extends CanvasWindow implements ActionListener{
+public class RandomShapesProgram extends CanvasWindow {
     public static final int NUM_SHAPES = 16;
     private Random randGenColor;
     private Random randGenWidth;
@@ -41,11 +41,7 @@ public class RandomShapesProgram extends CanvasWindow implements ActionListener{
         // You still do not make all the new shapes yet
 
 
-        JButton drawButton = new JButton("Redraw");
-        drawButton.setSize(80, 40);
-
-        add(drawButton);
-        drawButton.addActionListener(this);
+        onClick((event) -> reDraw());
 
         run();
     }
@@ -108,17 +104,6 @@ public class RandomShapesProgram extends CanvasWindow implements ActionListener{
         rect.setWidthAndHeight(width, width);
         rect.setPosition(x, y);
         add(rect);
-    }
-
-    /**
-     * Respond to button clicks
-     * @param e event that contains data about which button was clicked.
-     */
-    public void actionPerformed(ActionEvent e) {
-        String cmd = e.getActionCommand();
-        if (cmd.equals("Redraw")) {
-            reDraw();
-        }
     }
 
     public static void main(String[] args){
