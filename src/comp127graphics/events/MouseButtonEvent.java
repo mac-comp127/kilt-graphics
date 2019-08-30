@@ -5,11 +5,10 @@ import comp127graphics.Point;
 /**
  * Carries information about the mouse button being pressed or released.
  *
+ * @author Paul Cantrell
  * @see comp127graphics.CanvasWindow#onClick(MouseButtonEventHandler)
  * @see comp127graphics.CanvasWindow#onMouseDown(MouseButtonEventHandler)
  * @see comp127graphics.CanvasWindow#onMouseUp(MouseButtonEventHandler)
- *
- * @author Paul Cantrell
  */
 public final class MouseButtonEvent {
     private final Point position;

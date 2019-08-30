@@ -1,16 +1,16 @@
 package comp127graphics;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.util.Arrays;
 import java.util.List;
-import java.awt.*;
-import java.util.stream.Stream;
-
-import static java.lang.Math.*;
 
 
 /**
  * An arbitrary polygon, possibly self-intersecting.
- *
+ * <p>
  * The polygon is internally represented as a list of points, with an edge of the
  * polygon connecting each adjacent pair of points in the list, and an extra edge
  * connecting the first and last point in the list. As such the order of the list
@@ -38,9 +38,9 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      */
     public static Polygon makeTriangle(double x0, double y0, double x1, double y1, double x2, double y2) {
         return new Polygon(
-            new Point(x0, y0),
-            new Point(x1, y1),
-            new Point(x2, y2));
+                new Point(x0, y0),
+                new Point(x1, y1),
+                new Point(x2, y2));
     }
 
     /**
@@ -81,9 +81,9 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         this(List.of(points));
     }
 
-    public void draw(Graphics2D gc){
+    public void draw(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
-        if (isFilled){
+        if (isFilled) {
             gc.setPaint(fillColor);
             gc.fill(shape);
         }
@@ -136,11 +136,11 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
-    public float getStrokeWidth(){
+    public float getStrokeWidth() {
         return stroke.getLineWidth();
     }
 
-    public void setStrokeWidth(float width){
+    public void setStrokeWidth(float width) {
         stroke = new BasicStroke(width);
         changed();
     }
@@ -148,14 +148,14 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the leftmost position of the polygon's vertices.
      */
-    public double getX(){
+    public double getX() {
         return x;
     }
 
     /**
      * Returns the topmost position of the polygon's vertices.
      */
-    public double getY(){
+    public double getY() {
         return y;
     }
 
@@ -163,7 +163,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * Returns the width of the shape, measured as the x distance from the leftmost
      * point to the rightmost point.
      */
-    public double getWidth(){
+    public double getWidth() {
         return width;
     }
 
@@ -171,27 +171,27 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * Returns the width of the shape, measured as the x distance from the topmost
      * point to the bottommost point.
      */
-    public double getHeight(){
+    public double getHeight() {
         return height;
     }
 
-    public void setPosition(double x, double y){
+    public void setPosition(double x, double y) {
         double dx = x - getX();
         double dy = y - getY();
-        shape.translate((int)Math.round(dx), (int)Math.round(dy)); // TODO: int conversion here will cause x/y to drift from shape
+        shape.translate((int) Math.round(dx), (int) Math.round(dy)); // TODO: int conversion here will cause x/y to drift from shape
         this.x = x;
         this.y = y;
         changed();
     }
 
-    public Point getPosition(){
+    public Point getPosition() {
         return new Point(getX(), getY());
     }
 
     /**
      * Tests whether the given point is on the boundary or interior of this polygon. Does not account for stroke width.
      */
-    public boolean testHit(double x, double y){
+    public boolean testHit(double x, double y) {
         return shape.contains(x, y);
     }
 
@@ -200,8 +200,8 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * Ignores appearance, i.e. color and stroke width.
      */
     @Override
-    public boolean equals(Object other){
-        if (other instanceof Polygon){
+    public boolean equals(Object other) {
+        if (other instanceof Polygon) {
             Polygon otherShape = (Polygon) other;
             return this.shape.equals(otherShape.shape);
         }
@@ -217,11 +217,11 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * Returns a string representation of the Polygon
      */
     @Override
-    public String toString(){
-        return "Polygon with "+shape.npoints+" points at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
+    public String toString() {
+        return "Polygon with " + shape.npoints + " points at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
     }
 
-    public java.awt.Rectangle getBounds(){
+    public java.awt.Rectangle getBounds() {
         return shape.getBounds();
     }
 }

@@ -1,6 +1,6 @@
 package comp127graphics;
 
-import java.awt.*;
+import java.awt.Paint;
 
 /**
  * A graphical object with an interior than can be filled with a color or pattern.

@@ -5,10 +5,9 @@ import comp127graphics.Point;
 /**
  * Carries information about the mouse moving from one location to another
  *
+ * @author Paul Cantrell
  * @see comp127graphics.CanvasWindow#onMouseMove(MouseMotionEventHandler)
  * @see comp127graphics.CanvasWindow#onDrag(MouseMotionEventHandler)
- *
- * @author Paul Cantrell
  */
 public final class MouseMotionEvent {
     private final Point position, previousPosition, delta;

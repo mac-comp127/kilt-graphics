@@ -2,7 +2,7 @@ package comp127graphics;
 
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -15,7 +15,7 @@ import java.util.Objects;
  *
  * @author Bret Jackson
  */
-public class Image extends GraphicsObject{
+public class Image extends GraphicsObject {
     private BufferedImage img;
     private int x;
     private int y;
@@ -25,11 +25,11 @@ public class Image extends GraphicsObject{
      * Creates a bitmap image from the given file.
      * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP
      *
-     * @param x position
-     * @param y position
+     * @param x        position
+     * @param y        position
      * @param filePath filepath to image file to load.
      */
-    public Image(int x, int y, String filePath){
+    public Image(int x, int y, String filePath) {
         this.x = x;
         this.y = y;
         this.filePath = filePath;
@@ -38,7 +38,7 @@ public class Image extends GraphicsObject{
             Path path = Paths.get(filePath);
             path = path.toAbsolutePath();
             File file = new File(path.toString());
-            if (!file.exists()){
+            if (!file.exists()) {
                 throw new IOException(path + " does not exist");
             }
             img = ImageIO.read(file);
@@ -48,46 +48,46 @@ public class Image extends GraphicsObject{
         }
     }
 
-    public void draw(Graphics2D gc){
+    public void draw(Graphics2D gc) {
         gc.drawImage(img, x, y, null);
     }
 
     /**
      * Returns the position of the image's left edge.
      */
-    public double getX(){
+    public double getX() {
         return x;
     }
 
     /**
      * Returns the position of the image's top edge.
      */
-    public double getY(){
+    public double getY() {
         return y;
     }
 
     /**
      * Get the width of the image
      */
-    public double getWidth(){
+    public double getWidth() {
         return img.getWidth();
     }
 
     /**
      * Get the height of the image
      */
-    public double getHeight(){
+    public double getHeight() {
         return img.getHeight();
     }
 
-    public void setPosition(int x, int y){
+    public void setPosition(int x, int y) {
         this.x = x;
         this.y = y;
         changed();
     }
 
-    public void setPosition(double x, double y){
-        setPosition((int)Math.round(x), (int)Math.round(y));
+    public void setPosition(double x, double y) {
+        setPosition((int) Math.round(x), (int) Math.round(y));
     }
 
     public Point getPosition() {
@@ -98,25 +98,25 @@ public class Image extends GraphicsObject{
      * Tests whether the point (x, y) touches the image.
      * Does not take into account image transparency.
      */
-    public boolean testHit(double x, double y){
+    public boolean testHit(double x, double y) {
         return x >= this.x
-            && x <= this.x + img.getWidth()
-            && y >= this.y
-            && y <= this.y + img.getHeight();
+                && x <= this.x + img.getWidth()
+                && y >= this.y
+                && y <= this.y + img.getHeight();
     }
 
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
         }
-        if(o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Image image = (Image) o;
         return x == image.x
-            && y == image.y
-            && filePath.equals(image.filePath);
+                && y == image.y
+                && filePath.equals(image.filePath);
     }
 
     @Override
@@ -130,11 +130,11 @@ public class Image extends GraphicsObject{
 
 
     @Override
-    public String toString(){
-        return "Image at position ("+x+", "+y+") with file "+filePath;
+    public String toString() {
+        return "Image at position (" + x + ", " + y + ") with file " + filePath;
     }
 
-    public java.awt.Rectangle getBounds(){
-        return new java.awt.Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+    public java.awt.Rectangle getBounds() {
+        return new java.awt.Rectangle((int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
     }
 }

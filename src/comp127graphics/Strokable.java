@@ -1,6 +1,6 @@
 package comp127graphics;
 
-import java.awt.*;
+import java.awt.Paint;
 
 /**
  * A graphical object that has an outline, which can have a color and thickness.

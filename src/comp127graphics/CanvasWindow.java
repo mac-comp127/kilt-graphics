@@ -1,21 +1,15 @@
 package comp127graphics;
 
+import comp127graphics.events.MouseButtonEvent;
+import comp127graphics.events.MouseButtonEventHandler;
+import comp127graphics.events.MouseMotionEvent;
+import comp127graphics.events.MouseMotionEventHandler;
+
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.RenderingHints;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,21 +18,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import comp127graphics.events.MouseButtonEvent;
-import comp127graphics.events.MouseButtonEventHandler;
-import comp127graphics.events.MouseMotionEvent;
-import comp127graphics.events.MouseMotionEventHandler;
-
 /**
  * A window frame that can contain graphical objects.
- *
+ * <p>
  * A CanvasWindow will not immediate draw GraphicsObjects you add to it. Instead, it waits until
  * one of the following things happens:
- *
- * 1. Your main() method exits.
- * 2. An event listener completes.
- * 3. You explicitly call the CanvasWindow's draw() method.
- *
+ * <ol>
+ *   <li>Your main() method exits.</li>
+ *   <li>An event listener completes.</li>
+ *   <li>You explicitly call the CanvasWindow's draw() method.</li>
+ * </ol>
+ * <p>
  * You can use draw() to create animations using loops.
  *
  * @author Bret Jackson
@@ -59,8 +49,9 @@ public class CanvasWindow {
 
     /**
      * Opens a new window for drawing.
-     * @param title The user-visible title of the window
-     * @param windowWidth The width of the window's content area
+     *
+     * @param title        The user-visible title of the window
+     * @param windowWidth  The width of the window's content area
      * @param windowHeight The height of the window's content area
      */
     public CanvasWindow(String title, int windowWidth, int windowHeight) {
@@ -75,8 +66,8 @@ public class CanvasWindow {
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
         canvas.setBackground(Color.WHITE);
 
-        windowFrame = new JFrame (title);
-        windowFrame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+        windowFrame = new JFrame(title);
+        windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         windowFrame.getContentPane().add(canvas);
         windowFrame.pack();
         windowFrame.setVisible(true);
@@ -122,7 +113,7 @@ public class CanvasWindow {
     /**
      * Adds the given graphics object to the objects that will be drawn on the canvas.
      */
-    public void add(GraphicsObject gObject){
+    public void add(GraphicsObject gObject) {
         content.add(gObject);
     }
 
@@ -130,27 +121,28 @@ public class CanvasWindow {
      * Adds the graphical object to the list of objects drawn on the canvas
      * at the position x, y.
      *
-     * @param gObject  the graphical object to be drawn
-     * @param x        the x position of graphical object
-     * @param y        the y position of graphical object
+     * @param gObject the graphical object to be drawn
+     * @param x       the x position of graphical object
+     * @param y       the y position of graphical object
      */
-    public void add(GraphicsObject gObject, double x, double y){
+    public void add(GraphicsObject gObject, double x, double y) {
         content.add(gObject, x, y);
     }
 
     /**
      * Removes the object from being drawn
+     *
      * @param gObject
      * @throws NoSuchElementException if gObject has not been added to the canvas
      */
-    public void remove(GraphicsObject gObject){
+    public void remove(GraphicsObject gObject) {
         content.remove(gObject);
     }
 
     /**
      * Removes all of the objects currently drawn on the canvas. Does not change the background color.
      */
-    public void removeAll(){
+    public void removeAll() {
         content.removeAll();
         content.add(background);
     }
@@ -161,9 +153,9 @@ public class CanvasWindow {
      */
     public void draw() {
         try {
-            synchronized(repaintLock) {
+            synchronized (repaintLock) {
                 drawingInitiated = true;
-                if(EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
+                if (EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
                     canvas.paintImmediately(canvas.getBounds());
                 } else {
                     canvas.repaint(); // force redraw ASAP on AWT thread
@@ -171,41 +163,42 @@ public class CanvasWindow {
                 }
             }
         } catch (InterruptedException ex) {
-			/* Empty */
+            /* Empty */
         }
     }
 
     /**
      * Pauses the program for the given time in milliseconds.
      */
-    public void pause(long milliseconds){
+    public void pause(long milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException ex) {
-			/* Empty */
+            /* Empty */
         }
     }
 
     /**
      * Pauses the program for the given time in milliseconds.
      */
-    public void pause(double milliseconds){
+    public void pause(double milliseconds) {
         try {
             long millisPart = (long) milliseconds;
             int nanosPart = (int) Math.round((milliseconds - millisPart) * 1000000);
             Thread.sleep(millisPart, nanosPart);
         } catch (InterruptedException ex) {
-			/* Empty */
+            /* Empty */
         }
     }
 
     /**
      * Returns the topmost graphical object underneath position x, y. If no such object exists it returns null.
+     *
      * @param x position
      * @param y position
      * @return object at (x,y) or null if it does not exist.
      */
-    public GraphicsObject getElementAt(double x, double y){
+    public GraphicsObject getElementAt(double x, double y) {
         return content.getElementAt(x, y);
     }
 
@@ -238,16 +231,16 @@ public class CanvasWindow {
     }
 
     private void scheduleMainThreadExitCheck() {
-        synchronized(repaintLock) {
-            if(!mainThreadExitCheckScheduled) {
+        synchronized (repaintLock) {
+            if (!mainThreadExitCheckScheduled) {
                 mainThreadExitCheckScheduled = true;
 
                 final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
                 final long mainThreadID = Thread.currentThread().getId();
                 Runnable mainThreadExitCheck = () -> {
-                    for(Thread thread : Thread.getAllStackTraces().keySet()) {
-                        if(thread.getId() == mainThreadID) {
+                    for (Thread thread : Thread.getAllStackTraces().keySet()) {
+                        if (thread.getId() == mainThreadID) {
                             return;
                         }
                     }
@@ -263,16 +256,15 @@ public class CanvasWindow {
 
     /**
      * Saves a screenshot of the currently drawn canvas' contents to the filename specified as a parameter
+     *
      * @param filename The filename for where you would like to save.
      */
-    public void screenShot(String filename)
-    {
+    public void screenShot(String filename) {
         BufferedImage bImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D cg = bImg.createGraphics();
         canvas.paintAll(cg);
         try {
-            if (ImageIO.write(bImg, "png", new File(filename)))
-            {
+            if (ImageIO.write(bImg, "png", new File(filename))) {
                 System.out.println("-- saved");
             }
         } catch (IOException e) {
@@ -281,7 +273,7 @@ public class CanvasWindow {
         }
     }
 
-    public JFrame getWindowFrame(){
+    public JFrame getWindowFrame() {
         return windowFrame;
     }
 
@@ -293,28 +285,28 @@ public class CanvasWindow {
     }
 
     class Canvas extends JPanel {
-       /**
-        * Called automatically by Java to redraw the graphics
-        */
-       public void paintComponent(Graphics page) {
-           super.paintComponent(page);
+        /**
+         * Called automatically by Java to redraw the graphics
+         */
+        public void paintComponent(Graphics page) {
+            super.paintComponent(page);
 
-           synchronized(repaintLock) {
-               // AWT can create multiple repaint events internally during the creation of a window,
-               // but we don't want to actually draw anything until the student has explicitly
-               // requested it with a draw(). This prevents partial drawing / flickers of content,
-               // as well as a false positives when the student has a loop with no draw() calls.
-               if(!drawingInitiated) {
-                   return;
-               }
+            synchronized (repaintLock) {
+                // AWT can create multiple repaint events internally during the creation of a window,
+                // but we don't want to actually draw anything until the student has explicitly
+                // requested it with a draw(). This prevents partial drawing / flickers of content,
+                // as well as a false positives when the student has a loop with no draw() calls.
+                if (!drawingInitiated) {
+                    return;
+                }
 
-               Graphics2D gc = (Graphics2D) page;
-               enableAntialiasing(gc);
-               content.draw(gc);
+                Graphics2D gc = (Graphics2D) page;
+                enableAntialiasing(gc);
+                content.draw(gc);
 
-               repaintLock.notifyAll();
-           }
-       }
+                repaintLock.notifyAll();
+            }
+        }
     }
 
     // ------------ Event Handling ------------

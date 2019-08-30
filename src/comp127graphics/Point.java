@@ -1,40 +1,41 @@
 package comp127graphics;
+
 import java.awt.geom.Point2D;
 import java.util.Objects;
 
 /**
  * A point in two-dimensional space.
- *
+ * <p>
  * This class is immutable. All methods return a new Point.
  *
  * @author Paul Cantrell
  */
-public final class Point {    
+public final class Point {
     /**
      * The point (0,0).
      */
     public static final Point ORIGIN = new Point(0, 0);
-    
+
     /**
      * The point (1,0).
      */
     public static final Point UNIT_X = new Point(1, 0);
-    
+
     /**
      * The point (0,1).
      */
     public static final Point UNIT_Y = new Point(0, 1);
-    
+
     /**
      * A point at (-∞,-∞).
      */
     public static final Point MIN = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
-    
+
     /**
      * A point at (∞,∞).
      */
     public static final Point MAX = new Point(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
-    
+
 
     private final double x, y;
 
@@ -123,8 +124,8 @@ public final class Point {
      */
     public static Point min(Point p0, Point p1) {
         return new Point(
-            Math.min(p0.x, p1.x),
-            Math.min(p0.y, p1.y));
+                Math.min(p0.x, p1.x),
+                Math.min(p0.y, p1.y));
     }
 
     /**
@@ -133,8 +134,8 @@ public final class Point {
      */
     public static Point max(Point p0, Point p1) {
         return new Point(
-            Math.max(p0.x, p1.x),
-            Math.max(p0.y, p1.y));
+                Math.max(p0.x, p1.x),
+                Math.max(p0.y, p1.y));
     }
 
     /**
@@ -142,8 +143,8 @@ public final class Point {
      */
     public Point rotate(double angle) {
         return new Point(
-            getX() * Math.cos(angle) - getY() * Math.sin(angle),
-            getX() * Math.sin(angle) + getY() * Math.cos(angle));
+                getX() * Math.cos(angle) - getY() * Math.sin(angle),
+                getX() * Math.sin(angle) + getY() * Math.cos(angle));
     }
 
     /**
@@ -151,19 +152,20 @@ public final class Point {
      */
     public Point rotate(double angle, Point center) {
         return subtract(center)
-            .rotate(angle)
-            .add(center);
+                .rotate(angle)
+                .add(center);
     }
 
     /**
      * Linearly interpolates by alpha between the two points.
-     * @param p0 The point for alpha = 0
-     * @param p1 The point for alpha = 1
+     *
+     * @param p0    The point for alpha = 0
+     * @param p1    The point for alpha = 1
      * @param alpha The continuum from p0 to p1
      */
     public static Point interpolate(Point p0, Point p1, double alpha) {
         return p0.add(
-            p1.subtract(p0).scale(alpha));
+                p1.subtract(p0).scale(alpha));
     }
 
     /**
@@ -171,15 +173,15 @@ public final class Point {
      */
     @Override
     public boolean equals(Object o) {
-        if(this == o) {
+        if (this == o) {
             return true;
         }
-        if(o == null || getClass() != o.getClass()) {
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         Point that = (Point) o;
         return Double.compare(this.x, that.x) == 0
-            && Double.compare(this.y, that.y) == 0;
+                && Double.compare(this.y, that.y) == 0;
     }
 
     @Override

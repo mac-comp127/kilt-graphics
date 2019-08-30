@@ -1,6 +1,9 @@
 package comp127graphics;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.geom.Rectangle2D;
 
 /**
@@ -21,7 +24,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
      * Creates a rectangle whose upper left is at (x,y) with the specified width and height.
      * The rectangle has a 1 pixel black stroke outline by default.
      */
-    public Rectangle(double x, double y, double width, double height){
+    public Rectangle(double x, double y, double width, double height) {
         shape = new Rectangle2D.Double(x, y, width, height);
         fillColor = Color.black;
         strokeColor = Color.black;
@@ -38,9 +41,9 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         this(upperLeft.getX(), upperLeft.getY(), size.getX(), size.getY());
     }
 
-    public void draw(Graphics2D gc){
+    public void draw(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
-        if (isFilled){
+        if (isFilled) {
             gc.setPaint(fillColor);
             gc.fill(shape);
         }
@@ -93,11 +96,11 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
-    public float getStrokeWidth(){
+    public float getStrokeWidth() {
         return stroke.getLineWidth();
     }
 
-    public void setStrokeWidth(float width){
+    public void setStrokeWidth(float width) {
         stroke = new BasicStroke(width);
         changed();
     }
@@ -105,42 +108,42 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the X position of the rectangle's left edge.
      */
-    public double getX(){
+    public double getX() {
         return shape.getX();
     }
 
     /**
      * Returns the Y position of the rectangle's top edge.
      */
-    public double getY(){
+    public double getY() {
         return shape.getY();
     }
 
     /**
      * Returns the width of the rectangle.
      */
-    public double getWidth(){
+    public double getWidth() {
         return shape.getWidth();
     }
 
     /**
      * Returns the height of the rectangle.
      */
-    public double getHeight(){
+    public double getHeight() {
         return shape.getHeight();
     }
 
     /**
      * Returns the position of the rectangle's upper left corner.
      */
-    public Point getPosition(){
+    public Point getPosition() {
         return new Point(shape.getX(), shape.getY());
     }
 
     /**
      * Moves the rectangle's upper left corner to (x, y), preserving its size.
      */
-    public void setPosition(double x, double y){
+    public void setPosition(double x, double y) {
         shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
         changed();
     }
@@ -148,7 +151,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     /**
      * Changes the width and height of the rectangle, preserving its upper left corner's position.
      */
-    public void setSize(double width, double height){
+    public void setSize(double width, double height) {
         shape.setFrame(shape.getX(), shape.getY(), width, height);
         changed();
     }
@@ -156,11 +159,11 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     /**
      * Changes the width and height of the rectangle, preserving its upper left corner's position.
      */
-    public void setSize(Point size){
+    public void setSize(Point size) {
         setSize(size.getX(), size.getY());
     }
 
-    public boolean testHit(double x, double y){
+    public boolean testHit(double x, double y) {
         return shape.contains(x, y);
     }
 
@@ -169,8 +172,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
      * Ignores appearance, i.e. color and stroke width.
      */
     @Override
-    public boolean equals(Object other){
-        if(!(other instanceof Rectangle)) {
+    public boolean equals(Object other) {
+        if (!(other instanceof Rectangle)) {
             return false;
         }
         Rectangle otherShape = (Rectangle) other;
@@ -186,11 +189,11 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
      * Returns a string representation of the rectangle
      */
     @Override
-    public String toString(){
-        return "Rectangle at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
+    public String toString() {
+        return "Rectangle at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
     }
 
-    public java.awt.Rectangle getBounds(){
-        return new java.awt.Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
+    public java.awt.Rectangle getBounds() {
+        return new java.awt.Rectangle((int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
     }
 }

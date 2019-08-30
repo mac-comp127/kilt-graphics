@@ -1,6 +1,6 @@
 package comp127graphics;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +26,7 @@ public abstract class GraphicsObject {
 
     /**
      * Moves this object to the given position.
+     *
      * @param x position
      * @param y position
      */
@@ -55,7 +56,7 @@ public abstract class GraphicsObject {
     /**
      * Tests whether the given point is on the boundary or interior of this graphic object's shape.
      * The point is in this object's local coordinates, not canvas coordinates.
-     *
+     * <p>
      * Does not account for appearance, including stroke width and transparency.
      */
     public abstract boolean testHit(double x, double y);
@@ -87,7 +88,7 @@ public abstract class GraphicsObject {
      * should call this whenever anything changes that would alter this object's appearance.
      */
     protected void changed() {
-        for(GraphicsObserver observer : observers) {
+        for (GraphicsObserver observer : observers) {
             observer.graphicChanged(this);
         }
     }

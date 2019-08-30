@@ -23,7 +23,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     /**
      * Creates drawable text at position (x,y)
      */
-    public GraphicsText(String text, float x, float y){
+    public GraphicsText(String text, float x, float y) {
         this.x = x;
         this.y = y;
         this.text = text;
@@ -31,7 +31,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         font = new Font("SanSerif", Font.PLAIN, 14);
     }
 
-    public void draw(Graphics2D gc){
+    public void draw(Graphics2D gc) {
 
         Font curFont = gc.getFont();
         gc.setFont(font);
@@ -48,13 +48,13 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         gc.setPaint(curColor);
     }
 
-    public void setPosition(double x, double y){
+    public void setPosition(double x, double y) {
         this.x = (float) x;
         this.y = (float) y;
         changed();
     }
 
-    public Point getPosition(){
+    public Point getPosition() {
         return new Point(x, y);
     }
 
@@ -115,28 +115,28 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         this.filled = filled;
     }
 
-    public double getWidth(){
+    public double getWidth() {
         FontMetrics metrics = getFontMetrics();
         return metrics.stringWidth(text);
     }
 
-    public double getHeight(){
+    public double getHeight() {
         FontMetrics metrics = getFontMetrics();
         return metrics.getHeight();
     }
 
-    private FontMetrics getFontMetrics(){
+    private FontMetrics getFontMetrics() {
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = (Graphics2D) img.getGraphics();
         g.setFont(font);
         return g.getFontMetrics();
     }
 
-    public boolean testHit(double x, double y){
+    public boolean testHit(double x, double y) {
         return textShape != null && textShape.contains(x, y);
     }
 
-    public java.awt.Rectangle getBounds(){
-        return new java.awt.Rectangle((int)Math.round(x), (int)Math.round(y), (int)Math.round(getWidth()), (int)Math.round(getHeight()));
+    public java.awt.Rectangle getBounds() {
+        return new java.awt.Rectangle((int) Math.round(x), (int) Math.round(y), (int) Math.round(getWidth()), (int) Math.round(getHeight()));
     }
 }
