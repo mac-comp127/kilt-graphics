@@ -1,12 +1,8 @@
 package comp124graphics;
 
-import sun.java2d.SunGraphics2D;
-
 import java.awt.*;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Point2D;
 
 
 /**
@@ -14,11 +10,12 @@ import java.awt.geom.Point2D;
  *
  * Created by shoop on 2/9/17.
  */
-public class Arc extends GraphicsObject implements Colorable{
+public class Arc extends GraphicsObject implements Strokable {
 
     private Arc2D.Double shape;
     private Paint strokeColor;
     private BasicStroke stroke;
+    private boolean isStroked = true;
 
     private double x; // upper left x position
     private double y; // upper left y position
@@ -87,12 +84,13 @@ public class Arc extends GraphicsObject implements Colorable{
      */
     @Override
     public void draw(Graphics2D gc){
-        //Color originalColor = gc.getColor();
-        gc.setStroke(stroke);
-        //gc.setColor(strokeColor);
-        gc.setPaint(strokeColor);
-        gc.draw(shape);
-        //gc.setColor(originalColor); // set the color back to the original
+        if (isStroked) {
+            Paint originalColor = gc.getPaint();
+            gc.setStroke(stroke);
+            gc.setPaint(strokeColor);
+            gc.draw(shape);
+            gc.setPaint(originalColor); // set the color back to the original
+        }
     }
 
     /**
@@ -111,7 +109,7 @@ public class Arc extends GraphicsObject implements Colorable{
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**
@@ -132,6 +130,16 @@ public class Arc extends GraphicsObject implements Colorable{
     }
 
     @Override
+    public boolean isStroked() {
+        return isStroked;
+    }
+
+    @Override
+    public void setStroked(boolean stroked) {
+        this.isStroked = stroked;
+    }
+
+    @Override
     public void setPosition(double x, double y) {
         shape.setArc(x, y, width, height, startAngle, sweepAngle, type);
         this.x = x;
@@ -139,35 +147,13 @@ public class Arc extends GraphicsObject implements Colorable{
         changed();
     }
 
-
     @Override
-    public void move(double dx, double dy) {
-        shape.setArc(x + dx, y + dy, width, height, startAngle, sweepAngle, type);
-        this.x = x + dx;
-        this.y = y + dy;
-        changed();
+    public Point getPosition() {
+        return new Point(shape.getX(), shape.getY());
     }
 
-    @Override
-    public Point.Double getPosition() {
-        return new Point.Double(shape.getX(), shape.getY());
-    }
-
-    @Override
-    public boolean testHit(double x, double y, Graphics2D gc) {
-        int devScale = ((SunGraphics2D)gc).getSurfaceData().getDefaultScale();
-        AffineTransform transform = new AffineTransform();
-        transform.setToScale(devScale, devScale);
-        Point.Double point = new Point2D.Double(x, y);
-        Point.Double transformedPoint = new Point2D.Double(x, y);
-        transform.transform(point, transformedPoint);
-        java.awt.Rectangle test = new java.awt.Rectangle((int)Math.round(transformedPoint.getX()),
-                (int)Math.round(transformedPoint.getY()), 1*devScale,1*devScale);
-        if (gc.hit(test, shape, false || gc.hit(test, shape, true))){
-            return true;
-        }
-        return false;
-
+    public boolean testHit(double x, double y){
+        return shape.contains(x, y);
     }
 
     @Override

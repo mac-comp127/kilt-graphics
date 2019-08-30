@@ -1,22 +1,19 @@
 package comp124graphics;
 
-import sun.java2d.SunGraphics2D;
-
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 /**
  * Represents a line that can be drawn graphically in a canvaswindow
  * Created by bjackson on 9/14/2016.
  * @version 0.5
  */
-public class Line extends GraphicsObject implements Colorable {
+public class Line extends GraphicsObject implements Strokable {
 
     private Line2D.Double shape;
     private Paint strokeColor;
     private BasicStroke stroke;
+    private boolean isStroked = true;
 
     /**
      * Constructor to create the line object and initialize its instance variables.
@@ -38,11 +35,13 @@ public class Line extends GraphicsObject implements Colorable {
      * @param gc
      */
     public void draw(Graphics2D gc){
-        Paint originalColor = gc.getPaint();
-        gc.setStroke(stroke);
-        gc.setPaint(strokeColor);
-        gc.draw(shape);
-        gc.setPaint(originalColor); // set the color back to the original
+        if(isStroked) {
+            Paint originalColor = gc.getPaint();
+            gc.setStroke(stroke);
+            gc.setPaint(strokeColor);
+            gc.draw(shape);
+            gc.setPaint(originalColor); // set the color back to the original
+        }
     }
 
     /**
@@ -61,7 +60,7 @@ public class Line extends GraphicsObject implements Colorable {
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**
@@ -79,6 +78,16 @@ public class Line extends GraphicsObject implements Colorable {
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();
+    }
+
+    @Override
+    public boolean isStroked() {
+        return isStroked;
+    }
+
+    @Override
+    public void setStroked(boolean stroked) {
+        this.isStroked = stroked;
     }
 
     /**
@@ -148,37 +157,12 @@ public class Line extends GraphicsObject implements Colorable {
      * Gets the position of the graphical object
      * @return position
      */
-    public Point.Double getPosition(){
-        return new Point.Double(shape.getX1(), shape.getY1());
+    public Point getPosition(){
+        return new Point(shape.getX1(), shape.getY1());
     }
 
-
-    /**
-     * Move the shape from its current position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        shape.setLine(shape.getX1() + dx, shape.getY1() + dy, shape.getX2()+dx, shape.getY2()+dy);
-        changed();
-    }
-
-    /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
-     */
-    public boolean testHit(double x, double y, Graphics2D gc){
-        int devScale = ((SunGraphics2D)gc).getSurfaceData().getDefaultScale();
-        AffineTransform transform = new AffineTransform();
-        transform.setToScale(devScale, devScale);
-        Point.Double point = new Point2D.Double(x, y);
-        Point.Double transformedPoint = new Point2D.Double(x, y);
-        transform.transform(point, transformedPoint);
-        java.awt.Rectangle test = new java.awt.Rectangle((int)Math.round(transformedPoint.getX()), (int)Math.round(transformedPoint.getY()), 1*devScale,1*devScale);
-        if (gc.hit(test, shape, false || gc.hit(test, shape, true))){
-            return true;
-        }
-        return false;
+    public boolean testHit(double x, double y){
+        return shape.contains(x, y);
     }
 
     /**

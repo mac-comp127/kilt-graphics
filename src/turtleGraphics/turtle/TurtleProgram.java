@@ -98,12 +98,6 @@ public abstract class TurtleProgram extends JComponent implements TurtleObserver
         updateTimer.start();
     }
     
-    @Override
-    protected void finalize() throws Throwable {
-        updateTimer.stop();
-        super.finalize();
-    }
-
     private void enableAntialiasing(Graphics2D g) {
         g.setRenderingHint(
             RenderingHints.KEY_ANTIALIASING,

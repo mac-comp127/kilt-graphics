@@ -3,9 +3,9 @@ package activityStarterCode.debugActivity;
 import comp124graphics.CanvasWindow;
 import comp124graphics.GraphicsGroup;
 import comp124graphics.Polygon;
+import comp124graphics.Point;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,37 +14,39 @@ import java.util.List;
  */
 public class FlashLogo extends GraphicsGroup {
     public void draw() {
-        List<Point2D.Double> points = new ArrayList<>();
+        List<Point> points = new ArrayList<>();
 
-        Point2D.Double flashPoint = new Point2D.Double(179, 21);
-        points.add(flashPoint);
+        // Needs rework for new Point class
 
-        flashPoint.setLocation(93, 105);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(116, 100);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(76, 146);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(100, 136);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(47, 204);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(147, 115);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(126, 118);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(158, 81);
-        points.add(flashPoint);
-
-        flashPoint.setLocation(135, 85);
-        points.add(flashPoint);
+//        Point flashPoint = new Point(179, 21);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(93, 105);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(116, 100);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(76, 146);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(100, 136);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(47, 204);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(147, 115);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(126, 118);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(158, 81);
+//        points.add(flashPoint);
+//
+//        flashPoint.setLocation(135, 85);
+//        points.add(flashPoint);
 
         Polygon poly = new Polygon(points);
         poly.setFillColor(Color.YELLOW);

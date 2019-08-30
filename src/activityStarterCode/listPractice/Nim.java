@@ -43,7 +43,7 @@ public class Nim extends CanvasWindow implements MouseListener {
 
 
         createCoins();
-        addMouseListener(this);
+//        addMouseListener(this);
     }
 
     /**

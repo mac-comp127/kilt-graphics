@@ -128,7 +128,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         Iterator<GraphicsObject> it = gObjects.descendingIterator();
         while(it.hasNext()){
             GraphicsObject obj = it.next();
-            if (obj.testHit(x-this.x, y-this.y, subCanvas)){
+            if (obj.testHit(x - this.x, y - this.y)){
                 return obj;
             }
         }
@@ -216,33 +216,16 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * Gets the position of the graphical object
      * @return position
      */
-    public Point.Double getPosition(){
-        return new Point2D.Double(x, y);
-    }
-
-    /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        this.x += dx;
-        this.y += dy;
-        changed();
+    public Point getPosition(){
+        return new Point(x, y);
     }
 
     /**
      * Tests whether the point (x, y) hits the shape on the graphics window
      * @return true if this shape is the topmost object at point (x, y)
      */
-    public boolean testHit(double x, double y, Graphics2D gc){
-        java.awt.Rectangle test = new java.awt.Rectangle((int)Math.round(x), (int)Math.round(y), 1,1);
-        for(GraphicsObject obj : gObjects) {
-            if (obj.testHit(x-this.x, y-this.y, gc)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean testHit(double x, double y){
+        return getElementAt(x, y) != null;
     }
 
     @Override

@@ -1,12 +1,9 @@
 package comp124graphics;
 
-import sun.java2d.SunGraphics2D;
-
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -14,13 +11,14 @@ import java.awt.image.BufferedImage;
  * Created by bjackson on 10/10/2016.
  * @version 0.5
  */
-public class GraphicsText extends GraphicsObject implements Colorable {
+public class GraphicsText extends GraphicsObject implements Fillable {
 
     private String text;
     private float x, y;
     private Font font;
     private Paint textColor;
     private Shape textShape;
+    private boolean filled = true;
 
     /**
      * Constructs the graphical text at position x,y
@@ -58,24 +56,13 @@ public class GraphicsText extends GraphicsObject implements Colorable {
     }
 
     /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        x+= dx;
-        y+= dy;
-        changed();
-    }
-
-    /**
      * Sets the position of the graphical object
      * @param x position
      * @param y position
      */
     public void setPosition(double x, double y){
-        this.x = (float)x;
-        this.y = (float)y;
+        this.x = (float) x;
+        this.y = (float) y;
         changed();
     }
 
@@ -83,8 +70,8 @@ public class GraphicsText extends GraphicsObject implements Colorable {
      * Gets the position of the object on the canvas.
      * @return
      */
-    public Point.Double getPosition(){
-        return new Point.Double(x, y);
+    public Point getPosition(){
+        return new Point(x, y);
     }
 
     public String getText() {
@@ -124,14 +111,24 @@ public class GraphicsText extends GraphicsObject implements Colorable {
     }
 
     @Override
-    public Paint getStrokeColor() {
+    public Paint getFillColor() {
         return textColor;
     }
 
     @Override
-    public void setStrokeColor(Paint textColor) {
+    public void setFillColor(Paint textColor) {
         this.textColor = textColor;
-        changed();
+        setFilled(true);
+    }
+
+    @Override
+    public boolean isFilled() {
+        return filled;
+    }
+
+    @Override
+    public void setFilled(boolean filled) {
+        this.filled = filled;
     }
 
     public double getWidth(){
@@ -144,33 +141,15 @@ public class GraphicsText extends GraphicsObject implements Colorable {
         return metrics.getHeight();
     }
 
-    protected FontMetrics getFontMetrics(){
+    private FontMetrics getFontMetrics(){
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = Graphics2D.class.cast(img.getGraphics());
+        Graphics2D g = (Graphics2D) img.getGraphics();
         g.setFont(font);
         return g.getFontMetrics();
     }
 
-
-    /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
-     */
-    public boolean testHit(double x, double y, Graphics2D gc){
-        if (textShape == null){
-            return false;
-        }
-        int devScale = ((SunGraphics2D)gc).getSurfaceData().getDefaultScale();
-        AffineTransform transform = new AffineTransform();
-        transform.setToScale(devScale, devScale);
-        Point.Double point = new Point2D.Double(x, y);
-        Point.Double transformedPoint = new Point2D.Double(x, y);
-        transform.transform(point, transformedPoint);
-        java.awt.Rectangle test = new java.awt.Rectangle((int)Math.round(transformedPoint.getX()), (int)Math.round(transformedPoint.getY()), 1*devScale,1*devScale);
-        if (gc.hit(test, textShape, true) || gc.hit(test, textShape, false)){
-            return true;
-        }
-        return false;
+    public boolean testHit(double x, double y){
+        return textShape != null && textShape.contains(x, y);
     }
 
     /**

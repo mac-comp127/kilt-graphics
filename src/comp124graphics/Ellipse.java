@@ -1,18 +1,14 @@
 package comp124graphics;
 
-import sun.java2d.SunGraphics2D;
-
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
 
 /**
  * Used to draw an ellipse on the screen.
  * Created by bjackson on 9/13/2016.
  * @version 0.5
  */
-public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
+public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     private Ellipse2D.Double shape;
     private Paint fillColor;
@@ -73,6 +69,7 @@ public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
     @Override
     public void setFillColor(Paint fillColor) {
         this.fillColor = fillColor;
+        setFilled(true);
         changed();
     }
 
@@ -92,7 +89,7 @@ public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**
@@ -192,8 +189,8 @@ public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
      * Gets the position of the graphical object
      * @return position
      */
-    public Point.Double getPosition(){
-        return new Point.Double(shape.getX(), shape.getY());
+    public Point getPosition(){
+        return new Point(shape.getX(), shape.getY());
     }
 
     /**
@@ -206,36 +203,8 @@ public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
         changed();
     }
 
-    /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        shape.setFrame(shape.getX() + dx, shape.getY() + dy, shape.getWidth(), shape.getHeight());
-        changed();
-    }
-
-    /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
-     */
-    public boolean testHit(double x, double y, Graphics2D gc){
-        int devScale = ((SunGraphics2D)gc).getSurfaceData().getDefaultScale();
-        AffineTransform transform = new AffineTransform();
-        transform.setToScale(devScale, devScale);
-        Point.Double point = new Point2D.Double(x, y);
-        Point.Double transformedPoint = new Point2D.Double(x, y);
-        transform.transform(point, transformedPoint);
-        java.awt.Rectangle test = new java.awt.Rectangle((int)Math.round(transformedPoint.getX()), (int)Math.round(transformedPoint.getY()), 1*devScale,1*devScale);
-        boolean hit = false;
-        if (isFilled && gc.hit(test, shape, false)){
-            hit = true;
-        }
-        if(isStroked && gc.hit(test, shape, true)){
-            hit = true;
-        }
-        return hit;
+    public boolean testHit(double x, double y){
+        return shape.contains(x, y);
     }
 
     /**
