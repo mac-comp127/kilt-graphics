@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -27,9 +26,10 @@ import java.util.concurrent.TimeUnit;
  * Created by bjackson on 9/13/2016.
  * @version 0.5
  */
-public class CanvasWindow extends JPanel implements GraphicsObserver {
+public class CanvasWindow implements GraphicsObserver {
 
-    private JFrame windowFrame;
+    private final Canvas canvas;
+    private final JFrame windowFrame;
 
     private boolean drawingInitiated = false;
     private boolean mainThreadExitCheckScheduled = false;
@@ -41,41 +41,25 @@ public class CanvasWindow extends JPanel implements GraphicsObserver {
     private ConcurrentLinkedDeque<GraphicsObject> gObjects;
 
     public CanvasWindow(String title, int windowWidth, int windowHeight){
-        setPreferredSize (new Dimension(windowWidth, windowHeight));
-        setBackground (Color.white);
+        canvas = new Canvas();
+        canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
+        canvas.setBackground(Color.white);
 
         gObjects = new ConcurrentLinkedDeque<GraphicsObject>();
 
         windowFrame = new JFrame (title);
         windowFrame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-        windowFrame.getContentPane().add(this);
+        windowFrame.getContentPane().add(canvas);
         windowFrame.pack();
         windowFrame.setVisible(true);
     }
 
-    /**
-     * Called automatically by Java to redraw the graphics
-     */
-    public void paintComponent(Graphics page) {
-        super.paintComponent(page);
+    public int getWidth() {
+        return canvas.getWidth();
+    }
 
-        synchronized(repaintLock) {
-            // AWT can create multiple repaint events internally during the creation of a window,
-            // but we don't want to actually draw anything until the student has explicitly
-            // requested it with a draw(). This prevents partial drawing / flickers of content,
-            // as well as a false positives when the student has a loop with no draw() calls.
-            if(!drawingInitiated) {
-                return;
-            }
-
-            Graphics2D gc = (Graphics2D) page;
-            enableAntialiasing(gc);
-            for(GraphicsObject obj : gObjects) {
-                obj.draw(gc);
-            }
-
-            repaintLock.notifyAll();
-        }
+    public int getHeight() {
+        return canvas.getHeight();
     }
 
     /**
@@ -132,9 +116,9 @@ public class CanvasWindow extends JPanel implements GraphicsObserver {
             synchronized(repaintLock) {
                 drawingInitiated = true;
                 if(EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
-                    update(getGraphics());
+                    canvas.update(canvas.getGraphics());
                 } else {
-                    repaint(); // force redraw ASAP on AWT thread
+                    canvas.repaint(); // force redraw ASAP on AWT thread
                     repaintLock.wait();  // wait for drawing to complete (paintComponent notifies)
                 }
             }
@@ -174,11 +158,10 @@ public class CanvasWindow extends JPanel implements GraphicsObserver {
      * @return object at (x,y) or null if it does not exist.
      */
     public GraphicsObject getElementAt(double x, double y){
-        Graphics2D gc = (Graphics2D)this.getGraphics();
         Iterator<GraphicsObject> it = gObjects.descendingIterator();
         while(it.hasNext()){
             GraphicsObject obj = it.next();
-            if (obj.testHit(x, y)){
+            if (obj.testHit(x, y)) {
                 return obj;
             }
         }
@@ -255,9 +238,9 @@ public class CanvasWindow extends JPanel implements GraphicsObserver {
      */
     public void screenShot(String filename)
     {
-        BufferedImage bImg = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
+        BufferedImage bImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
         Graphics2D cg = bImg.createGraphics();
-        this.paintAll(cg);
+        canvas.paintAll(cg);
         try {
             if (ImageIO.write(bImg, "png", new File(filename)))
             {
@@ -279,6 +262,31 @@ public class CanvasWindow extends JPanel implements GraphicsObserver {
     public void closeWindow() {
         windowFrame.dispatchEvent(new WindowEvent(windowFrame, WindowEvent.WINDOW_CLOSING));
     }
+
+    class Canvas extends JPanel {
+       /**
+        * Called automatically by Java to redraw the graphics
+        */
+       public void paintComponent(Graphics page) {
+           super.paintComponent(page);
+
+           synchronized(repaintLock) {
+               // AWT can create multiple repaint events internally during the creation of a window,
+               // but we don't want to actually draw anything until the student has explicitly
+               // requested it with a draw(). This prevents partial drawing / flickers of content,
+               // as well as a false positives when the student has a loop with no draw() calls.
+               if(!drawingInitiated) {
+                   return;
+               }
+
+               Graphics2D gc = (Graphics2D) page;
+               enableAntialiasing(gc);
+               for(GraphicsObject obj : gObjects) {
+                   obj.draw(gc);
+               }
+
+               repaintLock.notifyAll();
+           }
+       }
+   }
 }
-
-
