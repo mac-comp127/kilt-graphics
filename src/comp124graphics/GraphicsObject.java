@@ -38,14 +38,14 @@ public abstract class GraphicsObject {
      * @param dx
      * @param dy
      */
-    public final void move(double dx, double dy) {
-        move(new Point(dx, dy));
+    public final void moveBy(double dx, double dy) {
+        moveBy(new Point(dx, dy));
     }
 
     /**
      * Offsets the shape from its current position by the given delta.
      */
-    public void move(Point delta) {
+    public void moveBy(Point delta) {
         setPosition(getPosition().add(delta));
     }
 

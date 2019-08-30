@@ -2,8 +2,6 @@ package comp124graphics;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class VisualTest {
@@ -60,11 +58,11 @@ public class VisualTest {
         });
 
         canvas.onMouseMove((event) -> {
-            text.move(event.getDelta());
+            text.moveBy(event.getDelta());
         });
 
         canvas.onDrag((event) -> {
-            bigDot.move(event.getDelta());
+            bigDot.moveBy(event.getDelta());
         });
 
         //noinspection InfiniteLoopStatement

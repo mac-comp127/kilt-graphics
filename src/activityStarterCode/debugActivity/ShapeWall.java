@@ -18,7 +18,7 @@ public class ShapeWall extends GraphicsGroup {
     public void drawPoly(int nSides) {
         GraphicsText gt = new GraphicsText(Integer.toString(nSides),50,50);
         //center in 100 x 100 box for polygon.
-        gt.move(-gt.getWidth()/2, gt.getHeight()/2);
+        gt.moveBy(-gt.getWidth()/2, gt.getHeight()/2);
         add(gt);
 
         List<Point> points = generatePoints(nSides);
