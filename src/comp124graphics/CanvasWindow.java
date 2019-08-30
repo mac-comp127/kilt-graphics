@@ -30,22 +30,18 @@ public class CanvasWindow implements GraphicsObserver {
 
     private final Canvas canvas;
     private final JFrame windowFrame;
+    private final GraphicsGroup content = new GraphicsGroup();
 
     private boolean drawingInitiated = false;
     private boolean mainThreadExitCheckScheduled = false;
     private final Object repaintLock = new Object();
 
-    /**
-     * Holds the objects to be drawn in calls to paintComponent
-     */
-    private ConcurrentLinkedDeque<GraphicsObject> gObjects;
-
     public CanvasWindow(String title, int windowWidth, int windowHeight){
+        content.addObserver(this);
+
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
         canvas.setBackground(Color.white);
-
-        gObjects = new ConcurrentLinkedDeque<GraphicsObject>();
 
         windowFrame = new JFrame (title);
         windowFrame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
@@ -66,9 +62,7 @@ public class CanvasWindow implements GraphicsObserver {
      * Adds the graphics object to the list of objects drawn on the canvas
      */
     public void add(GraphicsObject gObject){
-        gObject.addObserver(this);
-        gObjects.add(gObject);
-        changed();
+        content.add(gObject);
     }
 
     /**
@@ -80,8 +74,7 @@ public class CanvasWindow implements GraphicsObserver {
      * @param y        the y position of graphical object
      */
     public void add(GraphicsObject gObject, double x, double y){
-        gObject.setPosition(x, y);
-        this.add(gObject);
+        content.add(gObject, x, y);
     }
 
     /**
@@ -90,25 +83,14 @@ public class CanvasWindow implements GraphicsObserver {
      * @throws NoSuchElementException if gObject has not been added to the canvas
      */
     public void remove(GraphicsObject gObject){
-        gObject.removeObserver(this);
-        boolean success = gObjects.remove(gObject);
-        if (!success){
-            throw new NoSuchElementException("The object you want to remove has not been added to the canvaswindow. Perhaps it was already removed or was added to a GraphicsGroup instead of the canvas.");
-        }
-        changed();
+        content.remove(gObject);
     }
 
     /**
      * Removes all of the objects currently drawn on the canvas
      */
     public void removeAll(){
-        Iterator<GraphicsObject> it = gObjects.iterator();
-        while(it.hasNext()){
-            GraphicsObject obj = it.next();
-            obj.removeObserver(this);
-            it.remove();
-        }
-        changed();
+        content.removeAll();
     }
 
     public void draw() {
@@ -158,20 +140,13 @@ public class CanvasWindow implements GraphicsObserver {
      * @return object at (x,y) or null if it does not exist.
      */
     public GraphicsObject getElementAt(double x, double y){
-        Iterator<GraphicsObject> it = gObjects.descendingIterator();
-        while(it.hasNext()){
-            GraphicsObject obj = it.next();
-            if (obj.testHit(x, y)) {
-                return obj;
-            }
-        }
-        return null;
+        return content.getElementAt(x, y);
     }
 
     /*
        Checks to see if clicked within a GraphicsGroup object and returns true if so
      */
-    private boolean isGraphicsGroupAt(GraphicsObject obj, double x, double y) {
+    private boolean isGraphicsGroupAt(GraphicsObject obj, double x, double y) {  // TODO: Where in the course do we use this method?
         if (obj instanceof GraphicsGroup) {
             java.awt.Rectangle rect = obj.getBounds();
             if (rect.getX() <= x && x<= (rect.getX() + rect.getWidth())) {
@@ -179,7 +154,6 @@ public class CanvasWindow implements GraphicsObserver {
                     return true;
                 }
             }
-
         }
         return false;
     }
@@ -281,9 +255,7 @@ public class CanvasWindow implements GraphicsObserver {
 
                Graphics2D gc = (Graphics2D) page;
                enableAntialiasing(gc);
-               for(GraphicsObject obj : gObjects) {
-                   obj.draw(gc);
-               }
+               content.draw(gc);
 
                repaintLock.notifyAll();
            }
