@@ -1,27 +1,39 @@
 package comp124graphics;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Timer;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Creates a window frame and canvas panel that is used to draw graphical objects.
  * Created by bjackson on 9/13/2016.
  * @version 0.5
  */
-public class CanvasWindow extends JPanel implements GraphicsObserver{
+public class CanvasWindow extends JPanel implements GraphicsObserver {
 
-    /**
-     * Window frame
-     */
-    protected JFrame windowFrame;
+    private JFrame windowFrame;
+
+    private boolean drawingInitiated = false;
+    private boolean mainThreadExitCheckScheduled = false;
+    private final Object repaintLock = new Object();
 
     /**
      * Holds the objects to be drawn in calls to paintComponent
@@ -42,31 +54,37 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
     }
 
     /**
-     * Called automatically by java to draw graphical objects on the page
-     * @param page
+     * Called automatically by Java to redraw the graphics
      */
-    public void paintComponent (Graphics page) {
-        super.paintComponent (page);
+    public void paintComponent(Graphics page) {
+        super.paintComponent(page);
 
-        Graphics2D gc = (Graphics2D)page;
+        synchronized(repaintLock) {
+            // AWT can create multiple repaint events internally during the creation of a window,
+            // but we don't want to actually draw anything until the student has explicitly
+            // requested it with a draw(). This prevents partial drawing / flickers of content,
+            // as well as a false positives when the student has a loop with no draw() calls.
+            if(!drawingInitiated) {
+                return;
+            }
 
-        enableAntialiasing(gc);
+            Graphics2D gc = (Graphics2D) page;
+            enableAntialiasing(gc);
+            for(GraphicsObject obj : gObjects) {
+                obj.draw(gc);
+            }
 
-        // Iterate over all of the graphical objects and draw them.
-        Iterator<GraphicsObject> it = gObjects.iterator();
-        while (it.hasNext()){
-            it.next().draw(gc);
+            repaintLock.notifyAll();
         }
     }
 
     /**
-     * Adds the graphical object to the list of objects drawn on the canvas
-     * @param gObject
+     * Adds the graphics object to the list of objects drawn on the canvas
      */
     public void add(GraphicsObject gObject){
         gObject.addObserver(this);
         gObjects.add(gObject);
-        repaint();
+        changed();
     }
 
     /**
@@ -80,9 +98,6 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
     public void add(GraphicsObject gObject, double x, double y){
         gObject.setPosition(x, y);
         this.add(gObject);
-//        gObject.addObserver(this);
-//        gObjects.add(gObject);
-//        repaint();
     }
 
     /**
@@ -96,7 +111,7 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
         if (!success){
             throw new NoSuchElementException("The object you want to remove has not been added to the canvaswindow. Perhaps it was already removed or was added to a GraphicsGroup instead of the canvas.");
         }
-        repaint();
+        changed();
     }
 
     /**
@@ -109,31 +124,44 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
             obj.removeObserver(this);
             it.remove();
         }
-        repaint();
+        changed();
+    }
+
+    public void draw() {
+        try {
+            synchronized(repaintLock) {
+                drawingInitiated = true;
+                if(EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
+                    update(getGraphics());
+                } else {
+                    repaint(); // force redraw ASAP on AWT thread
+                    repaintLock.wait();  // wait for drawing to complete (paintComponent notifies)
+                }
+            }
+        } catch (InterruptedException ex) {
+			/* Empty */
+        }
     }
 
     /**
-     * Pauses the program for milliseconds
-     * @param milliseconds
+     * Pauses the program for the given time in milliseconds.
      */
     public void pause(long milliseconds){
-        try{
+        try {
             Thread.sleep(milliseconds);
-        }
-        catch(InterruptedException e) {
-            // Empty
+        } catch (InterruptedException ex) {
+			/* Empty */
         }
     }
 
     /**
-     * Pauses the program for milliseconds
-     * @param milliseconds
+     * Pauses the program for the given time in milliseconds.
      */
     public void pause(double milliseconds){
         try {
-            int millis = (int) milliseconds;
-            int nanos = (int) Math.round((milliseconds - millis) * 1000000);
-            Thread.sleep(millis, nanos);
+            long millisPart = (long) milliseconds;
+            int nanosPart = (int) Math.round((milliseconds - millisPart) * 1000000);
+            Thread.sleep(millisPart, nanosPart);
         } catch (InterruptedException ex) {
 			/* Empty */
         }
@@ -160,7 +188,7 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
     /*
        Checks to see if clicked within a GraphicsGroup object and returns true if so
      */
-    private boolean isGGat(GraphicsObject obj, double x, double y) {
+    private boolean isGraphicsGroupAt(GraphicsObject obj, double x, double y) {
         if (obj instanceof GraphicsGroup) {
             java.awt.Rectangle rect = obj.getBounds();
             if (rect.getX() <= x && x<= (rect.getX() + rect.getWidth())) {
@@ -192,10 +220,33 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
     /**
      * Implementation of GraphicsObserver method. Notifies Java to repaint the image if any of the objects drawn on the canvas
      * have changed.
-     * @param changedObject
      */
-    public void graphicChanged(GraphicsObject changedObject){
-        repaint();
+    public void graphicChanged(GraphicsObject changedObject) {
+        synchronized(repaintLock) {
+            if(!mainThreadExitCheckScheduled) {
+                mainThreadExitCheckScheduled = true;
+
+                final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+
+                final long mainThreadID = Thread.currentThread().getId();
+                Runnable mainThreadExitCheck = () -> {
+                    for(Thread thread : Thread.getAllStackTraces().keySet()) {
+                        if(thread.getId() == mainThreadID) {
+                            return;
+                        }
+                    }
+                    System.out.println("main() method completed; drawing CanvasWindow");
+                    draw();
+                    scheduler.shutdownNow();
+                };
+
+                scheduler.scheduleAtFixedRate(mainThreadExitCheck, 50, 100, TimeUnit.MILLISECONDS);
+            }
+        }
+    }
+
+    private void changed() {
+        graphicChanged(null);
     }
 
     /**
