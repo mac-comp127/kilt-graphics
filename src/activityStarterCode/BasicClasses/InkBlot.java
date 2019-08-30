@@ -1,7 +1,7 @@
 package activityStarterCode.BasicClasses;
 
-import comp124graphics.CanvasWindow;
-import comp124graphics.Line;
+import comp127graphics.CanvasWindow;
+import comp127graphics.Line;
 
 import java.awt.*;
 

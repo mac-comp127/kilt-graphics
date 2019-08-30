@@ -1,7 +1,6 @@
-package comp124graphics;
+package comp127graphics;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.NoSuchElementException;

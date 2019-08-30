@@ -1,4 +1,4 @@
-package comp124graphics;
+package comp127graphics;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -44,7 +44,7 @@ public class VisualTest {
                 100, 100,
                 73, 259));
 
-        CanvasWindow canvas = new CanvasWindow("comp124graphics visual test", 400, 300);
+        CanvasWindow canvas = new CanvasWindow("comp127graphics visual test", 400, 300);
         canvas.add(group);
 
         double pause = 1000;

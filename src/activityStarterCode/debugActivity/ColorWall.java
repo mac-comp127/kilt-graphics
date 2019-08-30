@@ -1,8 +1,8 @@
 package activityStarterCode.debugActivity;
 
-import comp124graphics.CanvasWindow;
-import comp124graphics.GraphicsGroup;
-import comp124graphics.Rectangle;
+import comp127graphics.CanvasWindow;
+import comp127graphics.GraphicsGroup;
+import comp127graphics.Rectangle;
 
 import java.awt.*;
 

@@ -1,6 +1,6 @@
 package activityStarterCode.snakeActivity;
 
-import comp124graphics.*;
+import comp127graphics.*;
 
 import java.awt.Color;
 import java.util.Random;

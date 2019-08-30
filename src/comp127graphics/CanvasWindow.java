@@ -1,4 +1,4 @@
-package comp124graphics;
+package comp127graphics;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
@@ -23,10 +23,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import comp124graphics.events.MouseButtonEvent;
-import comp124graphics.events.MouseButtonEventHandler;
-import comp124graphics.events.MouseMotionEvent;
-import comp124graphics.events.MouseMotionEventHandler;
+import comp127graphics.events.MouseButtonEvent;
+import comp127graphics.events.MouseButtonEventHandler;
+import comp127graphics.events.MouseMotionEvent;
+import comp127graphics.events.MouseMotionEventHandler;
 
 /**
  * Creates a window frame and canvas panel that is used to draw graphical objects.

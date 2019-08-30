@@ -1,4 +1,4 @@
-package comp124graphics;
+package comp127graphics;
 import java.awt.geom.Point2D;
 import java.util.Objects;
 
@@ -162,7 +162,7 @@ public final class Point {
     // ------ Java AWT Compatibility
 
     /**
-     * Converts a Java AWT Point2D to a comp124graphics Point.
+     * Converts a Java AWT Point2D to a comp127graphics Point.
      */
     public Point(Point2D point) {
         this(point.getX(), point.getY());

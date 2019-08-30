@@ -1,16 +1,16 @@
-package comp124graphics;
+package comp127graphics;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 
 /**
- * Represents a 2D rectangle that is drawn on the screen.
+ * Used to draw an ellipse on the screen.
  * Created by bjackson on 9/13/2016.
  * @version 0.5
  */
-public class Rectangle extends GraphicsObject implements Strokable, Fillable {
+public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
-    private Rectangle2D.Double shape;
+    private Ellipse2D.Double shape;
     private Paint fillColor;
     private Paint strokeColor;
     private boolean isFilled;
@@ -18,16 +18,16 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     private BasicStroke stroke;
 
     /**
-     * Constructor to create the rectangle object and initialize its instance variables.
-     * The default creates a rectangle at position x,y with the specified width and height.
-     * The rectangle is drawn with a 1 pixel black stroke outline by default.
+     * Constructor to create the ellipse object and initialize its instance variables.
+     * The default creates an ellipse at position x,y with a bounding rectangle of width and height.
+     * The ellipse is drawn with a 1 pixel black stroke outline by default.
      * @param x position
      * @param y position
-     * @param width
-     * @param height
+     * @param width of the bounding rectangle
+     * @param height of the bounding rectangle
      */
-    public Rectangle(double x, double y, double width, double height){
-        shape = new Rectangle2D.Double(x, y, width, height);
+    public Ellipse(double x, double y, double width, double height){
+        shape = new Ellipse2D.Double(x, y, width, height);
         fillColor = Color.black;
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
@@ -36,7 +36,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Draws the rectangle on the screen
+     * Draws the shape on the screen
      * @param gc
      */
     public void draw(Graphics2D gc){
@@ -160,16 +160,16 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Get the width of the rectangle
-     * @return rectangle width
+     * Get the width of the bounding rectangle of the ellipse
+     * @return bounding rectangle width
      */
     public double getWidth(){
         return shape.getWidth();
     }
 
     /**
-     * Get the height of the rectangle
-     * @return rectangle height
+     * Get the height of the bounding rectangle of the ellipse
+     * @return bounding rectangle height
      */
     public double getHeight(){
         return shape.getHeight();
@@ -185,12 +185,16 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
+    /**
+     * Gets the position of the graphical object
+     * @return position
+     */
     public Point getPosition(){
         return new Point(shape.getX(), shape.getY());
     }
 
     /**
-     * Set the width and height of the rectangle
+     * Set the width and height of the ellipse's bounding rectangle
      * @param width
      * @param height
      */
@@ -204,14 +208,14 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Tests for equality between two rectangle objects.
+     * Tests two ellipse objects for equality.
      * @param other
      * @return
      */
     @Override
     public boolean equals(Object other){
-        if (other != null && other instanceof Rectangle){
-            Rectangle otherShape = (Rectangle)other;
+        if (other != null && other instanceof Ellipse){
+            Ellipse otherShape = (Ellipse) other;
             if (this.shape.equals(otherShape.shape)){
                 return true;
             }
@@ -220,12 +224,12 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns a string representation of the rectangle
+     * Returns a string representation of the Ellipse
      * @return
      */
     @Override
     public String toString(){
-        return "A rectangle at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
+        return "An ellipse at position ("+getX()+", "+getY()+") with width="+getWidth()+" and height="+getHeight();
     }
 
     /**
@@ -235,4 +239,5 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     public java.awt.Rectangle getBounds(){
         return new java.awt.Rectangle((int)getX(), (int)getY(), (int)getWidth(), (int)getHeight());
     }
+
 }

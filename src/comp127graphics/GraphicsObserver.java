@@ -1,4 +1,4 @@
-package comp124graphics;
+package comp127graphics;
 
 /**
  * Observer pattern interface used to notify a canvas to repaint if a graphical object has changed.

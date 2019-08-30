@@ -1,6 +1,6 @@
-package comp124graphics.events;
+package comp127graphics.events;
 
-import comp124graphics.Point;
+import comp127graphics.Point;
 
 public final class MouseButtonEvent {
     private final Point position;

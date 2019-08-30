@@ -1,4 +1,4 @@
-package comp124graphics;
+package comp127graphics;
 
 
 import javax.imageio.ImageIO;

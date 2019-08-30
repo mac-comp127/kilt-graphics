@@ -1,13 +1,10 @@
 package activityStarterCode.arrayPractice;
 
-import comp124graphics.CanvasWindow;
-import comp124graphics.GraphicsObject;
-import comp124graphics.Rectangle;
+import comp127graphics.CanvasWindow;
+import comp127graphics.GraphicsObject;
+import comp127graphics.Rectangle;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Random;
 
 /**
@@ -99,7 +96,7 @@ public class RandomShapesProgram extends CanvasWindow {
         double width = randGenWidth.nextDouble()*180+20;
         double x = randGenX.nextDouble()*925 + 10;
         double y = randGenY.nextDouble()*690 + 10;
-        comp124graphics.Rectangle rect = (Rectangle) shape;
+        comp127graphics.Rectangle rect = (Rectangle) shape;
         rect.setFillColor(color);
         rect.setWidthAndHeight(width, width);
         rect.setPosition(x, y);

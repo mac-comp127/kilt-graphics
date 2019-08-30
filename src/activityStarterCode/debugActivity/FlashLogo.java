@@ -1,9 +1,9 @@
 package activityStarterCode.debugActivity;
 
-import comp124graphics.CanvasWindow;
-import comp124graphics.GraphicsGroup;
-import comp124graphics.Polygon;
-import comp124graphics.Point;
+import comp127graphics.CanvasWindow;
+import comp127graphics.GraphicsGroup;
+import comp127graphics.Polygon;
+import comp127graphics.Point;
 
 import java.awt.*;
 import java.util.ArrayList;

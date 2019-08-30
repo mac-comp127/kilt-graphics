@@ -1,8 +1,7 @@
 package activityStarterCode.methodPractice;
 
-import comp124graphics.Arc;
-import comp124graphics.CanvasWindow;
-import comp124graphics.Ellipse;
+import comp127graphics.Arc;
+import comp127graphics.CanvasWindow;
 
 import java.awt.*;
 

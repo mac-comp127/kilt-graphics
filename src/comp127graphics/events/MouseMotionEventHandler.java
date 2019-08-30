@@ -1,4 +1,4 @@
-package comp124graphics.events;
+package comp127graphics.events;
 
 public interface MouseMotionEventHandler {
     void handleEvent(MouseMotionEvent event);
