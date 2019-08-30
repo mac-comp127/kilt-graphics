@@ -10,6 +10,8 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
@@ -36,6 +38,7 @@ public class CanvasWindow implements GraphicsObserver {
     private final Canvas canvas;
     private final JFrame windowFrame;
     private final GraphicsGroup content = new GraphicsGroup();
+    private final Rectangle background;
 
     private boolean drawingInitiated = false;
     private boolean mainThreadExitCheckScheduled = false;
@@ -43,12 +46,17 @@ public class CanvasWindow implements GraphicsObserver {
 
     private Point curMousePos, prevMousePos;
 
-    public CanvasWindow(String title, int windowWidth, int windowHeight){
-        content.addObserver(this);
+    public CanvasWindow(String title, int windowWidth, int windowHeight) {
+        // We use a Rectangle for the background because canvas.setBackground() triggers spurious
+        // repaints, whereas this approach puts background color changes into the same paint cycle
+        // as the rest of the graphics.
+        background = new Rectangle(0, 0, 0, 0);
+        background.setStroked(false);
+        content.add(background);
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
-        canvas.setBackground(Color.white);
+        canvas.setBackground(Color.WHITE);
 
         windowFrame = new JFrame (title);
         windowFrame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
@@ -56,7 +64,17 @@ public class CanvasWindow implements GraphicsObserver {
         windowFrame.pack();
         windowFrame.setVisible(true);
 
+        content.addObserver(this);
+
         setUpMousePositionTracking();
+
+        updateBackgroundSize();
+        canvas.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                updateBackgroundSize();
+            }
+        });
     }
 
     public int getWidth() {
@@ -68,7 +86,11 @@ public class CanvasWindow implements GraphicsObserver {
     }
 
     public void setBackground(Color color) {
-        canvas.setBackground(color);
+        background.setFillColor(color);
+    }
+
+    private void updateBackgroundSize() {
+        background.setWidthAndHeight(canvas.getWidth(), canvas.getHeight());
     }
 
     /**
@@ -104,6 +126,7 @@ public class CanvasWindow implements GraphicsObserver {
      */
     public void removeAll(){
         content.removeAll();
+        content.add(background);
     }
 
     public void draw() {
