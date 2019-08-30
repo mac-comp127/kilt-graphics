@@ -32,16 +32,26 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     private double height;
 
     /**
-     * Create a polygon from a given list of points.
+     * Convenience method to create a triangle from individual coordinates.
+     */
+    public static Polygon makeTriangle(double x0, double y0, double x1, double y1, double x2, double y2) {
+        return new Polygon(
+            new Point(x0, y0),
+            new Point(x1, y1),
+            new Point(x2, y2));
+    }
+
+    /**
+     * Create a polygon whose vertices comes from the given list of points.
      * The list of points must not be null, and there must be at least 3 points.
      * You cannot make a polygon with fewer than 3 points.
-     *
      */
     public Polygon(List<Point> points) {
         if (points == null) {
             throw new NullPointerException("list of points must be non-null");
-        } else if (points.size()<3) {
-            throw new IllegalArgumentException("Not enough points to make a polygon");
+        }
+        if (points.size() < 3) {
+            throw new IllegalArgumentException("Not enough points to make a polygon: " + points.size() + " < 3");
         }
         int[] xPoints = new int[points.size()];
         int[] yPoints = new int[points.size()];
@@ -70,6 +80,13 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         stroke = new BasicStroke(1.0f);
         isFilled = false;
         isStroked = true;
+    }
+
+    /**
+     * Creates a polygon from vertices passed as separate arguments.
+     */
+    public Polygon(Point... points) {
+        this(List.of(points));
     }
 
     /**
