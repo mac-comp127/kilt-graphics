@@ -20,24 +20,40 @@ public abstract class GraphicsObject {
     public abstract void draw(Graphics2D gc);
 
     /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public abstract void move(double dx, double dy);
-
-    /**
-     * Sets the position of the graphical object
+     * Moves this object to the given position.
      * @param x position
      * @param y position
      */
     public abstract void setPosition(double x, double y);
 
     /**
+     * Moves this object to the given position.
+     */
+    public void setPosition(Point pos) {
+        setPosition(pos.getX(), pos.getY());
+    }
+
+    /**
+     * Move the shape from its current x, y position by dx and dy.
+     * @param dx
+     * @param dy
+     */
+    public final void move(double dx, double dy) {
+        move(new Point(dx, dy));
+    }
+
+    /**
+     * Offsets the shape from its current position by the given delta.
+     */
+    public void move(Point delta) {
+        setPosition(getPosition().add(delta));
+    }
+
+    /**
      * Gets the position of the object on the canvas.
      * @return
      */
-    public abstract Point.Double getPosition();
+    public abstract Point getPosition();
 
     /**
      * Tests whether the given point is on the boundary or interior of this graphic object's shape.

@@ -2,7 +2,6 @@ package comp124graphics;
 
 import java.util.List;
 import java.awt.*;
-import java.awt.geom.Point2D;
 
 import static java.lang.Math.*;
 
@@ -38,7 +37,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * You cannot make a polygon with fewer than 3 points.
      *
      */
-    public Polygon(List<Point2D.Double> points) {
+    public Polygon(List<Point> points) {
         if (points == null) {
             throw new NullPointerException("list of points must be non-null");
         } else if (points.size()<3) {
@@ -53,7 +52,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         double maxY = Double.NEGATIVE_INFINITY;
 
         int i = 0;
-        for(Point2D.Double point : points) {
+        for(Point point : points) {
             x = min(x, point.getX());
             y = min(y, point.getY());
             maxX = max(maxX, point.getX());
@@ -216,23 +215,16 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * Sets the shape's position to x, y
      */
     public void setPosition(double x, double y){
-        double dx = x-getX();
-        double dy = y-getY();
-        move(dx, dy);
-    }
-
-    public Point.Double getPosition(){
-        return new Point2D.Double(getX(), getY());
-    }
-
-    /**
-     * Move the shape from its current x, y position by dx and dy.
-     */
-    public void move(double dx, double dy){
-        shape.translate((int)Math.round(dx), (int)Math.round(dy));
-        x+=dx;
-        y+=dy;
+        double dx = x - getX();
+        double dy = y - getY();
+        shape.translate((int)Math.round(dx), (int)Math.round(dy)); // TODO: int conversion here will cause x/y to drift from shape
+        this.x = x;
+        this.y = y;
         changed();
+    }
+
+    public Point getPosition(){
+        return new Point(getX(), getY());
     }
 
     /**

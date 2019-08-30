@@ -56,24 +56,13 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        x+= dx;
-        y+= dy;
-        changed();
-    }
-
-    /**
      * Sets the position of the graphical object
      * @param x position
      * @param y position
      */
     public void setPosition(double x, double y){
-        this.x = (float)x;
-        this.y = (float)y;
+        this.x = (float) x;
+        this.y = (float) y;
         changed();
     }
 
@@ -81,8 +70,8 @@ public class GraphicsText extends GraphicsObject implements Fillable {
      * Gets the position of the object on the canvas.
      * @return
      */
-    public Point.Double getPosition(){
-        return new Point.Double(x, y);
+    public Point getPosition(){
+        return new Point(x, y);
     }
 
     public String getText() {

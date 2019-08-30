@@ -216,19 +216,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * Gets the position of the graphical object
      * @return position
      */
-    public Point.Double getPosition(){
-        return new Point2D.Double(x, y);
-    }
-
-    /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        this.x += dx;
-        this.y += dy;
-        changed();
+    public Point getPosition(){
+        return new Point(x, y);
     }
 
     /**

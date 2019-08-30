@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Point2D;
 import java.util.List;
 
 public class VisualTest {
@@ -31,10 +30,10 @@ public class VisualTest {
 
         group.add(
             new Polygon(List.of(
-                new Point2D.Double(23, 34),
-                new Point2D.Double(34, 173),
-                new Point2D.Double(243, 23),
-                new Point2D.Double(73, 223))));
+                new Point(23, 34),
+                new Point(34, 173),
+                new Point(243, 23),
+                new Point(73, 223))));
 
         group.add(
             new Line(33, 166, 66, 133));

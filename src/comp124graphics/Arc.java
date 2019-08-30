@@ -147,18 +147,9 @@ public class Arc extends GraphicsObject implements Strokable {
         changed();
     }
 
-
     @Override
-    public void move(double dx, double dy) {
-        shape.setArc(x + dx, y + dy, width, height, startAngle, sweepAngle, type);
-        this.x = x + dx;
-        this.y = y + dy;
-        changed();
-    }
-
-    @Override
-    public Point.Double getPosition() {
-        return new Point.Double(shape.getX(), shape.getY());
+    public Point getPosition() {
+        return new Point(shape.getX(), shape.getY());
     }
 
     public boolean testHit(double x, double y){

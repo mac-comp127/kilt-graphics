@@ -93,7 +93,7 @@ public class Image extends GraphicsObject{
      */
     public void setPosition(int x, int y){
         this.x = x;
-        this.y =y;
+        this.y = y;
         changed();
     }
 
@@ -105,19 +105,8 @@ public class Image extends GraphicsObject{
      * Gets the position of the graphical object
      * @return position
      */
-    public Point.Double getPosition(){
-        return new Point.Double(x, y);
-    }
-
-    /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        x += dx;
-        y += dy;
-        changed();
+    public Point getPosition(){
+        return new Point(x, y);
     }
 
     /**

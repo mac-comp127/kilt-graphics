@@ -19,7 +19,7 @@ public class Triangle extends Polygon {
      * triangle (a, b, and c)
      */
     public Triangle(double ax, double ay, double bx, double by, double cx, double cy) {
-        this(new Point2D.Double(ax,ay), new Point2D.Double(bx,by), new Point2D.Double(cx,cy));
+        this(new Point(ax,ay), new Point(bx,by), new Point(cx,cy));
     }
 
     /**
@@ -27,7 +27,7 @@ public class Triangle extends Polygon {
      * create a triangle from Point2D.Double objects representing the locations
      * of the three corners of the triangle (a, b, and c)
      */
-    public Triangle(Point2D.Double a, Point2D.Double b, Point2D.Double c) {
+    public Triangle(Point a, Point b, Point c) {
         super(Arrays.asList(a,b,c));
     }
 

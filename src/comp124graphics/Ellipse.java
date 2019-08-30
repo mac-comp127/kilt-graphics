@@ -189,8 +189,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
      * Gets the position of the graphical object
      * @return position
      */
-    public Point.Double getPosition(){
-        return new Point.Double(shape.getX(), shape.getY());
+    public Point getPosition(){
+        return new Point(shape.getX(), shape.getY());
     }
 
     /**
@@ -200,16 +200,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
      */
     public void setWidthAndHeight(double width, double height){
         shape.setFrame(shape.getX(), shape.getY(), width, height);
-        changed();
-    }
-
-    /**
-     * Move the shape from its current x, y position by dx and dy.
-     * @param dx
-     * @param dy
-     */
-    public void move(double dx, double dy){
-        shape.setFrame(shape.getX() + dx, shape.getY() + dy, shape.getWidth(), shape.getHeight());
         changed();
     }
 
