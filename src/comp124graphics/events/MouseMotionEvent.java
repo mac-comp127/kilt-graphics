@@ -1,9 +1,11 @@
-package comp124graphics;
+package comp124graphics.events;
+
+import comp124graphics.Point;
 
 public class MouseMotionEvent {
     private final Point position, previousPosition, delta;
 
-    MouseMotionEvent(java.awt.event.MouseEvent sourceEvent, Point previousPosition) {
+    public MouseMotionEvent(java.awt.event.MouseEvent sourceEvent, Point previousPosition) {
         position = new Point(sourceEvent.getPoint());
         this.previousPosition = previousPosition;
         delta = position.subtract(previousPosition);
