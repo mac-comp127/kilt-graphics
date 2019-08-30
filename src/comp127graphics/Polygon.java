@@ -53,26 +53,16 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         if (points.size() < 3) {
             throw new IllegalArgumentException("Not enough points to make a polygon: " + points.size() + " < 3");
         }
-        int[] xPoints = new int[points.size()];
-        int[] yPoints = new int[points.size()];
 
-        x = Double.POSITIVE_INFINITY;
-        y = Double.POSITIVE_INFINITY;
-        double maxX = Double.NEGATIVE_INFINITY;
-        double maxY = Double.NEGATIVE_INFINITY;
+        int[] xPoints = points.stream().mapToInt((p) -> (int) Math.round(p.getX())).toArray();
+        int[] yPoints = points.stream().mapToInt((p) -> (int) Math.round(p.getY())).toArray();
 
-        int i = 0;
-        for(Point point : points) {
-            x = min(x, point.getX());
-            y = min(y, point.getY());
-            maxX = max(maxX, point.getX());
-            maxY = max(maxY, point.getY());
-            xPoints[i] = (int) Math.round(point.getX());
-            yPoints[i] = (int) Math.round(point.getY());
-            i++;
-        }
-        width = maxX - x;
-        height = maxY - y;
+        var xStats = Arrays.stream(xPoints).summaryStatistics();
+        var yStats = Arrays.stream(yPoints).summaryStatistics();
+        x = xStats.getMin();
+        y = yStats.getMin();
+        width = xStats.getMax() - x;
+        height = yStats.getMax() - y;
 
         shape = new java.awt.Polygon(xPoints, yPoints, points.size());
         fillColor = Color.black;
