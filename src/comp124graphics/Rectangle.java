@@ -1,7 +1,6 @@
 package comp124graphics;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
@@ -10,7 +9,7 @@ import java.awt.geom.Rectangle2D;
  * Created by bjackson on 9/13/2016.
  * @version 0.5
  */
-public class Rectangle extends GraphicsObject implements Colorable, FillColorable{
+public class Rectangle extends GraphicsObject implements Strokable, Fillable {
 
     private Rectangle2D.Double shape;
     private Paint fillColor;
@@ -91,7 +90,7 @@ public class Rectangle extends GraphicsObject implements Colorable, FillColorabl
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**

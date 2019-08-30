@@ -2,7 +2,7 @@ package comp124graphics;
 
 import java.awt.*;
 
-public interface FillColorable {
+public interface Fillable {
 
     /**
      * Returns the color to fillColor that will be used to fill this shape if it is

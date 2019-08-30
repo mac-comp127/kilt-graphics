@@ -4,7 +4,6 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -12,13 +11,14 @@ import java.awt.image.BufferedImage;
  * Created by bjackson on 10/10/2016.
  * @version 0.5
  */
-public class GraphicsText extends GraphicsObject implements Colorable {
+public class GraphicsText extends GraphicsObject implements Fillable {
 
     private String text;
     private float x, y;
     private Font font;
     private Paint textColor;
     private Shape textShape;
+    private boolean filled = true;
 
     /**
      * Constructs the graphical text at position x,y
@@ -122,14 +122,24 @@ public class GraphicsText extends GraphicsObject implements Colorable {
     }
 
     @Override
-    public Paint getStrokeColor() {
+    public Paint getFillColor() {
         return textColor;
     }
 
     @Override
-    public void setStrokeColor(Paint textColor) {
+    public void setFillColor(Paint textColor) {
         this.textColor = textColor;
-        changed();
+        setFilled(true);
+    }
+
+    @Override
+    public boolean isFilled() {
+        return filled;
+    }
+
+    @Override
+    public void setFilled(boolean filled) {
+        this.filled = filled;
     }
 
     public double getWidth(){
@@ -142,9 +152,9 @@ public class GraphicsText extends GraphicsObject implements Colorable {
         return metrics.getHeight();
     }
 
-    protected FontMetrics getFontMetrics(){
+    private FontMetrics getFontMetrics(){
         BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = Graphics2D.class.cast(img.getGraphics());
+        Graphics2D g = (Graphics2D) img.getGraphics();
         g.setFont(font);
         return g.getFontMetrics();
     }

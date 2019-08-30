@@ -1,20 +1,19 @@
 package comp124graphics;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 
 /**
  * Represents a line that can be drawn graphically in a canvaswindow
  * Created by bjackson on 9/14/2016.
  * @version 0.5
  */
-public class Line extends GraphicsObject implements Colorable {
+public class Line extends GraphicsObject implements Strokable {
 
     private Line2D.Double shape;
     private Paint strokeColor;
     private BasicStroke stroke;
+    private boolean isStroked = true;
 
     /**
      * Constructor to create the line object and initialize its instance variables.
@@ -36,11 +35,13 @@ public class Line extends GraphicsObject implements Colorable {
      * @param gc
      */
     public void draw(Graphics2D gc){
-        Paint originalColor = gc.getPaint();
-        gc.setStroke(stroke);
-        gc.setPaint(strokeColor);
-        gc.draw(shape);
-        gc.setPaint(originalColor); // set the color back to the original
+        if(isStroked) {
+            Paint originalColor = gc.getPaint();
+            gc.setStroke(stroke);
+            gc.setPaint(strokeColor);
+            gc.draw(shape);
+            gc.setPaint(originalColor); // set the color back to the original
+        }
     }
 
     /**
@@ -59,7 +60,7 @@ public class Line extends GraphicsObject implements Colorable {
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**
@@ -77,6 +78,16 @@ public class Line extends GraphicsObject implements Colorable {
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();
+    }
+
+    @Override
+    public boolean isStroked() {
+        return isStroked;
+    }
+
+    @Override
+    public void setStroked(boolean stroked) {
+        this.isStroked = stroked;
     }
 
     /**

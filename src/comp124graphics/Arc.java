@@ -2,9 +2,7 @@ package comp124graphics;
 
 import java.awt.*;
 import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
-import java.awt.geom.Point2D;
 
 
 /**
@@ -12,11 +10,12 @@ import java.awt.geom.Point2D;
  *
  * Created by shoop on 2/9/17.
  */
-public class Arc extends GraphicsObject implements Colorable{
+public class Arc extends GraphicsObject implements Strokable {
 
     private Arc2D.Double shape;
     private Paint strokeColor;
     private BasicStroke stroke;
+    private boolean isStroked = true;
 
     private double x; // upper left x position
     private double y; // upper left y position
@@ -85,12 +84,13 @@ public class Arc extends GraphicsObject implements Colorable{
      */
     @Override
     public void draw(Graphics2D gc){
-        //Color originalColor = gc.getColor();
-        gc.setStroke(stroke);
-        //gc.setColor(strokeColor);
-        gc.setPaint(strokeColor);
-        gc.draw(shape);
-        //gc.setColor(originalColor); // set the color back to the original
+        if (isStroked) {
+            Paint originalColor = gc.getPaint();
+            gc.setStroke(stroke);
+            gc.setPaint(strokeColor);
+            gc.draw(shape);
+            gc.setPaint(originalColor); // set the color back to the original
+        }
     }
 
     /**
@@ -109,7 +109,7 @@ public class Arc extends GraphicsObject implements Colorable{
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**
@@ -127,6 +127,16 @@ public class Arc extends GraphicsObject implements Colorable{
     public void setStrokeWidth(float width){
         stroke = new BasicStroke(width);
         changed();
+    }
+
+    @Override
+    public boolean isStroked() {
+        return isStroked;
+    }
+
+    @Override
+    public void setStroked(boolean stroked) {
+        this.isStroked = stroked;
     }
 
     @Override

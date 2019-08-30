@@ -1,6 +1,5 @@
 package comp124graphics;
 
-import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -19,7 +18,7 @@ import static java.lang.Math.*;
  *
  * Created by Kluver on 11/9/17.
  */
-public class Polygon extends GraphicsObject implements Colorable, FillColorable {
+public class Polygon extends GraphicsObject implements Strokable, Fillable {
 
     private java.awt.Polygon shape;
     private Paint fillColor;
@@ -127,7 +126,7 @@ public class Polygon extends GraphicsObject implements Colorable, FillColorable 
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**

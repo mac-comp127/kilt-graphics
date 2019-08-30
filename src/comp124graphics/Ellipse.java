@@ -1,16 +1,14 @@
 package comp124graphics;
 
 import java.awt.*;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
-import java.awt.geom.Point2D;
 
 /**
  * Used to draw an ellipse on the screen.
  * Created by bjackson on 9/13/2016.
  * @version 0.5
  */
-public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
+public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     private Ellipse2D.Double shape;
     private Paint fillColor;
@@ -91,7 +89,7 @@ public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
     @Override
     public void setStrokeColor(Paint strokeColor) {
         this.strokeColor = strokeColor;
-        changed();
+        setStroked(true);
     }
 
     /**
