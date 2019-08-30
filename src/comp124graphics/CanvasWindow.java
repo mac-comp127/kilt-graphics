@@ -10,13 +10,13 @@ import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,6 +36,8 @@ public class CanvasWindow implements GraphicsObserver {
     private boolean mainThreadExitCheckScheduled = false;
     private final Object repaintLock = new Object();
 
+    private Point curMousePos, prevMousePos;
+
     public CanvasWindow(String title, int windowWidth, int windowHeight){
         content.addObserver(this);
 
@@ -48,6 +50,8 @@ public class CanvasWindow implements GraphicsObserver {
         windowFrame.getContentPane().add(canvas);
         windowFrame.pack();
         windowFrame.setVisible(true);
+
+        setUpMousePositionTracking();
     }
 
     public int getWidth() {
@@ -98,7 +102,7 @@ public class CanvasWindow implements GraphicsObserver {
             synchronized(repaintLock) {
                 drawingInitiated = true;
                 if(EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
-                    canvas.update(canvas.getGraphics());
+                    canvas.paintImmediately(canvas.getBounds());
                 } else {
                     canvas.repaint(); // force redraw ASAP on AWT thread
                     repaintLock.wait();  // wait for drawing to complete (paintComponent notifies)
@@ -260,5 +264,88 @@ public class CanvasWindow implements GraphicsObserver {
                repaintLock.notifyAll();
            }
        }
-   }
+    }
+
+    // ------------ Event Handling ------------
+
+    private void setUpMousePositionTracking() {
+        canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                curMousePos = new Point(e.getPoint());
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                curMousePos = new Point(e.getPoint());
+            }
+        });
+
+        canvas.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                updatePositions(e);
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                updatePositions(e);
+            }
+
+            private void updatePositions(MouseEvent e) {
+                prevMousePos = curMousePos;
+                curMousePos = new Point(e.getPoint());
+            }
+        });
+    }
+
+    public void onMouseDown(MouseButtonEventHandler handler) {
+        canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                handler.handleEvent(new MouseButtonEvent(e));
+                draw();
+            }
+        });
+    }
+
+    public void onMouseUp(MouseButtonEventHandler handler) {
+        canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                handler.handleEvent(new MouseButtonEvent(e));
+                draw();
+            }
+        });
+    }
+
+    public void onClick(MouseButtonEventHandler handler) {
+        canvas.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handler.handleEvent(new MouseButtonEvent(e));
+                draw();
+            }
+        });
+    }
+
+    public void onMouseMove(MouseMotionEventHandler handler) {
+        canvas.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent e) {
+                handler.handleEvent(new MouseMotionEvent(e, prevMousePos));
+                draw();
+            }
+        });
+    }
+
+    public void onDrag(MouseMotionEventHandler handler) {
+        canvas.addMouseMotionListener(new MouseAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                handler.handleEvent(new MouseMotionEvent(e, prevMousePos));
+                draw();
+            }
+        });
+    }
 }

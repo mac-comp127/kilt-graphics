@@ -10,6 +10,8 @@ public class VisualTest {
     // Graphics should still appear if main() exits without calling draw()
     private static final boolean IMMEDIATE_EXIT = false;
 
+    static boolean hitTestVisualization = false;
+
     public static void main(String[] args) {
         GraphicsGroup group = new GraphicsGroup();
 
@@ -47,17 +49,23 @@ public class VisualTest {
         CanvasWindow canvas = new CanvasWindow("comp124graphics visual test", 400, 300);
         canvas.add(group);
 
-        canvas.addMouseListener(
-            new MouseAdapter() {
-                @Override
-                public void mouseReleased(MouseEvent e) {
-                    text.setText(String.valueOf(System.currentTimeMillis() % 10000));
-                    canvas.draw();
-                }
-            }
-        );
-
         double pause = 1000;
+
+        canvas.onMouseMove((event) -> {
+            text.setText(event.getPosition().toString());
+        });
+
+        canvas.onClick((event) -> {
+            hitTestVisualization = !hitTestVisualization;
+        });
+
+        canvas.onMouseMove((event) -> {
+            text.move(event.getDelta());
+        });
+
+        canvas.onDrag((event) -> {
+            bigDot.move(event.getDelta());
+        });
 
         //noinspection InfiniteLoopStatement
         for(double t = 0; ; t += 0.007) {
@@ -66,20 +74,22 @@ public class VisualTest {
                 (Math.sin(t * Math.PI) / 2 + 0.5) * (canvas.getHeight() / 2.0));
 
             GraphicsGroup dots = new GraphicsGroup();
-            int step = 4;
-            for(int x = -step; x < canvas.getWidth() + step; x += step) {
-                for(int y = -step; y < canvas.getHeight() + step; y += step) {
-                    double r = 3;
-                    Ellipse dot = new Ellipse(x - r/2, y - r/2, r, r);
-                    Object elem = group.getElementAt(x, y);
-                    if(elem != null) {
-                        dot.setFillColor(new Color(System.identityHashCode(elem) & 0x00FFFFFF | 0xCC000000, true));
-                        dot.setStroked(false);
-                    } else {
-                        dot.setStrokeColor(new Color(0x33666666, true));
-                        dot.setStrokeWidth(0.5f);
+            if(hitTestVisualization) {
+                int step = 4;
+                for(int x = -step; x < canvas.getWidth() + step; x += step) {
+                    for(int y = -step; y < canvas.getHeight() + step; y += step) {
+                        double r = 3;
+                        Ellipse dot = new Ellipse(x - r/2, y - r/2, r, r);
+                        Object elem = group.getElementAt(x, y);
+                        if(elem != null) {
+                            dot.setFillColor(new Color(System.identityHashCode(elem) & 0x00FFFFFF | 0xCC000000, true));
+                            dot.setStroked(false);
+                        } else {
+                            dot.setStrokeColor(new Color(0x33666666, true));
+                            dot.setStrokeWidth(0.5f);
+                        }
+                        dots.add(dot);
                     }
-                    dots.add(dot);
                 }
             }
             canvas.add(dots);

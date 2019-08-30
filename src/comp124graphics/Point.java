@@ -1,4 +1,5 @@
 package comp124graphics;
+import java.awt.geom.Point2D;
 import java.util.Objects;
 
 /**
@@ -156,5 +157,21 @@ public final class Point {
     @Override
     public String toString() {
         return "(" + x + "," + y + ")";
+    }
+
+    // ------ Java AWT Compatibility
+
+    /**
+     * Converts a Java AWT Point2D to a comp124graphics Point.
+     */
+    public Point(Point2D point) {
+        this(point.getX(), point.getY());
+    }
+
+    /**
+     * Converts this point to the Java AWT Point2D.
+     */
+    public Point2D.Double toPoint2D() {
+        return new Point2D.Double(x, y);
     }
 }
