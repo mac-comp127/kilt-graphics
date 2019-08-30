@@ -40,10 +40,12 @@ public abstract class GraphicsObject {
     public abstract Point.Double getPosition();
 
     /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
+     * Tests whether the given point is on the boundary or interior of this graphic object's shape.
+     * The point is in this object's local coordinates, not canvas coordinates.
+     *
+     * Does not account for appearance, including stroke width and transparency.
      */
-    public abstract boolean testHit(double x, double y, Graphics2D gc);
+    public abstract boolean testHit(double x, double y);
 
     /**
      * Returns an axis aligned bounding rectangle for the graphical object.

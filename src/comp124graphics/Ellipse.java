@@ -1,7 +1,5 @@
 package comp124graphics;
 
-import sun.java2d.SunGraphics2D;
-
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
@@ -216,26 +214,8 @@ public class Ellipse extends GraphicsObject implements Colorable, FillColorable{
         changed();
     }
 
-    /**
-     * Tests whether the point (x, y) hits the shape on the graphics window
-     * @return true if this shape is the topmost object at point (x, y)
-     */
-    public boolean testHit(double x, double y, Graphics2D gc){
-        int devScale = ((SunGraphics2D)gc).getSurfaceData().getDefaultScale();
-        AffineTransform transform = new AffineTransform();
-        transform.setToScale(devScale, devScale);
-        Point.Double point = new Point2D.Double(x, y);
-        Point.Double transformedPoint = new Point2D.Double(x, y);
-        transform.transform(point, transformedPoint);
-        java.awt.Rectangle test = new java.awt.Rectangle((int)Math.round(transformedPoint.getX()), (int)Math.round(transformedPoint.getY()), 1*devScale,1*devScale);
-        boolean hit = false;
-        if (isFilled && gc.hit(test, shape, false)){
-            hit = true;
-        }
-        if(isStroked && gc.hit(test, shape, true)){
-            hit = true;
-        }
-        return hit;
+    public boolean testHit(double x, double y){
+        return shape.contains(x, y);
     }
 
     /**

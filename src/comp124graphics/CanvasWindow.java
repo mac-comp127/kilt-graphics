@@ -150,8 +150,7 @@ public class CanvasWindow extends JPanel implements GraphicsObserver{
         Iterator<GraphicsObject> it = gObjects.descendingIterator();
         while(it.hasNext()){
             GraphicsObject obj = it.next();
-            //if (obj.testHit(x, y, gc)){
-            if (isGGat(obj, x, y) || obj.testHit(x, y, gc)){
+            if (obj.testHit(x, y)){
                 return obj;
             }
         }
