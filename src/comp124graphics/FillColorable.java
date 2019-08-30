@@ -5,14 +5,23 @@ import java.awt.*;
 public interface FillColorable {
 
     /**
-     * Set the fill color to fillColor
-     * @param fillColor Color to fill the shape
+     * Returns the color to fillColor that will be used to fill this shape if it is
+     * filled. Note that there will still be no fill if isFilled() is false.
+     */
+    Paint getFillColor();
+
+    /**
+     * Sets the fill color to the given color. Automatically calls setFilled(true).
      */
     void setFillColor(Paint fillColor);
 
     /**
-     * Gets the fill color to fillColor
-     * @return  Color used to fill the shape
+     * Returns true if the interior of this shape will be filled with the fill color.
      */
-    Paint getFillColor();
+    boolean isFilled();
+
+    /**
+     * Causes the shape to be filled with the fill color when it is drawn.
+     */
+    void setFilled(boolean filled);
 }

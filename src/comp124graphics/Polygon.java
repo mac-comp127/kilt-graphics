@@ -107,6 +107,7 @@ public class Polygon extends GraphicsObject implements Colorable, FillColorable 
     @Override
     public void setFillColor(Paint fillColor) {
         this.fillColor = fillColor;
+        setFilled(true);
         changed();
     }
 

@@ -71,6 +71,7 @@ public class Rectangle extends GraphicsObject implements Colorable, FillColorabl
     @Override
     public void setFillColor(Paint fillColor) {
         this.fillColor = fillColor;
+        setFilled(true);
         changed();
     }
 
