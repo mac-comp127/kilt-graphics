@@ -1,7 +1,7 @@
 package activityStarterCode.methodDecomposition;
 
-import comp124graphics.Arc;
-import comp124graphics.CanvasWindow;
+import comp127graphics.Arc;
+import comp127graphics.CanvasWindow;
 
 import java.awt.*;
 

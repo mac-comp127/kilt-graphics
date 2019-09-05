@@ -1,6 +1,6 @@
 //package activityStarterCode.painterActivity;
 //
-//import comp124graphics.CanvasWindow;
+//import comp127graphics.CanvasWindow;
 //
 //import javax.swing.*;
 //import java.awt.*;

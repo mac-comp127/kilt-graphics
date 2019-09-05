@@ -1,8 +1,8 @@
 package activityStarterCode.listPractice;
 
-import comp124graphics.CanvasWindow;
-import comp124graphics.Ellipse;
-import comp124graphics.GraphicsText;
+import comp127graphics.CanvasWindow;
+import comp127graphics.Ellipse;
+import comp127graphics.GraphicsText;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

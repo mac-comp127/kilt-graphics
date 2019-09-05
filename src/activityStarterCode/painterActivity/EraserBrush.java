@@ -1,6 +1,6 @@
 package activityStarterCode.painterActivity;
 
-import comp124graphics.CanvasWindow;
+import comp127graphics.CanvasWindow;
 
 /**
  * Created by bjackson on 10/5/2016.

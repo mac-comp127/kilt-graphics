@@ -1,9 +1,9 @@
 package activityStarterCode.train;
 
-import comp124graphics.CanvasWindow;
-import comp124graphics.Ellipse;
-import comp124graphics.Line;
-import comp124graphics.Rectangle;
+import comp127graphics.CanvasWindow;
+import comp127graphics.Ellipse;
+import comp127graphics.Line;
+import comp127graphics.Rectangle;
 
 import java.awt.*;
 
