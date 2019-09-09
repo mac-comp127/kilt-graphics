@@ -1,4 +1,4 @@
-package edu.macalester.comp127.sen;
+package sen.expr;
 
 import java.util.Random;
 import java.util.Scanner;
