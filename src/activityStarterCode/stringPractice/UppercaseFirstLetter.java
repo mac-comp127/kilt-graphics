@@ -30,7 +30,7 @@ public class UppercaseFirstLetter {
 
         System.out.println("Enter something you would like to modify: ");
 
-        String input = scan.next();
+        String input = scan.nextLine();
 
         System.out.println(uppercaseFirstLetter(input));
     }

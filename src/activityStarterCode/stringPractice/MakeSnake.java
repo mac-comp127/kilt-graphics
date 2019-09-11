@@ -30,7 +30,7 @@ public class MakeSnake {
 
         System.out.println("Enter sssomething you would like to sssnakeify: ");
 
-        String input = scan.next();
+        String input = scan.nextLine();
 
         System.out.println(makeSnake(input));
     }

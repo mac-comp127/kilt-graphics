@@ -31,7 +31,7 @@ public class MakeEmphatic {
 
         System.out.println("Enter something you would like to emphasize: ");
 
-        String input = scan.next();
+        String input = scan.nextLine();
 
         System.out.println(makeEmphatic(input));
     }
