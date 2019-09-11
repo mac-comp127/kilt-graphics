@@ -26,4 +26,9 @@ public class UppercaseFirstLetterTest {
         assertEquals("", UppercaseFirstLetter.uppercaseFirstLetter(""));
     }
 
+    @Test
+    public void sameLetterTest() {
+        assertEquals("Eeee", UppercaseFirstLetter.uppercaseFirstLetter("eeee"));
+    }
+
 }
