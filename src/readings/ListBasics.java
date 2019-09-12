@@ -235,7 +235,7 @@ public class ListBasics {
         // common, Java gives us a helpful addAll() method to do it:
 
         List<String> betterMagicWordsCopy = new ArrayList<>();
-        betterMagicWordsCopy.addAll(magicWords);
+        betterMagicWordsCopy.addAll(magicWords);  // nice!
         betterMagicWordsCopy.add("expelliarmus");
         System.out.println("betterMagicWordsCopy = " + betterMagicWordsCopy);
 
@@ -244,9 +244,12 @@ public class ListBasics {
         // You can put the list you want to copy right between the parentheses
         // of new ArrayList<>(…):
 
-        List<String> bestMagicWordsCopy = new ArrayList<>(magicWords);
+        List<String> bestMagicWordsCopy = new ArrayList<>(magicWords);  // nicer!
         bestMagicWordsCopy.add("expelliarmus");
         System.out.println("bestMagicWordsCopy = " + bestMagicWordsCopy);
+
+        // There is a lot more to learn about lists in Java, but this is plenty
+        // to get us started with some interesting activities and labs.
     }
 
     private static void section(String title) {
