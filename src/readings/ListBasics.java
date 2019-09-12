@@ -169,9 +169,9 @@ public class ListBasics {
         // with a new one.
         //
         // You have already encountered immutable values in Java. Integers are
-        // immutable; you can't make 2 bigger! Strings in Java are immutable;
-        // to change a string, you have to make a new String. This is what the
-        // addition operator does:
+        // immutable; you can't make the number 2 grow bigger! Strings in Java
+        // are immutable; to change a string, you have to make a new String.
+        // This is what the String addition operator does:
 
         String thing0 = "Mac";
         String thing1 = thing0;
@@ -185,8 +185,9 @@ public class ListBasics {
         // Are lists mutable or immutable in Java? The answer is: both! Some
         // lists are mutable, and some are not.
         //
-        // When you make a list with List.of(…), it is immutable. This is why
-        // calling magicWords.add(…) failed above.
+        // When you make a list with List.of(…), it is immutable. But the List
+        // add() method tries to modify the list, not create a new one. This is
+        // why calling magicWords.add(…) failed above.
         //
         // If you want to make a new mutable list, the simplest and most common
         // way is this:
@@ -219,8 +220,9 @@ public class ListBasics {
         mutableList.remove("school bus"); // Remove by value
         System.out.println("mutableList = " + mutableList);
 
-        // To add new magic words, we'll need to create a mutable copy of the
-        // list. Here is one way to do that:
+        // Remember when we got the exception above trying to add new magic
+        // words? To do that, we'll need to create a mutable copy of the list.
+        // Here is one way:
 
         List<String> magicWordsCopy = new ArrayList<>();
         for(String word : magicWords) {
