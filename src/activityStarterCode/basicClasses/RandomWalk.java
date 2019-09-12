@@ -1,4 +1,4 @@
-package activityStarterCode.BasicClasses;
+package activityStarterCode.basicClasses;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package activityStarterCode.BasicClasses;
+package activityStarterCode.basicClasses;
 
 import comp127graphics.CanvasWindow;
 import comp127graphics.Line;
