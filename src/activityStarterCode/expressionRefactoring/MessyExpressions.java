@@ -65,9 +65,9 @@ public class MessyExpressions {
      *
      * YOUR TASK:
      *   (1) This code unnecessarily repeats the modulus operation, which makes
-     *       it a little harder to read. Use an “else” instead.
-     *   (2) Now return the result immediate from each branch of the conditional
-     *       instead of having a “newx” variable.
+     *       it harder to read — and more brittle. Use an “else” instead.
+     *   (2) Now return the result immediately from each branch of the
+     *       conditional, which will allow you to remove the “newx” variable.
      */
     public static int nextCollatz(int x) {
         int newx = x;
@@ -84,8 +84,9 @@ public class MessyExpressions {
      * Returns true if the given string contains nothing but the letter A,
      * exclamation points, and spaces.
      *
-     * YOUR TASK: Split each of the 4 steps into its own intermediate variable,
-     *   i.e. the first step goes in a variable called upperCaseText, then...
+     * YOUR TASK: Split each of the 4 steps into its own intermediate variable:
+     *   the first step goes in a variable called upperCaseText, then the second
+     *   step goes in a variable called... (You take it from here.)
      */
     public static boolean isJustScreaming(String text) {
         return text
@@ -98,7 +99,7 @@ public class MessyExpressions {
     /**
      * Removes acute accents from lowercase Roman vowels in the given text.
      *
-     * YOUR TASK: Do this in one return statement, with no assignments at all.
+     * YOUR TASK: Do this all in one return statement, with no assignments at all.
      *
      * Once again, this is the opposite of the previous exercise. What are the
      * advantages of each style? In what situations would one style be better
