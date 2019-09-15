@@ -1,4 +1,4 @@
-package activityStarterCode.listPractice;
+package activityStarterCode.nim;
 
 import comp127graphics.CanvasWindow;
 import comp127graphics.Ellipse;
