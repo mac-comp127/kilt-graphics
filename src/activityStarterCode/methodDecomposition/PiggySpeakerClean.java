@@ -14,9 +14,10 @@ package activityStarterCode.methodDecomposition;
  * 3. If there are no vowels, add "ay"
  *      Example: 127 = 127 + ay = 127ay
  *
- * The sentence "Pig Latin is hard to speak." is written as "Igpay Atinlay isway ardhay otay eakspay."
+ * Sentences are translated word by word. For example, the sentence "Pig Latin is hard to speak"
+ * is written as "Igpay Atinlay isway ardhay otay eakspay"
  *
- * Note that we preserve case.
+ * Note that we preserve case at the starting of each word.
  *
  * @author Shilad
  */

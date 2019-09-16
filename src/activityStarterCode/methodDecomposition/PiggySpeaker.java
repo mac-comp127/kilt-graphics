@@ -21,32 +21,6 @@ package activityStarterCode.methodDecomposition;
  * @author Shilad
  */
 public class PiggySpeaker {
-    /**
-     * @param word Word to be translated.
-     * @return translation of the word into pig latin
-     */
-    public static String translateWord(String word) {
-        int pos = -1;
-        for (int i = 0; i < word.length(); i++) {
-            if (isVowel(word.charAt((i)))) {
-                pos = i;
-                break;
-            }
-        }
-        String result;
-        if (pos == 0) {
-            result = word + "way";
-        } else if (pos == -1) {
-            result = word + "ay";
-        } else {
-            result = word.substring(pos) + word.substring(0, pos) + "ay";
-        }
-        if (Character.isUpperCase(word.charAt(0))) {
-            return Character.toUpperCase(result.charAt(0)) + result.substring(1).toLowerCase();
-        } else {
-            return result.toLowerCase();
-        }
-    }
 
     /**
      * @param phrase Phrase to be translated
@@ -55,21 +29,73 @@ public class PiggySpeaker {
      */
     public static String translatePhrase(String phrase) {
         String result = "";
-        for (String w : phrase.split("\\s+")) {
+        for (String word : phrase.split("\\s+")) {
             if (result.length() > 0) {
                 result += " ";
             }
-            result += translateWord(w);
+            int pos = -1;
+            for (int i = 0; i < word.length(); i++) {
+                boolean v = false;
+                if (Character.toLowerCase(word.charAt(i)) == 'a') {
+                    v = true;
+                } else {
+                    v = v;
+                }
+                if (Character.toLowerCase(word.charAt(i)) == 'e') {
+                    v = true;
+                } else {
+                    v = v;
+                }
+                if (Character.toLowerCase(word.charAt(i)) == 'i') {
+                    v = true;
+                } else {
+                    v = v;
+                }
+                if (Character.toLowerCase(word.charAt(i)) == 'o') {
+                    v = true;
+                } else {
+                    v = v;
+                }
+                if (Character.toLowerCase(word.charAt(i)) == 'u') {
+                    v = true;
+                } else {
+                    v = v;
+                }
+                if (Character.toLowerCase(word.charAt(i)) == 'y') {
+                    v = true;
+                } else {
+                    v = v;
+                }
+                if (v) {
+                    pos = i;
+                    break;
+                }
+            }
+            String r;
+            if (pos == 0) {
+                r = word + "way";
+            } else if (pos == -1) {
+                r = word + "ay";
+            } else if (pos == 1) {
+                char first = word.charAt(0);
+                String rest = word.substring(1);
+                r = rest + first + "ay";
+            } else if (pos == 2) {
+                String firstTwo = word.substring(0, 2);
+                String rest = word.substring(2);
+                r = rest + firstTwo + "ay";
+            } else { // three or more
+                r = word.substring(pos) + word.substring(0, pos) + "ay";
+            }
+            char firstNew = r.charAt(0);
+            char firstOrig = word.charAt(0);
+            String restNew = r.substring(1);
+            if (Character.isUpperCase(firstOrig)) {
+                firstNew = Character.toUpperCase(firstNew);
+            }
+            String newWord = (firstNew + restNew.toLowerCase());
+            result += newWord;
         }
         return result;
-    }
-
-    /**
-     * @param ch Character to be tested.
-     * @return True if and only if the character is an upper- or lower-case vowel (including Y).
-     */
-    public static boolean isVowel(char ch) {
-        char lch = Character.toLowerCase(ch);
-        return (lch == 'a' || lch == 'e' || lch == 'i' || lch == 'o' || lch == 'u' || lch == 'y');
     }
 }
