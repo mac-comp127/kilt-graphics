@@ -22,29 +22,25 @@ package activityStarterCode.methodRefactoring;
  * @author Shilad
  */
 @SuppressWarnings({"StringConcatenationInLoop", "WeakerAccess"})
-public class PiggySpeakerClean {
+public class PiggySpeakerClean2 {
     /**
      * @param word Word to be translated.
      * @return translation of the word into pig latin
      */
     public static String translateWord(String word) {
-        int pos = -1;
-        for (int i = 0; i < word.length(); i++) {
-            if (isVowel(word.charAt((i)))) {
-                pos = i;
-                break;
-            }
-        }
+        int firstVowelPos = indexOfFirstVowel(word);
+
         String result;
-        if (pos == 0) {
+        if (firstVowelPos == 0) {
             result = word + "way";
-        } else if (pos == -1) {
+        } else if (firstVowelPos == -1) {
             result = word + "ay";
         } else {
-            result = word.substring(pos) + word.substring(0, pos) + "ay";
+            result = word.substring(firstVowelPos) + word.substring(0, firstVowelPos) + "ay";
         }
-        if (Character.isUpperCase(word.charAt(0))) {
-            return Character.toUpperCase(result.charAt(0)) + result.substring(1).toLowerCase();
+
+        if (isCapitalized(word)) {
+            return capitalize(result);
         } else {
             return result.toLowerCase();
         }
@@ -73,5 +69,37 @@ public class PiggySpeakerClean {
     public static boolean isVowel(char ch) {
         char lch = Character.toLowerCase(ch);
         return (lch == 'a' || lch == 'e' || lch == 'i' || lch == 'o' || lch == 'u' || lch == 'y');
+    }
+
+    /**
+     * Returns the index of the first vowel in the given string, or -1 if the string contains
+     * no vowels.
+     */
+    private static int indexOfFirstVowel(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            if (isVowel(s.charAt((i)))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the given string with the first character converted to upper case, and the
+     * remainder of the string converted to lower case.
+     *
+     * @param s A string with length ≥ 1
+     */
+    private static String capitalize(String s) {
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1).toLowerCase();
+    }
+
+    /**
+     * Returns true if the first character of the given string is an upper case letter.
+     *
+     * @param s A string with length ≥ 1
+     */
+    private static boolean isCapitalized(String s) {
+        return Character.isUpperCase(s.charAt(0));
     }
 }

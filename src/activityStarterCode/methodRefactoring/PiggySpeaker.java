@@ -20,6 +20,7 @@ package activityStarterCode.methodRefactoring;
  *
  * @author Shilad
  */
+@SuppressWarnings({"StringConcatenationInLoop", "WeakerAccess"})
 public class PiggySpeaker {
 
     /**
