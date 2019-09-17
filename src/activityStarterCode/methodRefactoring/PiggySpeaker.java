@@ -1,4 +1,4 @@
-package activityStarterCode.methodDecomposition;
+package activityStarterCode.methodRefactoring;
 
 /**
  * A class to speak pig latin that is obfuscated.

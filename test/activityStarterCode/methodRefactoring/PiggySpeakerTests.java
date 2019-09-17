@@ -1,4 +1,4 @@
-package activityStarterCode.methodDecomposition;
+package activityStarterCode.methodRefactoring;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 
-public class PiggySpeakerTest {
+public class PiggySpeakerTests {
 
     @Test
     public void translatePhrase() {
