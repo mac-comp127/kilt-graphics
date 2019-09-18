@@ -1,4 +1,4 @@
-package marsh;
+package marsh.methods;
 
 import java.util.Scanner;
 

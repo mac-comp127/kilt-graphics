@@ -1,4 +1,4 @@
-package marsh;
+package marsh.cond;
 
 import java.util.Scanner;
 
