@@ -48,7 +48,7 @@ public class Emojis {
     }
 
     /**
-     * Adds an empty emoji head to the given graphics group. The head fits inside the box from (0,0)
+     * Creates an empty emoji head. The head fits inside the box from (0,0)
      * to (width,height).
      */
     private static Ellipse createHead(double height, double width) {
