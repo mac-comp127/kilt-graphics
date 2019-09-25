@@ -61,9 +61,6 @@ public class DrawDog {
         bleg2.setStrokeColor(Color.GRAY);
         cw.add(bleg2);
 
-        GraphicsText bark = new GraphicsText("bark", 250, 300);
-        cw.add(bark);
-
         cw.draw();
     }
 }
