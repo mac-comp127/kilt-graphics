@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.List;
 
@@ -195,6 +196,11 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         return shape.contains(x, y);
     }
 
+    @Override
+    Rectangle2D getBounds() {
+        return shape.getBounds2D();
+    }
+
     /**
      * Tests whether the given object is a Polygon with the same shape.
      * Ignores appearance, i.e. color and stroke width.
@@ -219,9 +225,5 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     @Override
     public String toString() {
         return "Polygon with " + shape.npoints + " points at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
-    }
-
-    public java.awt.Rectangle getBounds() {
-        return shape.getBounds();
     }
 }

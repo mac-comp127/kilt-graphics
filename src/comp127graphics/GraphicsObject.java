@@ -1,6 +1,7 @@
 package comp127graphics;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +65,7 @@ public abstract class GraphicsObject {
     /**
      * For internal use. Returns an axis-aligned bounding rectangle for the graphical object.
      */
-    public abstract java.awt.Rectangle getBounds();
+    abstract Rectangle2D getBounds();
 
     // ------ Observers ------
 

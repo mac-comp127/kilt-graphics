@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * An ellipse that can be drawn on the screen.
@@ -129,7 +130,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Moves the ellipse's upper left corner to (x,y), preserving its size.
+     * Moves the ellipse so that the upper left corner of its bounding box is at (x,y). Preserves
+     * the size of the ellipse.
      */
     public void setPosition(double x, double y) {
         shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
@@ -137,7 +139,7 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the ellipse's upper left corner.
+     * Returns the upper left corner of this ellipse’s bounding box.
      */
     public Point getPosition() {
         return new Point(shape.getX(), shape.getY());
@@ -153,6 +155,11 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     public boolean testHit(double x, double y) {
         return shape.contains(x, y);
+    }
+
+    @Override
+    Rectangle2D getBounds() {
+        return shape.getBounds2D();
     }
 
     /**
@@ -175,9 +182,5 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     @Override
     public String toString() {
         return "Ellipse at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
-    }
-
-    public java.awt.Rectangle getBounds() {
-        return new java.awt.Rectangle((int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
     }
 }

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 
 /**
  * A line segment that can be drawn on the screen.
@@ -141,6 +142,12 @@ public class Line extends GraphicsObject implements Strokable {
         return shape.contains(x, y);
     }
 
+    Rectangle2D getBounds() {
+        double left = Math.min(getX1(), getX2());
+        double top = Math.min(getY1(), getY2());
+        return new Rectangle2D.Double(left, top, Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
+    }
+
     /**
      * Two lines are identical if the have the same start points and the same endpoints, regardless
      * of appearance.
@@ -162,11 +169,5 @@ public class Line extends GraphicsObject implements Strokable {
     @Override
     public String toString() {
         return "A line at position (" + getX1() + ", " + getY1() + ") and (" + getX2() + ", " + getY2() + ")";
-    }
-
-    public java.awt.Rectangle getBounds() {
-        int left = (int) Math.min(getX1(), getX2());
-        int top = (int) Math.min(getY1(), getY2());
-        return new java.awt.Rectangle(left, top, (int) Math.abs(getX2() - getX1()), (int) Math.abs(getY1() - getY2()));
     }
 }
