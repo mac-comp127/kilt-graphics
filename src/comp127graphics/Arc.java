@@ -9,7 +9,7 @@ import java.awt.geom.Rectangle2D;
 
 
 /**
- * Used to draw an arc on the CanvasWindow or GraphicsGroup.
+ * A partial section of an ellipse.
  *
  * @author Libby Shoop
  */
