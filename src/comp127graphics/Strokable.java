@@ -17,7 +17,7 @@ public interface Strokable {
     Paint getStrokeColor();
 
     /**
-     * Sets the stroke color to the given color. Automatically calls setStrokeed(true).
+     * Sets the stroke color to the given color. Automatically calls setStroked(true).
      */
     void setStrokeColor(Paint strokeColor);
 
