@@ -14,15 +14,15 @@ public class Emojis {
     public static void main(String[] args) {
         CanvasWindow canvas = new CanvasWindow("Emoji", 800, 600);
 
-        GraphicsGroup littleSmiley = createSmiley(100);
+        GraphicsGroup littleSmiley = createSmileyFace(100);
         littleSmiley.setPosition(50, 400);
         canvas.add(littleSmiley);
 
-        GraphicsGroup mediumSmiley = createSmiley(200);
+        GraphicsGroup mediumSmiley = createSmileyFace(200);
         mediumSmiley.setPosition(150, 300);
         canvas.add(mediumSmiley);
 
-        GraphicsGroup bigSmiley = createSmiley(300);
+        GraphicsGroup bigSmiley = createSmileyFace(300);
         bigSmiley.setPosition(350, 200);
         canvas.add(bigSmiley);
     }
@@ -33,7 +33,7 @@ public class Emojis {
      * @param size The overall width and height of the emoji.
      * @return A graphic that you can add to a window, or place inside some other graphics group.
      */
-    public static GraphicsGroup createSmiley(double size) {
+    public static GraphicsGroup createSmileyFace(double size) {
         GraphicsGroup group = new GraphicsGroup();
 
         group.add(createHead(size, size));
