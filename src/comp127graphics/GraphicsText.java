@@ -1,5 +1,6 @@
 package comp127graphics;
 
+import javax.swing.JFrame;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
@@ -18,7 +19,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     private float x, y;
     private Font font;
     private Paint textColor;
-    private Shape textShape;
+    private Shape textShape;  // lazily initialized, updated when painted
     private boolean filled = true;
 
     /**
@@ -40,13 +41,39 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         gc.setPaint(textColor);
         //gc.drawString(text, x, y); // This would look better but doesn't seem to work with hit testing.
 
+        gc.fill(recomputeTextShape(gc));
+        gc.setFont(curFont);
+        gc.setPaint(curColor);
+    }
+
+    private Shape recomputeTextShape(Graphics2D gc) {
         FontRenderContext frc = gc.getFontRenderContext();
         TextLayout textLayout = new TextLayout(text, font, frc);
         AffineTransform moveTo = AffineTransform.getTranslateInstance(x, y);
-        textShape = textLayout.getOutline(moveTo);
-        gc.fill(textShape);
-        gc.setFont(curFont);
-        gc.setPaint(curColor);
+        textShape = textLayout.getOutline(moveTo);  // memoize
+        return textShape;
+    }
+
+    private Shape getTextShape() {
+        // Getting a text shape requires a graphics context. We normally can't get one until we're
+        // painted, but we may want to measure text before it's drawn. This hack creates an almost-
+        // invisible dummy window and uses its graphics. We recompute the text's shape when it's
+        // actually drawn in a real window, in case the real graphics context is different.
+        if (textShape == null) {
+            JFrame dummyFrame = new JFrame();
+            dummyFrame.setUndecorated(true);
+            dummyFrame.setVisible(true);
+            recomputeTextShape((Graphics2D) dummyFrame.getGraphics());
+            dummyFrame.setVisible(false);
+            dummyFrame.dispose();
+        }
+        return textShape;
+    }
+
+    @Override
+    protected void changed() {
+        textShape = null;
+        super.changed();
     }
 
     public void setPosition(double x, double y) {
@@ -134,11 +161,11 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     public boolean testHit(double x, double y) {
-        return textShape != null && textShape.contains(x, y);
+        return getTextShape().contains(x, y);
     }
 
     @Override
     Rectangle2D getBounds() {
-        return textShape.getBounds2D();
+        return getTextShape().getBounds2D();
     }
 }
