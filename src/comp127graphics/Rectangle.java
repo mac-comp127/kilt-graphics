@@ -41,7 +41,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         this(upperLeft.getX(), upperLeft.getY(), size.getX(), size.getY());
     }
 
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);
@@ -141,7 +141,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Moves the rectangle's upper left corner to (x, y), preserving its size.
+     * Moves this rectangle's upper left corner to (x, y), preserving its size.
      */
     public void setPosition(double x, double y) {
         shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
@@ -165,6 +165,11 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
 
     public boolean testHit(double x, double y) {
         return shape.contains(x, y);
+    }
+
+    @Override
+    Rectangle2D getBounds() {
+        return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
     }
 
     /**
@@ -191,9 +196,5 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     @Override
     public String toString() {
         return "Rectangle at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
-    }
-
-    public java.awt.Rectangle getBounds() {
-        return new java.awt.Rectangle((int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
     }
 }

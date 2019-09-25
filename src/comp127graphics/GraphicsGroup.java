@@ -3,6 +3,7 @@ package comp127graphics;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -35,7 +36,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Bounding rectangle around all of the graphicObjects contained in this group in window coordinates.
      */
-    private java.awt.Rectangle bounds;
+    private Rectangle2D bounds;
 
     /**
      * Buffer to draw the sub graphics objects on
@@ -54,7 +55,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         this.x = x;
         this.y = y;
         gObjects = new ConcurrentLinkedDeque<GraphicsObject>();
-        bounds = new java.awt.Rectangle(0, 0, -1, -1);
+        bounds = new Rectangle2D.Double(0, 0, -1, -1);
     }
 
     /**
@@ -73,8 +74,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void add(GraphicsObject gObject) {
         gObject.addObserver(this);
         gObjects.add(gObject);
-        //java.awt.Rectangle objBounds = gObject.getBounds();
-        bounds = bounds.union(gObject.getBounds());
+        Rectangle2D.union(bounds, gObject.getBounds(), bounds);
         changed();
     }
 
@@ -137,7 +137,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     @Override
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         // Don't bother drawing if nothing has been added or everything would be drawn off screen.
         if (bounds.isEmpty()) {
             return;
@@ -244,11 +244,13 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     /**
      * Returns an axis aligned bounding rectangle for the graphical object in canvas coordinates.
-     *
-     * @return
      */
-    public java.awt.Rectangle getBounds() {
-        return new java.awt.Rectangle((int) Math.ceil(this.x + bounds.getX()), (int) Math.ceil(this.y + bounds.getY()), (int) Math.ceil(bounds.getWidth()), (int) Math.ceil(bounds.getHeight()));
+    Rectangle2D getBounds() {
+        return new Rectangle2D.Double(
+            this.x + bounds.getX(),
+            this.y + bounds.getY(),
+            bounds.getWidth(),
+            bounds.getHeight());
     }
 
     /**
@@ -285,17 +287,18 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     private void updateBounds() {
-        java.awt.Rectangle newBounds = null;
+        Rectangle2D totalBounds = null;
         for (GraphicsObject gObject : gObjects) {
-            if (newBounds != null) {
-                newBounds = newBounds.union(gObject.getBounds());
-            } else {
-                java.awt.Rectangle objBounds = gObject.getBounds();
-                if (objBounds != null) {
-                    newBounds = new java.awt.Rectangle((int) objBounds.getX(), (int) objBounds.getY(), (int) objBounds.getWidth(), (int) objBounds.getHeight());
+            Rectangle2D curBounds = gObject.getBounds();
+            if (curBounds != null) {
+                if (totalBounds != null) {
+                    Rectangle2D.union(totalBounds, curBounds, totalBounds);
+                } else {
+                    totalBounds = new Rectangle2D.Double();
+                    totalBounds.setRect(curBounds);
                 }
             }
         }
-        bounds = newBounds;
+        bounds = totalBounds;
     }
 }

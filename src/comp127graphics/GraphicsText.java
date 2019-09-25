@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
@@ -31,7 +32,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         font = new Font("SanSerif", Font.PLAIN, 14);
     }
 
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
 
         Font curFont = gc.getFont();
         gc.setFont(font);
@@ -136,7 +137,8 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         return textShape != null && textShape.contains(x, y);
     }
 
-    public java.awt.Rectangle getBounds() {
-        return new java.awt.Rectangle((int) Math.round(x), (int) Math.round(y), (int) Math.round(getWidth()), (int) Math.round(getHeight()));
+    @Override
+    Rectangle2D getBounds() {
+        return textShape.getBounds2D();
     }
 }

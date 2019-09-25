@@ -1,12 +1,15 @@
 package comp127graphics;
 
-import java.awt.Rectangle;
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Paint;
 import java.awt.geom.Arc2D;
+import java.awt.geom.Rectangle2D;
 
 
 /**
- * Used to draw an arc on the CanvasWindow or GraphicsGroup.
+ * A partial section of an ellipse.
  *
  * @author Libby Shoop
  */
@@ -24,10 +27,6 @@ public class Arc extends GraphicsObject implements Strokable {
     private double startAngle;
     private double sweepAngle;
     private int type;
-
-    // g.drawArc( x-coordinate of top left corner , y-coordinate of top left corner ,
-    //            width , height , start angle , angle swept out );
-    //   0 start angle is positive x axis
 
     // TODO: need to likely add closed arcs and ability to fill them
 
@@ -69,7 +68,7 @@ public class Arc extends GraphicsObject implements Strokable {
     }
 
     @Override
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         if (isStroked) {
             Paint originalColor = gc.getPaint();
             gc.setStroke(stroke);
@@ -127,7 +126,7 @@ public class Arc extends GraphicsObject implements Strokable {
     }
 
     @Override
-    public Rectangle getBounds() {
-        return shape.getBounds();
+    Rectangle2D getBounds() {
+        return shape.getBounds2D();
     }
 }

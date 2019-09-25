@@ -1,6 +1,7 @@
 package comp127graphics;
 
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public abstract class GraphicsObject {
     /**
      * For internal use. Draws this graphics object on the screen.
      */
-    public abstract void draw(Graphics2D gc);
+    protected abstract void draw(Graphics2D gc);
 
     /**
      * Moves this object to the given position.
@@ -37,6 +38,28 @@ public abstract class GraphicsObject {
      */
     public final void setPosition(Point pos) {
         setPosition(pos.getX(), pos.getY());
+    }
+
+    /**
+     * Returns the center of this shape's bounding box.
+     */
+    public final Point getCenter() {
+        Rectangle2D bounds = getBounds();
+        return new Point(bounds.getCenterX(), bounds.getCenterY());
+    }
+
+    /**
+     * Moves the shape so its bounding box is centered at the given point.
+     */
+    public final void setCenter(double x, double y) {
+        setCenter(new Point(x, y));
+    }
+
+    /**
+     * Moves the shape so its bounding box is centered at the given point.
+     */
+    public final void setCenter(Point point) {
+        moveBy(point.subtract(getCenter()));
     }
 
     /**
@@ -64,7 +87,7 @@ public abstract class GraphicsObject {
     /**
      * For internal use. Returns an axis-aligned bounding rectangle for the graphical object.
      */
-    public abstract java.awt.Rectangle getBounds();
+    abstract Rectangle2D getBounds();
 
     // ------ Observers ------
 

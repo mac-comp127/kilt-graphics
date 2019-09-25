@@ -3,6 +3,7 @@ package comp127graphics;
 
 import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class Image extends GraphicsObject {
         }
     }
 
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         gc.drawImage(img, x, y, null);
     }
 
@@ -106,6 +107,11 @@ public class Image extends GraphicsObject {
     }
 
     @Override
+    Rectangle2D getBounds() {
+        return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -132,9 +138,5 @@ public class Image extends GraphicsObject {
     @Override
     public String toString() {
         return "Image at position (" + x + ", " + y + ") with file " + filePath;
-    }
-
-    public java.awt.Rectangle getBounds() {
-        return new java.awt.Rectangle((int) getX(), (int) getY(), (int) getWidth(), (int) getHeight());
     }
 }
