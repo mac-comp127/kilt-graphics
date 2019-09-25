@@ -23,7 +23,7 @@ public abstract class GraphicsObject {
     /**
      * For internal use. Draws this graphics object on the screen.
      */
-    public abstract void draw(Graphics2D gc);
+    protected abstract void draw(Graphics2D gc);
 
     /**
      * Moves this object to the given position.

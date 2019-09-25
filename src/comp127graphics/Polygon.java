@@ -82,7 +82,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         this(List.of(points));
     }
 
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);

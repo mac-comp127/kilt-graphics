@@ -137,7 +137,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     @Override
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         // Don't bother drawing if nothing has been added or everything would be drawn off screen.
         if (bounds.isEmpty()) {
             return;

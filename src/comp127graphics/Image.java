@@ -49,7 +49,7 @@ public class Image extends GraphicsObject {
         }
     }
 
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
         gc.drawImage(img, x, y, null);
     }
 

@@ -32,7 +32,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         font = new Font("SanSerif", Font.PLAIN, 14);
     }
 
-    public void draw(Graphics2D gc) {
+    protected void draw(Graphics2D gc) {
 
         Font curFont = gc.getFont();
         gc.setFont(font);
