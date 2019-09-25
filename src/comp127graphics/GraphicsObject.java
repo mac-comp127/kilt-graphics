@@ -41,6 +41,28 @@ public abstract class GraphicsObject {
     }
 
     /**
+     * Returns the center of this shape's bounding box.
+     */
+    public final Point getCenter() {
+        Rectangle2D bounds = getBounds();
+        return new Point(bounds.getCenterX(), bounds.getCenterY());
+    }
+
+    /**
+     * Moves the shape so its bounding box is centered at the given point.
+     */
+    public final void setCenter(double x, double y) {
+        setCenter(new Point(x, y));
+    }
+
+    /**
+     * Moves the shape so its bounding box is centered at the given point.
+     */
+    public final void setCenter(Point point) {
+        moveBy(point.subtract(getCenter()));
+    }
+
+    /**
      * Move the shape from its current (x, y) position to (x + dx, y + dy).
      */
     public final void moveBy(double dx, double dy) {
