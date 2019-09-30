@@ -7,16 +7,31 @@ import java.util.Random;
  * @author Shilad
  */
 public class FinishedDie {
+    private static final int DEFAULT_MAX_VALUE = 6;
+
+    private final int maxValue;
     private int value = -1;
     private Random random = new Random();
 
-    public FinishedDie() {}
+    /**
+     * Creates a new die that can generate values between 1 and 6.
+     */
+    public FinishedDie() {
+        this(DEFAULT_MAX_VALUE);
+    }
+
+    /**
+     * Creates a new die that can generate values between 1 and the specified max value.
+     */
+    public FinishedDie(int maxValue) {
+        this.maxValue = maxValue;
+    }
 
     /**
      * Re-roll the die
      */
     public void roll() {
-        value = random.nextInt(6) + 1;
+        value = random.nextInt(maxValue) + 1;
     }
 
     /**
