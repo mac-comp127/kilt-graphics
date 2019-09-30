@@ -10,7 +10,7 @@ public class FinishedDiceRoller {
         // Roll a die 10 times, print out the value
         for (int i = 0; i < 10; i++) {
             d1.roll();
-            System.out.println((i + 1) + ": Rolled a " + d1);
+            System.out.println("Roll " + (i + 1) + " generated a " + d1);
         }
 
         FinishedDie d2 = new FinishedDie();

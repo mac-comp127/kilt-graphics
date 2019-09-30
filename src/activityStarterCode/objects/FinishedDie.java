@@ -44,6 +44,7 @@ public class FinishedDie {
     /**
      * Returns true iff the two dice have equal values.
      */
+    @Override
     public boolean equals(Object o) {
         if (!(o instanceof FinishedDie)) {
             return false;
@@ -55,6 +56,7 @@ public class FinishedDie {
     /**
      * Returns the string representation of the dice ("one"... "six")
      */
+    @Override
     public String toString() {
         if (value == 1) {
             return "one";
