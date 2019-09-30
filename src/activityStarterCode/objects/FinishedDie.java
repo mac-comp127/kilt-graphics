@@ -28,14 +28,14 @@ public class FinishedDie {
     }
 
     /**
-     * Re-roll the die
+     * Roll the die and remember the new value
      */
     public void roll() {
         value = random.nextInt(maxValue) + 1;
     }
 
     /**
-     * The current die value, or -1 if it has never been rolled.
+     * Returns the die's current value, or -1 if it has never been rolled.
      */
     public int getValue() {
         return value;
