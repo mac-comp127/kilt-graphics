@@ -42,18 +42,6 @@ public class FinishedDie {
     }
 
     /**
-     * Returns true iff the two dice have equal values.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof FinishedDie)) {
-            return false;
-        }
-        FinishedDie d = (FinishedDie)o;
-        return this.value == d.value;
-    }
-
-    /**
      * Returns the string representation of the dice ("one"... "six")
      */
     @Override

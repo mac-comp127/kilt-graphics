@@ -18,7 +18,7 @@ public class FinishedDiceRoller {
         for (int i = 0; i < 1000000; i++) {
             d1.roll();
             d2.roll();
-            if (d1.equals(d2)) {
+            if (d1.getValue() == d2.getValue()) {
                 matches++;
             }
         }
