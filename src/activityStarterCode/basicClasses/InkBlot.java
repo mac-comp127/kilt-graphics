@@ -49,9 +49,9 @@ public class InkBlot {
      * @return a Color object.
      */
     private Color getColor(RandomWalk red, RandomWalk green, RandomWalk blue) {
-        int r = Math.abs(red.advanceValue() % 256);
-        int g = Math.abs(green.advanceValue() % 256);
-        int b = Math.abs(blue.advanceValue() % 256);
+        int r = red.advanceValue();
+        int g = green.advanceValue();
+        int b = blue.advanceValue();
         if(((r >= 0 && r < 256) && (g>=0 && g<256)) && b>=0 && b<256) {
             return new Color(r,g,b);
         } else {
