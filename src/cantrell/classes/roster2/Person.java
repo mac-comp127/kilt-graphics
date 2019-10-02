@@ -1,11 +1,11 @@
 package cantrell.classes.roster2;
 
-public class Name {
+public class Person {
     private String givenName;
     private String familyName;
     private boolean familyNameFirst;
 
-    public Name(String givenName, String familyName, boolean familyNameFirst) {
+    public Person(String givenName, String familyName, boolean familyNameFirst) {
         this.givenName = givenName;
         this.familyName = familyName;
         this.familyNameFirst = familyNameFirst;
@@ -27,7 +27,6 @@ public class Name {
         }
     }
 }
-
 
 
 

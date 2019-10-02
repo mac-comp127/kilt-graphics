@@ -4,12 +4,20 @@ import java.util.List;
 
 public class Roster {
     public static void main(String[] args) {
-        List<String> givenNames = List.of("Marjane", "Hayao", "Chuck");
+        List<String> givenNames  = List.of("Marjane", "Hayao",    "Chuck");
         List<String> familyNames = List.of("Satrapi", "Miyazaki", "Jones");
 
-        printRoster(givenNames, familyNames);
-
         greetEveryone(givenNames);
+
+        System.out.println();
+        System.out.println("Roster:");
+        printRoster(givenNames, familyNames);
+    }
+
+    private static void printRoster(List<String> givenNames, List<String> familyNames) {
+        for (int n = 0; n < givenNames.size(); n++) {
+            System.out.println(givenNames.get(n) + " " + familyNames.get(n));
+        }
     }
 
     private static void greetEveryone(List<String> givenNames) {
@@ -17,10 +25,9 @@ public class Roster {
             System.out.println("Hi, " + name + "!");
         }
     }
-
-    private static void printRoster(List<String> givenNames, List<String> familyNames) {
-        for (int i = 0; i < familyNames.size(); i++) {
-            System.out.println(givenNames.get(i) + " " + familyNames.get(i));
-        }
-    }
 }
+
+
+
+
+

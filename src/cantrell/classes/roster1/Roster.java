@@ -4,25 +4,32 @@ import java.util.List;
 
 public class Roster {
     public static void main(String[] args) {
-        List<Name> names = List.of(
-            new Name("Marjane", "Satrapi"),
-            new Name("Hayao", "Miyazaki"),
-            new Name("Chuck", "Jones"));
+        List<Person> people = List.of(
+            new Person("Marjane", "Satrapi"),
+            new Person("Hayao", "Miyazaki"),
+            new Person("Chuck", "Jones"));
 
-        printRoster(names);
+        greetEveryone(people);
 
-        greetEveryone(names);
+        System.out.println();
+        System.out.println("Roster:");
+        printRoster(people);
     }
 
-    private static void greetEveryone(List<Name> names) {
-        for (Name name : names) {
-            System.out.println("Hi, " + name.getGivenName() + "!");
+    private static void printRoster(List<Person> people) {
+        for (Person person : people) {
+            System.out.println(person.getFamilyName() + " " + person.getGivenName());
         }
     }
 
-    private static void printRoster(List<Name> names) {
-        for (Name name : names) {
-            System.out.println(name.getGivenName() + " " + name.getFamilyName());
+    private static void greetEveryone(List<Person> people) {
+        for (Person person : people) {
+            System.out.println("Hi, " + person.getGivenName() + "!");
         }
     }
 }
+
+
+
+
+

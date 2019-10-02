@@ -1,10 +1,10 @@
 package cantrell.classes.roster1;
 
-public class Name {
+public class Person {
     private String givenName;
     private String familyName;
 
-    public Name(String givenName, String familyName) {
+    public Person(String givenName, String familyName) {
         this.givenName = givenName;
         this.familyName = familyName;
     }
@@ -17,3 +17,4 @@ public class Name {
         return familyName;
     }
 }
+
