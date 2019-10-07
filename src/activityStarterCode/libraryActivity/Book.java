@@ -40,7 +40,17 @@ public class Book {
      * @return true if the requested book was checked out, and false if the book could not be checked out.
      */
     public boolean checkOut() {
-        return (this.isAvailable ? !(this.isAvailable = false) : this.isAvailable);
+        if(this.isAvailable) {
+            this.isAvailable = false;
+            return true;
+        } else {
+            return this.isAvailable;
+        }
+        /* Fun challenge: The following single line of code does the same thing as the six lines above.
+            What looks unfamiliar to you? Can you figure out what the different parts are? What
+            are they each doing?
+         */
+        //return (this.isAvailable ? !(this.isAvailable = false) : this.isAvailable);
     }
 
     /**
@@ -51,6 +61,16 @@ public class Book {
      * @return true if the book was checked in, and false if the book could not be checked in.
      */
     public boolean checkIn() {
-        return (this.isAvailable ? !this.isAvailable : (this.isAvailable = true));
+        if(this.isAvailable) {
+            return false;
+        } else {
+            this.isAvailable = true;
+            return this.isAvailable;
+        }
+        /* Fun challenge: The following single line of code does the same thing as the six lines above.
+            What looks unfamiliar to you? Can you figure out what the different parts are? What
+            are they each doing?
+         */
+        //return (this.isAvailable ? !this.isAvailable : (this.isAvailable = true));
     }
 }
