@@ -197,7 +197,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    Rectangle2D getBounds() {
+    public Rectangle2D getBounds() {
         return shape.getBounds2D();
     }
 

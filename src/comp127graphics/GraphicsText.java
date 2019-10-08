@@ -165,7 +165,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     @Override
-    Rectangle2D getBounds() {
+    public Rectangle2D getBounds() {
         return getTextShape().getBounds2D();
     }
 }

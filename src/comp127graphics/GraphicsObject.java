@@ -87,7 +87,7 @@ public abstract class GraphicsObject {
     /**
      * For internal use. Returns an axis-aligned bounding rectangle for the graphical object.
      */
-    abstract Rectangle2D getBounds();
+    public abstract Rectangle2D getBounds();
 
     // ------ Observers ------
 

@@ -107,7 +107,7 @@ public class Image extends GraphicsObject {
     }
 
     @Override
-    Rectangle2D getBounds() {
+    public Rectangle2D getBounds() {
         return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
     }
 

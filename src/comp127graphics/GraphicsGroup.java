@@ -245,7 +245,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Returns an axis aligned bounding rectangle for the graphical object in canvas coordinates.
      */
-    Rectangle2D getBounds() {
+    public Rectangle2D getBounds() {
         return new Rectangle2D.Double(
             this.x + bounds.getX(),
             this.y + bounds.getY(),

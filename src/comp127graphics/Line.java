@@ -142,7 +142,7 @@ public class Line extends GraphicsObject implements Strokable {
         return shape.contains(x, y);
     }
 
-    Rectangle2D getBounds() {
+    public Rectangle2D getBounds() {
         double left = Math.min(getX1(), getX2());
         double top = Math.min(getY1(), getY2());
         return new Rectangle2D.Double(left, top, Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
