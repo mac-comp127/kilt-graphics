@@ -4,6 +4,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +25,7 @@ import java.util.List;
  */
 public class Polygon extends GraphicsObject implements Strokable, Fillable {
 
-    private java.awt.Polygon shape;
+    private GeneralPath shape;
     private Paint fillColor;
     private Paint strokeColor;
     private boolean isFilled;
@@ -33,6 +36,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     private double y;
     private double width;
     private double height;
+    private int vertexCount;
 
     /**
      * Convenience method to create a triangle from three individual coordinates.
@@ -57,17 +61,21 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
             throw new IllegalArgumentException("Not enough points to make a polygon: " + points.size() + " < 3");
         }
 
-        int[] xPoints = points.stream().mapToInt((p) -> (int) Math.round(p.getX())).toArray();
-        int[] yPoints = points.stream().mapToInt((p) -> (int) Math.round(p.getY())).toArray();
+        shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
 
-        var xStats = Arrays.stream(xPoints).summaryStatistics();
-        var yStats = Arrays.stream(yPoints).summaryStatistics();
-        x = xStats.getMin();
-        y = yStats.getMin();
-        width = xStats.getMax() - x;
-        height = yStats.getMax() - y;
+        shape.moveTo(points.get(0).getX(), points.get(0).getY());
+        for (Point point : points.subList(1, points.size())) {
+            shape.lineTo(point.getX(), point.getY());
+        }
+        shape.closePath();
 
-        shape = new java.awt.Polygon(xPoints, yPoints, points.size());
+        Rectangle shapeBounds = shape.getBounds();
+        x = shapeBounds.getX();
+        y = shapeBounds.getY();
+        width = shapeBounds.getWidth();
+        height = shapeBounds.getHeight();
+        vertexCount = points.size();
+
         fillColor = Color.black;
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
@@ -179,7 +187,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     public void setPosition(double x, double y) {
         double dx = x - getX();
         double dy = y - getY();
-        shape.translate((int) Math.round(dx), (int) Math.round(dy)); // TODO: int conversion here will cause x/y to drift from shape
+        shape.transform(AffineTransform.getTranslateInstance(dx, dy));
         this.x = x;
         this.y = y;
         changed();
@@ -224,6 +232,6 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      */
     @Override
     public String toString() {
-        return "Polygon with " + shape.npoints + " points at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
+        return "Polygon with " + vertexCount + " points at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
     }
 }
