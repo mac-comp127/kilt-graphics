@@ -48,6 +48,13 @@ public final class Point {
     }
 
     /**
+     * Returns the unit vector at the given angle in radians.
+     */
+    public static Point atAngle(double theta) {
+        return new Point(Math.cos(theta), Math.sin(theta));
+    }
+
+    /**
      * The vertical position of this point.
      */
     public double getX() {
