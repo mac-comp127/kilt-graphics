@@ -11,31 +11,32 @@ public class AnimationsTest {
     public static void main(String[] args) {
         CanvasWindow canvas = new CanvasWindow("Animations", 600, 400);
 
-        Ellipse obj0 = new Ellipse(50, 300, 60, 60);
-        obj0.setStrokeColor(new Color(0x571B7A));
-        obj0.setFillColor(new Color(0x98DF609E, true));
-        obj0.setStrokeWidth(4);
-        canvas.add(obj0);
+        Ellipse pinkCircle = new Ellipse(50, 300, 60, 60);
+        pinkCircle.setStrokeColor(new Color(0x571B7A));
+        pinkCircle.setFillColor(new Color(0x98DF609E, true));
+        pinkCircle.setStrokeWidth(4);
+        canvas.add(pinkCircle);
 
-        Polygon obj1 = new Polygon(
+        Polygon blueTriangle = new Polygon(
             new Point(450, 360),
             new Point(500, 290),
             new Point(550, 360));
-        obj1.setStrokeColor(new Color(0x335E7A));
-        obj1.setFillColor(new Color(0x834139DF, true));
-        obj1.setStrokeWidth(3);
-        canvas.add(obj1);
+        blueTriangle.setStrokeColor(new Color(0x335E7A));
+        blueTriangle.setFillColor(new Color(0x834139DF, true));
+        blueTriangle.setStrokeWidth(3);
+        canvas.add(blueTriangle);
 
-        Rectangle obj2 = new Rectangle(290, 190, 20, 20);
-        obj2.setStrokeColor(new Color(0xE39B24));
-        obj2.setFillColor(new Color(0x83FFFF00, true));
-        obj2.setStrokeWidth(2);
-        canvas.add(obj2);
+        Rectangle yellowSquare = new Rectangle(290, 190, 20, 20);
+        yellowSquare.setStrokeColor(new Color(0xE39B24));
+        yellowSquare.setFillColor(new Color(0x83FFFF00, true));
+        yellowSquare.setStrokeWidth(2);
+        canvas.add(yellowSquare);
 
         Animator animator = new Animator(canvas);
 
-        animator.add(new LinearAnimation(obj0, 10, -100, 2.5));
-        animator.add(new LinearAnimation(obj1, -10, -100, 3.5));
+        animator.add(new LinearAnimation(pinkCircle, 70, -100, 1.0));
+        animator.add(new LinearAnimation(blueTriangle, -40, -100, 2.5));
+        animator.add(new LinearAnimation(yellowSquare, 0, 150, 0.5));
 
         animator.run();
     }
