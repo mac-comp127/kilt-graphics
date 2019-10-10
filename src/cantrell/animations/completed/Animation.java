@@ -1,7 +1,5 @@
 package cantrell.animations.completed;
 
-import comp127graphics.GraphicsObject;
-
 public interface Animation {
     /**
      * Advance the animation by one discrete time step.

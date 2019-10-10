@@ -3,7 +3,6 @@ package cantrell.animations.starterCode;
 import comp127graphics.*;
 
 import java.awt.Color;
-import java.util.List;
 
 public class AnimationsTest {
     private static final double GRAVITY = 2000;

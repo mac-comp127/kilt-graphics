@@ -28,10 +28,10 @@ public class WanderingAnimation implements Animation {
         target.moveBy(Point.atAngle(direction).scale(dt * speed));
 
         direction += dt * turnRate;
-        turnRate += dt
-            * wiggliness
-            * ((rand.nextFloat() - 0.5) * 2  // -1...1
-                - this.turnRate * 0.02);     // counteract current turnRate to keep near 0
+        turnRate +=
+            dt * wiggliness
+               * ((rand.nextFloat() - 0.5) * 2  // -1...1
+                    - this.turnRate * 0.02);    // counteract current turnRate to keep near 0
     }
 
     @Override

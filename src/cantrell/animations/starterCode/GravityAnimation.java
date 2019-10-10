@@ -2,9 +2,6 @@ package cantrell.animations.starterCode;
 
 import comp127graphics.GraphicsObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @SuppressWarnings("WeakerAccess")
 public class GravityAnimation {
     private final GraphicsObject target;
