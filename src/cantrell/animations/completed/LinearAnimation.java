@@ -2,6 +2,9 @@ package cantrell.animations.completed;
 
 import comp127graphics.GraphicsObject;
 
+/**
+ * Animates an object along a straight line segment at a constant speed.
+ */
 @SuppressWarnings("NonAsciiCharacters")
 public class LinearAnimation implements Animation {
     private final GraphicsObject target;

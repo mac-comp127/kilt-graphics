@@ -5,6 +5,9 @@ import comp127graphics.CanvasWindow;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Applies a group of Animations to graphics objects in a canvas.
+ */
 public class Animator {
     private static final double FRAME_RATE = 60;
 
@@ -33,6 +36,8 @@ public class Animator {
                 }
             }
             canvas.draw();
+
+            // Account for time spent drawing to keep a more stable frame rate
             canvas.pause(Math.max(0, nextFrameTime - System.currentTimeMillis()));
         } while (stillAnimating);
     }

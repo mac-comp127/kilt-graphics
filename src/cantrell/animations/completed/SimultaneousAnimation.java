@@ -2,6 +2,9 @@ package cantrell.animations.completed;
 
 import java.util.List;
 
+/**
+ * Runs several animations at once. The animation completes when all the sub-animations are complete.
+ */
 public class SimultaneousAnimation implements Animation {
     private final List<Animation> animations;
 

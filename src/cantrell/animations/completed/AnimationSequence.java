@@ -2,6 +2,10 @@ package cantrell.animations.completed;
 
 import java.util.List;
 
+/**
+ * Several animations played sequentially. When one animation is complete, the next in the list
+ * starts. When all animations in the list and complete, the whole sequence is complete.
+ */
 public class AnimationSequence implements Animation {
     private final List<Animation> animations;
     private int currentIndex = 0;

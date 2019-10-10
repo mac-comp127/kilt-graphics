@@ -5,6 +5,9 @@ import comp127graphics.Point;
 
 import java.util.Random;
 
+/**
+ * Animates an object moving at a constant speed with a randomly varying direction.
+ */
 public class WanderingAnimation implements Animation {
     private final GraphicsObject target;
     private final double speed, wiggliness;
