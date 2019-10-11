@@ -21,6 +21,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     private Paint textColor;
     private Shape textShape;  // lazily initialized, updated when painted
     private boolean filled = true;
+    private FontMetrics metrics;
 
     /**
      * Creates drawable text at position (x,y)
@@ -60,12 +61,8 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         // invisible dummy window and uses its graphics. We recompute the text's shape when it's
         // actually drawn in a real window, in case the real graphics context is different.
         if (textShape == null) {
-            JFrame dummyFrame = new JFrame();
-            dummyFrame.setUndecorated(true);
-            dummyFrame.setVisible(true);
-            recomputeTextShape((Graphics2D) dummyFrame.getGraphics());
-            dummyFrame.setVisible(false);
-            dummyFrame.dispose();
+            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+            recomputeTextShape((Graphics2D) img.getGraphics());
         }
         return textShape;
     }
@@ -73,6 +70,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     @Override
     protected void changed() {
         textShape = null;
+        metrics = null;
         super.changed();
     }
 
@@ -144,20 +142,21 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     public double getWidth() {
-        FontMetrics metrics = getFontMetrics();
-        return metrics.stringWidth(text);
+        return getFontMetrics().stringWidth(text);
     }
 
     public double getHeight() {
-        FontMetrics metrics = getFontMetrics();
-        return metrics.getHeight();
+        return getFontMetrics().getHeight();
     }
 
     private FontMetrics getFontMetrics() {
-        BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = (Graphics2D) img.getGraphics();
-        g.setFont(font);
-        return g.getFontMetrics();
+        if (metrics == null) {
+            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = (Graphics2D) img.getGraphics();
+            g.setFont(font);
+            metrics = g.getFontMetrics();
+        }
+        return metrics;
     }
 
     public boolean testHit(double x, double y) {
