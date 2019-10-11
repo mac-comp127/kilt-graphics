@@ -18,8 +18,8 @@ import java.util.Objects;
  */
 public class Image extends GraphicsObject {
     private BufferedImage img;
-    private double x;
-    private double y;
+    private double x,y;
+    private double maxWidth = Double.POSITIVE_INFINITY, maxHeight = Double.POSITIVE_INFINITY;
     private String path;
 
     private static final Map<String,BufferedImage> imageCache = new HashMap<>();
@@ -74,9 +74,31 @@ public class Image extends GraphicsObject {
         this.img = loadImage(path);
     }
 
+    /**
+     * Causes the image to shrink (preserving aspect ratio) if the image width is larger than the
+     * given maximum width.
+     */
+    public void setMaxWidth(double maxWidth) {
+        this.maxWidth = maxWidth;
+    }
+
+    /**
+     * Causes the image to shrink (preserving aspect ratio) if the image height is larger than the
+     * given maximum height.
+     */
+    public void setMaxHeight(double maxHeight) {
+        this.maxHeight = maxHeight;
+    }
+
     protected void draw(Graphics2D gc) {
         if (img != null) {
-            gc.drawImage(img, (int) Math.round(x), (int) Math.round(y), null);
+            gc.drawImage(
+                img,
+                (int) Math.round(x),
+                (int) Math.round(y),
+                (int) Math.round(getWidth()),
+                (int) Math.round(getHeight()),
+                null);
         }
     }
 
@@ -95,16 +117,41 @@ public class Image extends GraphicsObject {
     }
 
     /**
-     * Get the width of the image
+     * Get the width of the rendered image as it will appear on the screen. Affected by the size of
+     * the image as well as setMaxWidth() and setMaxHeight().
      */
     public double getWidth() {
+        return getImageWidth() * getScaleToFit();
+    }
+
+    /**
+     * Get the height of the rendered image as it will appear on the screen. Affected by the size of
+     * the image as well as setMaxWidth() and setMaxHeight().
+     */
+    public double getHeight() {
+        return getImageHeight() * getScaleToFit();
+    }
+
+    private double getScaleToFit() {
+        double width = getImageWidth(), height = getImageHeight();
+        return Math.min(
+            1,
+            Math.min(
+                maxWidth / getImageWidth(),
+                maxHeight / getImageHeight()));
+    }
+
+    /**
+     * Get the width of the underlying image.
+     */
+    public double getImageWidth() {
         return img == null ? 0 : img.getWidth();
     }
 
     /**
-     * Get the height of the image
+     * Get the height of the underlying image.
      */
-    public double getHeight() {
+    public double getImageHeight() {
         return img == null ? 0 : img.getHeight();
     }
 
