@@ -85,6 +85,22 @@ public abstract class GraphicsObject {
     public abstract boolean testHit(double x, double y);
 
     /**
+     * Returns the topmost graphical object that touches position x, y. If no such object exists,
+     * returns null. If this GraphicsObject has child elements, this method might return a child.
+     *
+     * @param x position in the coordinate space of this object’s container
+     * @param y position in the coordinate space of this object’s container
+     * @return object at (x,y) or null if it does not exist.
+     */
+    public GraphicsObject getElementAt(double x, double y) {
+        if (testHit(x, y)) {
+            return this;
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * For internal use. Returns an axis-aligned bounding rectangle for the graphical object.
      */
     public abstract Rectangle2D getBounds();
