@@ -119,15 +119,24 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Returns the topmost graphical object underneath position x, y. If no such object exists, it returns null.
+     * Returns the topmost graphical object that touches the given position. If no such object exists, returns null.
      *
-     * @param x position in the coordinate space of the container of this group
-     * @param y position in the coordinate space of the container of this group
+     * @param p position in the coordinate space of the container of this group
+     * @return object at (x,y) or null if it does not exist.
+     */
+    public GraphicsObject getElementAt(Point p) {
+        return getElementAt(p.getX(), p.getY());
+    }
+
+    /**
+     * Returns the topmost graphical object that touches position x, y. If no such object exists, returns null.
+     *
+     * @param x position in the coordinate space of this group
+     * @param y position in the coordinate space of this group
      * @return object at (x,y) or null if it does not exist.
      */
     public GraphicsObject getElementAt(double x, double y) {
-        Iterator<GraphicsObject> it = gObjects.descendingIterator();
-        while (it.hasNext()) {
+        for (Iterator<GraphicsObject> it = gObjects.descendingIterator(); it.hasNext(); ) {
             GraphicsObject obj = it.next();
             if (obj.testHit(x - this.x, y - this.y)) {
                 return obj;
