@@ -5,10 +5,10 @@ import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -18,39 +18,66 @@ import java.util.Objects;
  */
 public class Image extends GraphicsObject {
     private BufferedImage img;
-    private int x;
-    private int y;
-    private String filePath;
+    private double x;
+    private double y;
+    private String path;
+
+    private static final Map<String,BufferedImage> imageCache = new HashMap<>();
+
+    private static BufferedImage loadImage(String path) {
+        synchronized (imageCache) {
+            BufferedImage image = imageCache.get(path);
+            if (image == null) {
+                try {
+                    System.out.println("Loading image /" + path);
+                    InputStream resource = Image.class.getResourceAsStream("/" + path);
+                    if (resource == null) {
+                        throw new IOException("No resource named /" + path);
+                    }
+                    image = ImageIO.read(resource);
+                    imageCache.put(path, image);
+                } catch (IOException e) {
+                    System.err.println("Could not load image from " + path + ": " + e);
+                }
+            }
+            return image;
+        }
+    }
+
+    /**
+     * Creates an Image placeholder with no current image.
+     */
+    public Image(double x, double y) {
+        this.x = x;
+        this.y = y;
+    }
 
     /**
      * Creates a bitmap image from the given file.
      * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP
      *
-     * @param x        position
-     * @param y        position
-     * @param filePath filepath to image file to load.
+     * @param path path of image file to load, relative to the res/ directory.
      */
-    public Image(int x, int y, String filePath) {
+    public Image(double x, double y, String path) {
         this.x = x;
         this.y = y;
-        this.filePath = filePath;
+        setImagePath(path);
+    }
 
-        try {
-            Path path = Paths.get(filePath);
-            path = path.toAbsolutePath();
-            File file = new File(path.toString());
-            if (!file.exists()) {
-                throw new IOException(path + " does not exist");
-            }
-            img = ImageIO.read(file);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+    /**
+     * Changes the image displayed by this graphics element.
+     *
+     * @param path path of image file to load, relative to the res/ directory.
+     */
+    public void setImagePath(String path) {
+        this.path = path;
+        this.img = loadImage(path);
     }
 
     protected void draw(Graphics2D gc) {
-        gc.drawImage(img, x, y, null);
+        if (img != null) {
+            gc.drawImage(img, (int) Math.round(x), (int) Math.round(y), null);
+        }
     }
 
     /**
@@ -71,14 +98,14 @@ public class Image extends GraphicsObject {
      * Get the width of the image
      */
     public double getWidth() {
-        return img.getWidth();
+        return img == null ? 0 : img.getWidth();
     }
 
     /**
      * Get the height of the image
      */
     public double getHeight() {
-        return img.getHeight();
+        return img == null ? 0 : img.getHeight();
     }
 
     public void setPosition(int x, int y) {
@@ -101,9 +128,9 @@ public class Image extends GraphicsObject {
      */
     public boolean testHit(double x, double y) {
         return x >= this.x
-                && x <= this.x + img.getWidth()
+                && x <= this.x + getWidth()
                 && y >= this.y
-                && y <= this.y + img.getHeight();
+                && y <= this.y + getHeight();
     }
 
     @Override
@@ -111,6 +138,9 @@ public class Image extends GraphicsObject {
         return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
     }
 
+    /**
+     * Two images are equal if they are the same file and are at the same position.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -122,21 +152,16 @@ public class Image extends GraphicsObject {
         Image image = (Image) o;
         return x == image.x
                 && y == image.y
-                && filePath.equals(image.filePath);
+                && path.equals(image.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, filePath);
+        return Objects.hash(x, y, path);
     }
-
-    /**
-     * Two images are equal if they are the same file and are at the same position.
-     */
-
 
     @Override
     public String toString() {
-        return "Image at position (" + x + ", " + y + ") with file " + filePath;
+        return "Image at position (" + x + ", " + y + ") with file " + path;
     }
 }
