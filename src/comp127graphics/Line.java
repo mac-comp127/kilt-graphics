@@ -119,11 +119,25 @@ public class Line extends GraphicsObject implements Strokable {
     }
 
     /**
+     * Sets the line's starting position to the given point without affecting the end position.
+     */
+    public void setStartPosition(Point p) {
+        setStartPosition(p.getX(), p.getY());
+    }
+
+    /**
      * Sets the line's ending position to (x, y) without affecting the start position.
      */
     public void setEndPosition(double x, double y) {
         shape.setLine(shape.getX1(), shape.getY1(), x, y);
         changed();
+    }
+
+    /**
+     * Sets the line's ending position to the given point without affecting the end position.
+     */
+    public void setEndPosition(Point p) {
+        setEndPosition(p.getX(), p.getY());
     }
 
     /**
