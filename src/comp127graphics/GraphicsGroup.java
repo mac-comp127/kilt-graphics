@@ -21,7 +21,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Holds the objects to be drawn in calls to paintComponent
      */
-    private ConcurrentLinkedDeque<GraphicsObject> gObjects;
+    private ConcurrentLinkedDeque<GraphicsObject> children;
 
     /**
      * X position of group in canvas space
@@ -54,7 +54,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public GraphicsGroup(double x, double y) {
         this.x = x;
         this.y = y;
-        gObjects = new ConcurrentLinkedDeque<GraphicsObject>();
+        children = new ConcurrentLinkedDeque<GraphicsObject>();
         bounds = new Rectangle2D.Double(0, 0, -1, -1);
     }
 
@@ -73,7 +73,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     public void add(GraphicsObject gObject) {
         gObject.addObserver(this);
-        gObjects.add(gObject);
+        children.add(gObject);
         recomputeBounds();
         changed();
     }
@@ -98,7 +98,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     public void remove(GraphicsObject gObject) {
         gObject.removeObserver(this);
-        boolean success = gObjects.remove(gObject);
+        boolean success = children.remove(gObject);
         if (!success) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
         }
@@ -110,7 +110,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * Removes all of the objects in this group
      */
     public void removeAll() {
-        Iterator<GraphicsObject> it = gObjects.iterator();
+        Iterator<GraphicsObject> it = children.iterator();
         while (it.hasNext()) {
             GraphicsObject obj = it.next();
             obj.removeObserver(this);
@@ -136,7 +136,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     @Override
     public GraphicsObject getElementAt(double x, double y) {
-        for (Iterator<GraphicsObject> it = gObjects.descendingIterator(); it.hasNext(); ) {
+        for (Iterator<GraphicsObject> it = children.descendingIterator(); it.hasNext(); ) {
             GraphicsObject obj = it.next();
             GraphicsObject hit = obj.getElementAt(x - this.x, y - this.y);
             if (hit != null) {
@@ -161,7 +161,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         subCanvas.setBackground(new Color(1, 1, 1, 0));
         subCanvas.clearRect(0, 0, (int) Math.ceil(bounds.getX() + bounds.getWidth()), (int) Math.ceil(bounds.getY() + bounds.getHeight()));
 
-        for (GraphicsObject obj : gObjects) {
+        for (GraphicsObject obj : children) {
             obj.draw(subCanvas);
         }
         // We need to draw on the sub canvas so that getElement at works properly
@@ -169,7 +169,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         //gc.drawImage(imgBuffer, (int)x, (int)y, null);
 
         gc.translate(x, y);
-        for (GraphicsObject obj : gObjects) {
+        for (GraphicsObject obj : children) {
             obj.draw(gc);
         }
         gc.translate(-x, -y);
@@ -239,12 +239,12 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         GraphicsGroup that = (GraphicsGroup) o;
         return Double.compare(that.x, x) == 0
                 && Double.compare(that.y, y) == 0
-                && gObjects.equals(that.gObjects);
+                && children.equals(that.children);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, gObjects);
+        return Objects.hash(x, y, children);
     }
 
     @Override
@@ -265,7 +265,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     private void recomputeBounds() {
         bounds.setRect(0, 0, 0, 0);
-        for (GraphicsObject child : gObjects) {
+        for (GraphicsObject child : children) {
             Rectangle2D.union(bounds, child.getBounds(), bounds);
         }
     }
@@ -274,7 +274,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * Returns an iterator over the contents of this group, in the order they will be drawn.
      */
     public Iterator<GraphicsObject> iterator() {
-        return gObjects.iterator();
+        return children.iterator();
     }
 
     /**
@@ -305,7 +305,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     private void updateBounds() {
         Rectangle2D totalBounds = null;
-        for (GraphicsObject gObject : gObjects) {
+        for (GraphicsObject gObject : children) {
             Rectangle2D curBounds = gObject.getBounds();
             if (curBounds != null) {
                 if (totalBounds != null) {
