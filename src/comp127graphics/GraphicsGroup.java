@@ -74,7 +74,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void add(GraphicsObject gObject) {
         gObject.addObserver(this);
         gObjects.add(gObject);
-        Rectangle2D.union(bounds, gObject.getBounds(), bounds);
+        recomputeBounds();
         changed();
     }
 
@@ -102,6 +102,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         if (!success) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
         }
+        recomputeBounds();
         changed();
     }
 
@@ -115,6 +116,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
             obj.removeObserver(this);
             it.remove();
         }
+        recomputeBounds();
         changed();
     }
 
@@ -259,6 +261,13 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
             this.y + bounds.getY(),
             bounds.getWidth(),
             bounds.getHeight());
+    }
+
+    private void recomputeBounds() {
+        bounds.setRect(0, 0, 0, 0);
+        for (GraphicsObject child : gObjects) {
+            Rectangle2D.union(bounds, child.getBounds(), bounds);
+        }
     }
 
     /**
