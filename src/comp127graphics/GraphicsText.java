@@ -16,7 +16,7 @@ import java.awt.image.BufferedImage;
 public class GraphicsText extends GraphicsObject implements Fillable {
 
     private String text;
-    private float x, y;
+    private double x, y;
     private Font font;
     private Paint textColor;
     private Shape textShape;  // lazily initialized, updated when painted
@@ -26,7 +26,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     /**
      * Creates drawable text at position (x,y)
      */
-    public GraphicsText(String text, float x, float y) {
+    public GraphicsText(String text, double x, double y) {
         this.x = x;
         this.y = y;
         this.text = text;
@@ -48,6 +48,9 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     private Shape recomputeTextShape(Graphics2D gc) {
+        if (text.isEmpty()) {  // textLayout doesn't like empty strings
+            return textShape = new Rectangle2D.Double(0, 0, 0, 0);
+        }
         FontRenderContext frc = gc.getFontRenderContext();
         TextLayout textLayout = new TextLayout(text, font, frc);
         AffineTransform moveTo = AffineTransform.getTranslateInstance(x, y);
@@ -75,8 +78,8 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     public void setPosition(double x, double y) {
-        this.x = (float) x;
-        this.y = (float) y;
+        this.x = x;
+        this.y = y;
         changed();
     }
 
@@ -93,20 +96,20 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    public float getX() {
+    public double getX() {
         return x;
     }
 
-    public void setX(float x) {
+    public void setX(double x) {
         this.x = x;
         changed();
     }
 
-    public float getY() {
+    public double getY() {
         return y;
     }
 
-    public void setY(float y) {
+    public void setY(double y) {
         this.y = y;
         changed();
     }

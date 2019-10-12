@@ -145,12 +145,12 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
-    public float getStrokeWidth() {
+    public double getStrokeWidth() {
         return stroke.getLineWidth();
     }
 
-    public void setStrokeWidth(float width) {
-        stroke = new BasicStroke(width);
+    public void setStrokeWidth(double width) {
+        stroke = new BasicStroke((float) width);
         changed();
     }
 

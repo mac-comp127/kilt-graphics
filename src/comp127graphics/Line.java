@@ -55,12 +55,12 @@ public class Line extends GraphicsObject implements Strokable {
         setStroked(true);
     }
 
-    public float getStrokeWidth() {
+    public double getStrokeWidth() {
         return stroke.getLineWidth();
     }
 
-    public void setStrokeWidth(float width) {
-        stroke = new BasicStroke(width);
+    public void setStrokeWidth(double width) {
+        stroke = new BasicStroke((float) width);
         changed();
     }
 

@@ -34,10 +34,10 @@ public interface Strokable {
     /**
      * Returns the thickness of the stroke in pixels.
      */
-    float getStrokeWidth();
+    double getStrokeWidth();
 
     /**
      * Sets how thick the stroke is.
      */
-    void setStrokeWidth(float width);
+    void setStrokeWidth(double width);
 }
