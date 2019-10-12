@@ -101,7 +101,15 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * For internal use. Returns an axis-aligned bounding rectangle for the graphical object.
+     * Returns the width and height of this graphics object.
+     */
+    public Point getSize() {
+        Rectangle2D bounds = getBounds();
+        return new Point(bounds.getWidth(), bounds.getHeight());
+    }
+
+    /**
+     * Returns an axis-aligned bounding rectangle for this graphical object.
      */
     public abstract Rectangle2D getBounds();
 
