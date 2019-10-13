@@ -85,6 +85,16 @@ public abstract class GraphicsObject {
     public abstract boolean testHit(double x, double y);
 
     /**
+     * Returns true if the given point in the parent's coordinate space is within the bounds of this
+     * object. Note that testHit() actually checks the actual shape, whereas this method only tests
+     * the bounds. So, for example, a point in the upper left corner of an Ellipse’s bounding box
+     * could return true for isInBounds(), but false for testHit().
+     */
+    public boolean isInBounds(Point position) {
+        return getBounds().contains(position.getX(), position.getY());
+    }
+
+    /**
      * Returns the topmost graphical object that touches position x, y. If no such object exists,
      * returns null. If this GraphicsObject has child elements, this method might return a child.
      *

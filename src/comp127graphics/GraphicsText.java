@@ -31,7 +31,14 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         this.y = y;
         this.text = text;
         textColor = Color.BLACK;
-        font = new Font("SanSerif", Font.PLAIN, 14);
+        setFont(Font.SANS_SERIF, FontStyle.PLAIN, 14);
+    }
+
+    /**
+     * Creates an instance with null text at (0,0)
+     */
+    public GraphicsText() {
+        this(null, 0, 0);
     }
 
     protected void draw(Graphics2D gc) {
@@ -48,7 +55,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     private Shape recomputeTextShape(Graphics2D gc) {
-        if (text.isEmpty()) {  // textLayout doesn't like empty strings
+        if (text == null || text.isEmpty()) {  // textLayout doesn't like empty strings
             return textShape = new Rectangle2D.Double(0, 0, 0, 0);
         }
         FontRenderContext frc = gc.getFontRenderContext();
@@ -114,10 +121,45 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    public Font getFont() {
-        return font;
+    /**
+     * Changes the size of text displayed, preserving the font family and style.
+     */
+    public void setFontSize(double size) {
+        this.font = font.deriveFont((float) size);
+        changed();
     }
 
+    /**
+     * Changes the font style of text displayed, preserving the font family and size.
+     */
+    public void setFontStyle(FontStyle style) {
+        setFont(font.getFamily(), style, font.getSize());
+    }
+
+    /**
+     * Changes the size and style of the font while preserving the font family.
+     */
+    public void setFont(FontStyle style, double size) {
+        setFont(font.getFamily(), style, size);
+    }
+
+    /**
+     * Changes the font in which the text is rendered.
+     *
+     * @param fontFamily A font family name, such as "Helvetica"
+     */
+    public void setFont(String fontFamily, FontStyle style, double size) {
+        //noinspection MagicConstant
+        this.font = new Font(fontFamily, style.getAwtCode(), 0).deriveFont((float) size);
+        changed();
+    }
+
+    /**
+     * Changes the font in which the text is rendered.
+     *
+     * @deprecated Use setFont(family, style, size) instead
+     */
+    @Deprecated
     public void setFont(Font font) {
         this.font = font;
         changed();
@@ -145,6 +187,9 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     public double getWidth() {
+        if (text == null) {
+            return 0;
+        }
         return getFontMetrics().stringWidth(text);
     }
 

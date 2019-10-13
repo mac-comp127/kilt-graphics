@@ -8,7 +8,7 @@ public class VisualTest {
     // Graphics should still appear if main() exits without calling draw()
     private static final boolean IMMEDIATE_EXIT = false;
 
-    static boolean hitTestVisualization = false;
+    private static boolean hitTestVisualization = false;
 
     public static void main(String[] args) {
         GraphicsGroup group = new GraphicsGroup();
@@ -24,7 +24,7 @@ public class VisualTest {
         group.add(bigDot);
 
         GraphicsText text = new GraphicsText("Ahoy", 20, 60);
-        text.setFont(new Font("Avenir Next", 0, 42));
+        text.setFont("Avenir Next", FontStyle.BOLD_ITALIC, 42);
         text.setFillColor(Color.MAGENTA);
         group.add(text);
 

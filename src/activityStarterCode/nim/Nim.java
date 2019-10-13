@@ -2,6 +2,7 @@ package activityStarterCode.nim;
 
 import comp127graphics.CanvasWindow;
 import comp127graphics.Ellipse;
+import comp127graphics.FontStyle;
 import comp127graphics.GraphicsText;
 
 import java.awt.*;
@@ -36,7 +37,7 @@ public class Nim extends CanvasWindow implements MouseListener {
         super("Nim", 1000, 375);
         selectedIndex = -1;
         label = new GraphicsText(PLAYER1_TEXT, (float)STARTING_X, 50.0f);
-        label.setFont(new Font("SanSerif", Font.PLAIN, 24));
+        label.setFont(FontStyle.PLAIN, 24);
         add(label);
 
         //TODO: initialize the coins ArrayList.

@@ -193,13 +193,16 @@ public class CanvasWindow {
 
     /**
      * Returns the topmost graphical object underneath position x, y. If no such object exists it returns null.
-     *
-     * @param x position
-     * @param y position
-     * @return object at (x,y) or null if it does not exist.
      */
     public GraphicsObject getElementAt(double x, double y) {
         return content.getElementAt(x, y);
+    }
+
+    /**
+     * Returns the topmost graphical object underneath position x, y. If no such object exists it returns null.
+     */
+    public GraphicsObject getElementAt(Point position) {
+        return getElementAt(position.getX(), position.getY());
     }
 
 // TODO: Where in the course do we use this method? Can we delete it?
