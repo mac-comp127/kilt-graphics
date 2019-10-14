@@ -34,7 +34,7 @@ public class GameCharacter {
                 return this.getName() + " did not have enough mana for a fireball attack";
             }
         } else {
-            int damage = rand.nextInt(swordMaxDamage - swordMinDamage) + swordMinDamage;
+            int damage = rand.nextInt(swordMaxDamage - swordMinDamage + 1) + swordMinDamage;
             target.takeDamage(damage);
             return this.getName() + " struck " + target.getName() + " with a sword for "
                 + damage + " points of damage";
