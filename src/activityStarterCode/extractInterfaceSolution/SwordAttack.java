@@ -1,4 +1,4 @@
-package activityStarterCode.extractInterface.solution;
+package activityStarterCode.extractInterfaceSolution;
 
 import java.util.Random;
 

@@ -1,4 +1,4 @@
-package activityStarterCode.extractInterface.solution;
+package activityStarterCode.extractInterfaceSolution;
 
 public class GameCharacter {
     private final String name;

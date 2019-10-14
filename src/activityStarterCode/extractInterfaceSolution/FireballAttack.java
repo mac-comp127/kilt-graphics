@@ -1,4 +1,4 @@
-package activityStarterCode.extractInterface.solution;
+package activityStarterCode.extractInterfaceSolution;
 
 public class FireballAttack implements Attack {
     private final int damage, manaRequired;
