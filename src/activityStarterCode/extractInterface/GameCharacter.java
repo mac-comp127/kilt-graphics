@@ -12,6 +12,9 @@ public class GameCharacter {
     private final int fireballManaRequired;
 
     public GameCharacter(String name, int hitPoints, int mana, int swordMinDamage, int swordMaxDamage, int fireballDamage, int fireballManaRequired) {
+        if ((swordMinDamage != 0 || swordMaxDamage != 0) && (fireballDamage != 0 || fireballManaRequired != 0)) {
+            throw new IllegalArgumentException("Character cannot have both sword and fireball damage");
+        }
         this.name = name;
         this.hitPoints = hitPoints;
         this.mana = mana;
