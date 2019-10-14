@@ -72,7 +72,7 @@ public class InkBlot {
      * Note, the file type will be a "png" (portable network graphic) image.
      * Therefore it is recommended your filename ends with ".png"
      *
-     * Files will be written in your comp124-s18 directory (the same directory
+     * Files will be written in your comp127-s18 directory (the same directory
      * that new modules check-out to).
      * @param fileName - the name of the file to write to.
      */
