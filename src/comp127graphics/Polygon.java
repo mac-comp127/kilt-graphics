@@ -54,11 +54,29 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
      * You cannot make a polygon with fewer than 3 points.
      */
     public Polygon(List<Point> points) {
-        if (points == null) {
-            throw new NullPointerException("list of points must be non-null");
-        }
-        if (points.size() < 3) {
-            throw new IllegalArgumentException("Not enough points to make a polygon: " + points.size() + " < 3");
+        setVertices(points);
+
+        fillColor = Color.black;
+        strokeColor = Color.black;
+        isFilled = false;
+        setStrokeWidth(1.0);
+    }
+
+    /**
+     * Creates a polygon from vertices passed as separate arguments.
+     */
+    public Polygon(Point... points) {
+        this(List.of(points));
+    }
+
+    /**
+     * Changes the verices of this polygon, replacing any existing ones. The coordinates are
+     * relative to the polygon’s container; the method ignores (and then changes) the polygon’s
+     * current position.
+     */
+    public void setVertices(List<Point> points) {
+        if (points == null || points.isEmpty()) {
+            throw new NullPointerException("list of points must be non-null and non-empty");
         }
 
         shape = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.size());
@@ -76,18 +94,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
         height = shapeBounds.getHeight();
         vertexCount = points.size();
 
-        fillColor = Color.black;
-        strokeColor = Color.black;
-        stroke = new BasicStroke(1.0f);
-        isFilled = false;
-        isStroked = true;
-    }
-
-    /**
-     * Creates a polygon from vertices passed as separate arguments.
-     */
-    public Polygon(Point... points) {
-        this(List.of(points));
+        changed();
     }
 
     protected void draw(Graphics2D gc) {
@@ -150,7 +157,7 @@ public class Polygon extends GraphicsObject implements Strokable, Fillable {
     }
 
     public void setStrokeWidth(double width) {
-        stroke = new BasicStroke((float) width);
+        stroke = new BasicStroke((float) width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
         changed();
     }
 
