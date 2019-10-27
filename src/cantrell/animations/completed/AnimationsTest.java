@@ -17,7 +17,7 @@ public class AnimationsTest {
         pinkCircle.setStrokeWidth(4);
         canvas.add(pinkCircle);
 
-        Polygon blueTriangle = new Polygon(
+        Path blueTriangle = new Path(
             new Point(450, 360),
             new Point(500, 290),
             new Point(550, 360));

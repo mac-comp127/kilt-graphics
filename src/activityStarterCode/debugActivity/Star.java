@@ -2,7 +2,7 @@ package activityStarterCode.debugActivity;
 
 import comp127graphics.CanvasWindow;
 import comp127graphics.GraphicsGroup;
-import comp127graphics.Polygon;
+import comp127graphics.Path;
 import comp127graphics.Point;
 
 import java.awt.*;
@@ -19,7 +19,7 @@ public class Star extends GraphicsGroup {
         // translate the shape to be correctly centered)
         translateStarPoints(starPoints, 100, 100);
 
-        Polygon poly = new Polygon(starPoints);
+        Path poly = new Path(starPoints);
         poly.setFillColor(Color.YELLOW);
         poly.setFilled(true);
         add(poly);

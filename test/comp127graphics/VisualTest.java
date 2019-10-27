@@ -1,7 +1,6 @@
 package comp127graphics;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.util.List;
 
 public class VisualTest {
@@ -29,7 +28,7 @@ public class VisualTest {
         group.add(text);
 
         group.add(
-            new Polygon(List.of(
+            new Path(List.of(
                 new Point(23, 34),
                 new Point(34, 173),
                 new Point(243, 23),

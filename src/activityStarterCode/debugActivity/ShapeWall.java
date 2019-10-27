@@ -4,7 +4,7 @@ import comp127graphics.CanvasWindow;
 import comp127graphics.GraphicsGroup;
 import comp127graphics.GraphicsText;
 import comp127graphics.Point;
-import comp127graphics.Polygon;
+import comp127graphics.Path;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class ShapeWall extends GraphicsGroup {
         add(gt);
 
         List<Point> points = generatePoints(nSides);
-        Polygon poly = new Polygon(points);
+        Path poly = new Path(points);
         add(poly);
     }
 

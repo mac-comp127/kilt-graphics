@@ -2,7 +2,7 @@ package activityStarterCode.debugActivity;
 
 import comp127graphics.CanvasWindow;
 import comp127graphics.GraphicsGroup;
-import comp127graphics.Polygon;
+import comp127graphics.Path;
 import comp127graphics.Point;
 
 import java.awt.*;
@@ -48,7 +48,7 @@ public class FlashLogo extends GraphicsGroup {
 //        flashPoint.setLocation(135, 85);
 //        points.add(flashPoint);
 
-        Polygon poly = new Polygon(points);
+        Path poly = new Path(points);
         poly.setFillColor(Color.YELLOW);
         poly.setFilled(true);
         add(poly);
