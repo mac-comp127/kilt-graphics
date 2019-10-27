@@ -100,6 +100,13 @@ public class CanvasWindow {
     }
 
     /**
+     * Returns the center of the window’s visible content area.
+     */
+    public Point getCenter() {
+        return new Point(getWidth() / 2, getHeight() / 2);
+    }
+
+    /**
      * Changes the background color of the window.
      */
     public void setBackground(Paint color) {
