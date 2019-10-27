@@ -13,8 +13,8 @@ public class GraphingCalculator {
     private final List<FunctionPlot> plots;
     private Point origin;
     private double scale;
-    private double xmin, xmax, step;
-    private double parameter;
+    private double xmin, xmax, step;  // computed from origin + scale + size
+    private double parametricVariable;
     private Line xaxis, yaxis;
 
     public GraphingCalculator(int width, int height) {
@@ -22,12 +22,12 @@ public class GraphingCalculator {
         plots = new ArrayList<>();
 
         origin = canvas.getCenter();
-        scale = (canvas.getWidth() + canvas.getHeight()) / 8.0;
+        scale = Math.min(width, height) / 4.0;
 
         xaxis = createAxisLine();
         yaxis = createAxisLine();
 
-        recalculateGrid();
+        coordinatesChanged();
     }
 
     public void show(SimpleFunction function) {
@@ -41,15 +41,15 @@ public class GraphingCalculator {
 
         recolorPlots();
 
-        recalculateAll(plot);
+        recalculate(plot);
     }
 
-    public double getParameter() {
-        return parameter;
+    public double getParametricVariable() {
+        return parametricVariable;
     }
 
-    public void setParameter(double parameter) {
-        this.parameter = parameter;
+    public void setParametricVariable(double parametricVariable) {
+        this.parametricVariable = parametricVariable;
         recalculateAll();
         canvas.draw();
     }
@@ -62,7 +62,7 @@ public class GraphingCalculator {
         return axis;
     }
 
-    private void recalculateGrid() {
+    private void coordinatesChanged() {
         xaxis.setStartPosition(0, origin.getY());
         xaxis.setEndPosition(canvas.getWidth(), origin.getY());
         yaxis.setStartPosition(origin.getX(), 0);
@@ -74,11 +74,11 @@ public class GraphingCalculator {
     }
 
     private void recalculateAll() {
-        plots.forEach(this::recalculateAll);
+        plots.forEach(this::recalculate);
     }
 
-    private void recalculateAll(FunctionPlot plot) {
-        plot.recalculate(parameter, xmin, xmax, step, this::convertToScreenCoordinates);
+    private void recalculate(FunctionPlot plot) {
+        plot.recalculate(parametricVariable, xmin, xmax, step, this::convertToScreenCoordinates);
     }
 
     private Point convertToScreenCoordinates(Point equationPoint) {
