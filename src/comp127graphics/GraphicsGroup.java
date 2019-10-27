@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * A group of graphical objects that can be added, moved, and removed as a single unit.
@@ -250,6 +252,15 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     public Iterator<GraphicsObject> iterator() {
         return children.iterator();
+    }
+
+    void forEachDescendant(Point origin, BiConsumer<GraphicsObject,Point> callback) {
+        super.forEachDescendant(origin, callback);
+
+        Point groupOrigin = origin.add(getPosition());
+        for (GraphicsObject child : children) {
+            child.forEachDescendant(groupOrigin, callback);
+        }
     }
 
     /**

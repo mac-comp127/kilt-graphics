@@ -1,5 +1,7 @@
 package comp127graphics;
 
+import comp127graphics.ui.Button;
+
 import java.awt.Color;
 import java.util.List;
 
@@ -26,6 +28,8 @@ public class VisualTest {
         text.setFont("Avenir Next", FontStyle.BOLD_ITALIC, 42);
         text.setFillColor(Color.MAGENTA);
         group.add(text);
+
+        group.add(Button.withTitle("zongle!"));
 
         group.add(
             new Path(List.of(
@@ -92,7 +96,7 @@ public class VisualTest {
             canvas.add(dots);
 
             canvas.pause(pause);  // pause comes before draw, so you should initially see nothing
-            pause *= 0.9;
+            pause *= 0.8;
 
             if(IMMEDIATE_EXIT) {
                 return;

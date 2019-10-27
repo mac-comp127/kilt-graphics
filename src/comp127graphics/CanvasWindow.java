@@ -6,6 +6,7 @@ import comp127graphics.events.MouseMotionEvent;
 import comp127graphics.events.MouseMotionEventHandler;
 
 import javax.imageio.ImageIO;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import java.awt.*;
@@ -13,7 +14,9 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +42,7 @@ public class CanvasWindow {
     private final Canvas canvas;
     private final JFrame windowFrame;
     private final GraphicsGroup content = new GraphicsGroup();
+    private Set<JComponent> embeddedComponents = Set.of();
     private final Rectangle background;
 
     private boolean drawingInitiated = false;
@@ -103,7 +107,7 @@ public class CanvasWindow {
      * Returns the center of the window’s visible content area.
      */
     public Point getCenter() {
-        return new Point(getWidth() / 2, getHeight() / 2);
+        return new Point(getWidth() / 2.0, getHeight() / 2.0);
     }
 
     /**
@@ -139,7 +143,6 @@ public class CanvasWindow {
     /**
      * Removes the object from being drawn
      *
-     * @param gObject
      * @throws NoSuchElementException if gObject has not been added to the canvas
      */
     public void remove(GraphicsObject gObject) {
@@ -162,6 +165,9 @@ public class CanvasWindow {
         try {
             synchronized (repaintLock) {
                 drawingInitiated = true;
+
+                updateEmbeddedComponents();
+
                 if (EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
                     canvas.paintImmediately(canvas.getBounds());
                 } else {
@@ -172,6 +178,33 @@ public class CanvasWindow {
         } catch (InterruptedException ex) {
             /* Empty */
         }
+    }
+
+    private void updateEmbeddedComponents() {
+        Set<JComponent> updatedComponents = new LinkedHashSet<>();
+        content.forEachDescendant(Point.ORIGIN, (gobj, pos) -> {
+            JComponent component = gobj.getEmbeddedComponent();
+            if (component != null) {
+                component.setLocation(
+                    (int) Math.round(pos.getX()),
+                    (int) Math.round(pos.getY()));
+                updatedComponents.add(component);
+            }
+        });
+
+        for (JComponent existing : embeddedComponents) {
+            if (!updatedComponents.contains(existing)) {
+                canvas.remove(existing);
+            }
+        }
+
+        for (JComponent newComponent : updatedComponents) {
+            if (!embeddedComponents.contains(newComponent)) {
+                canvas.add(newComponent);
+            }
+        }
+
+        embeddedComponents = updatedComponents;
     }
 
     /**
@@ -283,6 +316,9 @@ public class CanvasWindow {
         }
     }
 
+    /**
+     * @deprecated Do not mix Swing and comp127graphics APIs
+     */
     public JFrame getWindowFrame() {
         return windowFrame;
     }
@@ -298,10 +334,10 @@ public class CanvasWindow {
         /**
          * Called automatically by Java to redraw the graphics
          */
-        public void paintComponent(Graphics page) {
-            super.paintComponent(page);
-
+        public void paintComponent(Graphics g) {
             synchronized (repaintLock) {
+                super.paintComponent(g);
+
                 // AWT can create multiple repaint events internally during the creation of a window,
                 // but we don't want to actually draw anything until the student has explicitly
                 // requested it with a draw(). This prevents partial drawing / flickers of content,
@@ -310,7 +346,7 @@ public class CanvasWindow {
                     return;
                 }
 
-                Graphics2D gc = (Graphics2D) page;
+                Graphics2D gc = (Graphics2D) g;
                 enableAntialiasing(gc);
                 content.draw(gc);
 

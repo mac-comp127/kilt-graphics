@@ -1,9 +1,11 @@
 package comp127graphics;
 
+import javax.swing.JComponent;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 /**
  * Abstract class representing some sort of graphical object that can be drawn and positioned in a canvaswindow.
@@ -122,6 +124,17 @@ public abstract class GraphicsObject {
      * Returns an axis-aligned bounding rectangle for this graphical object.
      */
     public abstract Rectangle2D getBounds();
+
+    void forEachDescendant(Point origin, BiConsumer<GraphicsObject,Point> callback) {
+        callback.accept(this, origin.add(getPosition()));
+    }
+
+    /**
+     * For internal use.
+     */
+    public JComponent getEmbeddedComponent() {
+        return null;
+    }
 
     // ------ Observers ------
 
