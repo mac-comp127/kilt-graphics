@@ -3,6 +3,7 @@ package comp127graphics;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
@@ -37,12 +38,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * Bounding rectangle around all of the graphicObjects contained in this group in window coordinates.
      */
     private Rectangle2D bounds;
-
-    /**
-     * Buffer to draw the sub graphics objects on
-     */
-    private BufferedImage imgBuffer;
-    private Graphics2D subCanvas;
 
     /**
      * Constructs a new group. Each group has its own local coordinate system. The group is
@@ -148,32 +143,12 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     @Override
     protected void draw(Graphics2D gc) {
-        // Don't bother drawing if nothing has been added or everything would be drawn off screen.
-        if (bounds.isEmpty()) {
-            return;
-        }
-        imgBuffer = new BufferedImage(
-                Math.max(1, (int) Math.ceil(bounds.getX() + bounds.getWidth())),
-                Math.max(1, (int) Math.ceil(bounds.getY() + bounds.getHeight())),
-                BufferedImage.TYPE_4BYTE_ABGR);
-        subCanvas = imgBuffer.createGraphics();
-        enableAntialiasing();
-        subCanvas.setBackground(new Color(1, 1, 1, 0));
-        subCanvas.clearRect(0, 0, (int) Math.ceil(bounds.getX() + bounds.getWidth()), (int) Math.ceil(bounds.getY() + bounds.getHeight()));
-
-        for (GraphicsObject obj : children) {
-            obj.draw(subCanvas);
-        }
-        // We need to draw on the sub canvas so that getElement at works properly
-
-        //gc.drawImage(imgBuffer, (int)x, (int)y, null);
-
+        AffineTransform savedTransform = gc.getTransform();
         gc.translate(x, y);
         for (GraphicsObject obj : children) {
             obj.draw(gc);
         }
-        gc.translate(-x, -y);
-
+        gc.setTransform(savedTransform);
     }
 
 
@@ -286,21 +261,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void graphicChanged(GraphicsObject changedObject) {
         updateBounds();
         changed();
-    }
-
-    /**
-     * Enables antialiasing on the drawn shapes.
-     */
-    private void enableAntialiasing() {
-        subCanvas.setRenderingHint(
-                RenderingHints.KEY_ANTIALIASING,
-                RenderingHints.VALUE_ANTIALIAS_ON);
-        subCanvas.setRenderingHint(
-                RenderingHints.KEY_RENDERING,
-                RenderingHints.VALUE_RENDER_QUALITY);
-        subCanvas.setRenderingHint(
-                RenderingHints.KEY_STROKE_CONTROL,
-                RenderingHints.VALUE_STROKE_PURE);
     }
 
     private void updateBounds() {
