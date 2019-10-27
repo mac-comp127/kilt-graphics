@@ -91,6 +91,13 @@ public final class Point {
     }
 
     /**
+     * Returns the distance from this point to the origin.
+     */
+    public double magnitude() {
+        return Math.hypot(x, y);
+    }
+
+    /**
      * Returns the distance between this point and another point.
      */
     public double distance(Point p) {
