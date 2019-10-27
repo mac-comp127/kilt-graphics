@@ -37,7 +37,7 @@ public interface Strokable {
     double getStrokeWidth();
 
     /**
-     * Sets how thick the stroke is.
+     * Sets how thick the stroke is. Automatically calls setStroked(true).
      */
     void setStrokeWidth(double width);
 }

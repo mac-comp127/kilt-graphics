@@ -75,9 +75,10 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     public Path(List<Point> points, boolean closed) {
         setVertices(points, closed);
 
-        fillColor = Color.black;
-        strokeColor = Color.black;
-        isFilled = false;
+        fillColor = Color.BLACK;
+        setFilled(false);
+
+        setStrokeColor(Color.BLACK);
         setStrokeWidth(1.0);
     }
 
@@ -187,7 +188,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
 
     public void setStrokeWidth(double width) {
         stroke = new BasicStroke((float) width, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-        changed();
+        setStroked(true);
     }
 
     /**

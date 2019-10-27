@@ -61,7 +61,7 @@ public class Line extends GraphicsObject implements Strokable {
 
     public void setStrokeWidth(double width) {
         stroke = new BasicStroke((float) width);
-        changed();
+        setStroked(true);
     }
 
     @Override
@@ -72,6 +72,7 @@ public class Line extends GraphicsObject implements Strokable {
     @Override
     public void setStroked(boolean stroked) {
         this.isStroked = stroked;
+        changed();
     }
 
     /**

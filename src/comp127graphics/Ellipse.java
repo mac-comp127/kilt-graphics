@@ -100,7 +100,7 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     public void setStrokeWidth(double width) {
         stroke = new BasicStroke((float) width);
-        changed();
+        setStroked(true);
     }
 
     public double getX() {
