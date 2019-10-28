@@ -5,13 +5,18 @@ import javax.swing.JButton;
 public class Button extends EmbeddedSwingComponent {
     private JButton button;
 
-    public static Button withTitle(String title) {
-        return new Button(new JButton(title));
+    public Button(String title) {
+        this(new JButton(title));
     }
 
     private Button(JButton button) {
         super(button);
         this.button = button;
-        button.setSize(button.getPreferredSize());
+        changed();
+    }
+
+    public void onClick(Runnable callback) {
+        button.addActionListener(e ->
+            getCanvas().performEventAction(callback));
     }
 }

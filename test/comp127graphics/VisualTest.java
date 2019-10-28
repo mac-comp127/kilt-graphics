@@ -1,6 +1,7 @@
 package comp127graphics;
 
 import comp127graphics.ui.Button;
+import comp127graphics.ui.TextField;
 
 import java.awt.Color;
 import java.util.List;
@@ -29,7 +30,15 @@ public class VisualTest {
         text.setFillColor(Color.MAGENTA);
         group.add(text);
 
-        group.add(Button.withTitle("zongle!"));
+        Button button = new Button("zongle!");
+        group.add(button);
+        button.onClick(() -> System.out.println("zongle pressed"));
+        button.setCenter(100, 10);
+
+        TextField field = new TextField();
+        field.onChange(s -> System.out.println("text field: " + s));
+        field.setCenter(100, 60);
+        group.add(field);
 
         group.add(
             new Path(List.of(
@@ -96,7 +105,7 @@ public class VisualTest {
             canvas.add(dots);
 
             canvas.pause(pause);  // pause comes before draw, so you should initially see nothing
-            pause *= 0.8;
+            pause *= 0.9;
 
             if(IMMEDIATE_EXIT) {
                 return;

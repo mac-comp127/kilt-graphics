@@ -4,6 +4,7 @@ import comp127graphics.GraphicsObject;
 import comp127graphics.Point;
 
 import javax.swing.JComponent;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 
@@ -26,19 +27,28 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
         return position;
     }
 
+    protected void changed() {
+        Dimension preferredSize = component.getPreferredSize();
+        component.setSize(
+            (int) Math.round(Math.max(preferredSize.getWidth(), component.getMinimumSize().getWidth())),
+            (int) Math.round(Math.max(preferredSize.getHeight(), component.getMinimumSize().getHeight())));
+        super.changed();
+    }
+
     @Override
     protected void draw(Graphics2D gc) {
-        // drawn by top-level container, so nothing to do here
+        // Swing components are drawn by top-level container, so nothing to do here
     }
 
     @Override
     public void setPosition(double x, double y) {
-        component.setLocation((int) position.getX(), (int) position.getY());
+        this.position = new Point(x, y);
+        changed();
     }
 
     @Override
     public boolean testHit(double x, double y) {
-        return false;
+        return getBounds().contains(x, y);
     }
 
     @Override
