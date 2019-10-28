@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -17,9 +18,6 @@ import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A window frame that can contain graphical objects.
@@ -38,6 +36,11 @@ import java.util.concurrent.TimeUnit;
  * @author Paul Cantrell
  */
 public class CanvasWindow {
+    // This is static because the first CanvasWindow is presumably created on the main thread, but
+    // subsequent windows may be created on the AWT thread, and ThreadExitWatcher waits for
+    // whatever thread it was created on. So we wait for the _first_ CanvasWindow’s thread to exit
+    // when deferring tasks for _all_ CanvasWindows.
+    private static final ThreadExitWatcher mainThreadWatcher = new ThreadExitWatcher();
 
     private final Canvas canvas;
     private final JFrame windowFrame;
@@ -46,7 +49,6 @@ public class CanvasWindow {
     private final Rectangle background;
 
     private boolean drawingInitiated = false;
-    private boolean mainThreadExitCheckScheduled = false;
     private final Object repaintLock = new Object();
 
     private Point curMousePos, prevMousePos;
@@ -59,6 +61,8 @@ public class CanvasWindow {
      * @param windowHeight The height of the window's content area
      */
     public CanvasWindow(String title, int windowWidth, int windowHeight) {
+        content.setCanvas(this);  // propagates to descendants
+
         // We use a Rectangle for the background because canvas.setBackground() triggers spurious
         // repaints, whereas this approach puts background color changes into the same paint cycle
         // as the rest of the graphics.
@@ -76,8 +80,6 @@ public class CanvasWindow {
         windowFrame.pack();
         windowFrame.setVisible(true);
 
-        content.addObserver((g) -> scheduleMainThreadExitCheck());
-
         setUpMousePositionTracking();
 
         updateBackgroundSize();
@@ -87,6 +89,8 @@ public class CanvasWindow {
                 updateBackgroundSize();
             }
         });
+
+        mainThreadWatcher.afterThreadExits(this::draw);
     }
 
     /**
@@ -171,7 +175,7 @@ public class CanvasWindow {
                 if (EventQueue.isDispatchThread()) {  // prevent deadlock when calling draw() in event handler
                     canvas.paintImmediately(canvas.getBounds());
                 } else {
-                    canvas.repaint(); // force redraw ASAP on AWT thread
+                    canvas.repaint(canvas.getBounds()); // force redraw ASAP on AWT thread
                     repaintLock.wait();  // wait for drawing to complete (paintComponent notifies)
                 }
             }
@@ -197,13 +201,11 @@ public class CanvasWindow {
                 canvas.remove(existing);
             }
         }
-
         for (JComponent newComponent : updatedComponents) {
             if (!embeddedComponents.contains(newComponent)) {
                 canvas.add(newComponent);
             }
         }
-
         embeddedComponents = updatedComponents;
     }
 
@@ -271,30 +273,6 @@ public class CanvasWindow {
         gc.setRenderingHint(
                 RenderingHints.KEY_STROKE_CONTROL,
                 RenderingHints.VALUE_STROKE_PURE);
-    }
-
-    private void scheduleMainThreadExitCheck() {
-        synchronized (repaintLock) {
-            if (!mainThreadExitCheckScheduled) {
-                mainThreadExitCheckScheduled = true;
-
-                final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-                final long mainThreadID = Thread.currentThread().getId();
-                Runnable mainThreadExitCheck = () -> {
-                    for (Thread thread : Thread.getAllStackTraces().keySet()) {
-                        if (thread.getId() == mainThreadID) {
-                            return;
-                        }
-                    }
-                    System.out.println("main() method completed; drawing CanvasWindow");
-                    draw();
-                    scheduler.shutdownNow();
-                };
-
-                scheduler.scheduleAtFixedRate(mainThreadExitCheck, 50, 100, TimeUnit.MILLISECONDS);
-            }
-        }
     }
 
     /**
@@ -395,8 +373,8 @@ public class CanvasWindow {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                handler.handleEvent(new MouseButtonEvent(e));
-                draw();
+                performEventAction(() ->
+                    handler.handleEvent(new MouseButtonEvent(e)));
             }
         });
     }
@@ -408,8 +386,8 @@ public class CanvasWindow {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseReleased(MouseEvent e) {
-                handler.handleEvent(new MouseButtonEvent(e));
-                draw();
+                performEventAction(() ->
+                    handler.handleEvent(new MouseButtonEvent(e)));
             }
         });
     }
@@ -422,8 +400,8 @@ public class CanvasWindow {
         canvas.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                handler.handleEvent(new MouseButtonEvent(e));
-                draw();
+                performEventAction(() ->
+                    handler.handleEvent(new MouseButtonEvent(e)));
             }
         });
     }
@@ -436,8 +414,8 @@ public class CanvasWindow {
         canvas.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                handler.handleEvent(new MouseMotionEvent(e, prevMousePos));
-                draw();
+                performEventAction(() ->
+                    handler.handleEvent(new MouseMotionEvent(e, prevMousePos)));
             }
         });
     }
@@ -450,9 +428,19 @@ public class CanvasWindow {
         canvas.addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                handler.handleEvent(new MouseMotionEvent(e, prevMousePos));
-                draw();
+                performEventAction(() ->
+                    handler.handleEvent(new MouseMotionEvent(e, prevMousePos)));
             }
+        });
+    }
+
+    /**
+     * For internal use.
+     */
+    public void performEventAction(Runnable action) {
+        mainThreadWatcher.afterThreadExits(() -> {
+            action.run();
+            draw();
         });
     }
 }

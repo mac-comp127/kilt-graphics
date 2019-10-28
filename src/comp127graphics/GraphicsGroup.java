@@ -71,6 +71,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void add(GraphicsObject gObject) {
         gObject.addObserver(this);
         children.add(gObject);
+        gObject.setCanvas(getCanvas());
         recomputeBounds();
         changed();
     }
@@ -95,6 +96,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     public void remove(GraphicsObject gObject) {
         gObject.removeObserver(this);
+        gObject.setCanvas(null);
         boolean success = children.remove(gObject);
         if (!success) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
@@ -111,6 +113,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         while (it.hasNext()) {
             GraphicsObject obj = it.next();
             obj.removeObserver(this);
+            obj.setCanvas(null);
             it.remove();
         }
         recomputeBounds();
@@ -260,6 +263,14 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         Point groupOrigin = origin.add(getPosition());
         for (GraphicsObject child : children) {
             child.forEachDescendant(groupOrigin, callback);
+        }
+    }
+
+    @Override
+    void setCanvas(CanvasWindow canvas) {
+        super.setCanvas(canvas);
+        for (GraphicsObject child : children) {
+            child.setCanvas(canvas);
         }
     }
 

@@ -15,6 +15,7 @@ import java.util.function.BiConsumer;
 public abstract class GraphicsObject {
 
     private List<GraphicsObserver> observers = new ArrayList<GraphicsObserver>();
+    private CanvasWindow canvas;
 
     /**
      * Gets the position of the object on the canvas. The location of the anchor point
@@ -130,7 +131,21 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * For internal use.
+     * Returns the window that this Object is inside, or null if it does not belong to a window.
+     */
+    public CanvasWindow getCanvas() {
+        return canvas;
+    }
+
+    void setCanvas(CanvasWindow canvas) {
+        if (canvas != this.canvas && canvas != null && this.canvas != null) {
+            throw new IllegalStateException("Trying to add graphics object to two different windows");
+        }
+        this.canvas = canvas;
+    }
+
+    /**
+     * For internal use only. Supports UI components.
      */
     public JComponent getEmbeddedComponent() {
         return null;
