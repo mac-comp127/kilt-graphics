@@ -51,7 +51,24 @@ public class GraphingCalculator {
     public void setParametricVariable(double parametricVariable) {
         this.parametricVariable = parametricVariable;
         recalculateAll();
-        canvas.draw();
+    }
+
+    public Point getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(Point origin) {
+        this.origin = origin;
+        coordinatesChanged();
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
+        coordinatesChanged();
     }
 
     private Line createAxisLine() {
@@ -71,6 +88,8 @@ public class GraphingCalculator {
         xmin = convertToEquationCoordinates(Point.ORIGIN).getX();
         xmax = convertToEquationCoordinates(new Point(canvas.getWidth(), 0)).getX();
         step = 2 / scale;
+
+        recalculateAll();
     }
 
     private void recalculateAll() {
