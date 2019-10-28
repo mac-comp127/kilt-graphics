@@ -14,9 +14,15 @@ public class GraphingCalculator {
     private Point origin;
     private double scale;
     private double xmin, xmax, step;  // computed from origin + scale + size
-    private double parametricVariable;
+    private double animationParameter;
     private Line xaxis, yaxis;
 
+    /**
+     * Creates a new graphing calculator with its own window.
+     *
+     * @param width   Window width
+     * @param height  Window height
+     */
     public GraphingCalculator(int width, int height) {
         canvas = new CanvasWindow("Graphing Calculator", width, height);
         plots = new ArrayList<>();
@@ -28,31 +34,52 @@ public class GraphingCalculator {
         yaxis = createAxisLine();
 
         coordinatesChanged();
+
+        canvas.animate(() ->
+            setAnimationParameter(
+                getAnimationParameter() + 0.01));
     }
 
+    /**
+     * Shows the given function in the graphing calculator, treating y as a function of x.
+     */
     public void show(SimpleFunction function) {
         show((x, n) -> function.evaluate(x));
     }
 
+    /**
+     * Shows the given function in the graphing calculator. The first parameter of the function is
+     * x, and the second parameter is a parametric variable that can change over time to animate
+     * the equation.
+     */
     public void show(ParametricFunction function) {
         FunctionPlot plot = new FunctionPlot(function);
         plots.add(plot);
         canvas.add(plot.getGraphics());
 
         recolorPlots();
-
         recalculate(plot);
     }
 
-    public double getParametricVariable() {
-        return parametricVariable;
+    /**
+     * The second parameter passed to all ParametricFunctions this calculator is showing.
+     */
+    public double getAnimationParameter() {
+        return animationParameter;
     }
 
-    public void setParametricVariable(double parametricVariable) {
-        this.parametricVariable = parametricVariable;
+    /**
+     * Changes the second parameter passed to all ParametricFunctions in this calculator.
+     * Immediately recomputes and redraws all the functions.
+     */
+    public void setAnimationParameter(double animationParameter) {
+        this.animationParameter = animationParameter;
         recalculateAll();
     }
 
+    /**
+     * The position within the window of (0,0) in function plot space.
+     */
     public Point getOrigin() {
         return origin;
     }
@@ -62,6 +89,9 @@ public class GraphingCalculator {
         coordinatesChanged();
     }
 
+    /**
+     * The number of pixels in the window for a distance of 1 in function plot space.
+     */
     public double getScale() {
         return scale;
     }
@@ -97,7 +127,7 @@ public class GraphingCalculator {
     }
 
     private void recalculate(FunctionPlot plot) {
-        plot.recalculate(parametricVariable, xmin, xmax, step, this::convertToScreenCoordinates);
+        plot.recalculate(animationParameter, xmin, xmax, step, this::convertToScreenCoordinates);
     }
 
     private Point convertToScreenCoordinates(Point equationPoint) {
@@ -114,5 +144,9 @@ public class GraphingCalculator {
             plot.setColor(index, plots.size());
             index++;
         }
+    }
+
+    public static void main(String[] args) {
+        GraphingCalculator calc = new GraphingCalculator(800, 600);
     }
 }
