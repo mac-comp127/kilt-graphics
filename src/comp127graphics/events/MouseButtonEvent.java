@@ -10,13 +10,14 @@ import comp127graphics.Point;
  * @see comp127graphics.CanvasWindow#onMouseDown(MouseButtonEventHandler)
  * @see comp127graphics.CanvasWindow#onMouseUp(MouseButtonEventHandler)
  */
-public final class MouseButtonEvent {
+public final class MouseButtonEvent extends AbstractEvent {
     private final Point position;
 
     /**
      * For internal use. Translates an underlying AWT event to a comp127graphics event.
      */
     public MouseButtonEvent(java.awt.event.MouseEvent sourceEvent) {
+        super(sourceEvent);
         position = new Point(sourceEvent.getPoint());
     }
 

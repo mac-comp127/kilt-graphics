@@ -2,6 +2,11 @@ package comp127graphics.events;
 
 import comp127graphics.Point;
 
+import java.awt.event.InputEvent;
+import java.awt.event.MouseEvent;
+import java.util.Collections;
+import java.util.Set;
+
 /**
  * Carries information about the mouse moving from one location to another
  *
@@ -9,13 +14,14 @@ import comp127graphics.Point;
  * @see comp127graphics.CanvasWindow#onMouseMove(MouseMotionEventHandler)
  * @see comp127graphics.CanvasWindow#onDrag(MouseMotionEventHandler)
  */
-public final class MouseMotionEvent {
+public final class MouseMotionEvent extends AbstractEvent {
     private final Point position, previousPosition, delta;
 
     /**
      * For internal use. Translates an underlying AWT event to a comp127graphics event.
      */
     public MouseMotionEvent(java.awt.event.MouseEvent sourceEvent, Point previousPosition) {
+        super(sourceEvent);
         position = new Point(sourceEvent.getPoint());
         this.previousPosition = previousPosition;
         delta = position.subtract(previousPosition);
