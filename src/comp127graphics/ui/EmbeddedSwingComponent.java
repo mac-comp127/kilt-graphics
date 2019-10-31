@@ -6,6 +6,7 @@ import comp127graphics.Point;
 import javax.swing.JComponent;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 abstract class EmbeddedSwingComponent extends GraphicsObject {
@@ -53,6 +54,11 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
 
     @Override
     public Rectangle2D getBounds() {
-        return component.getBounds();
+        Rectangle bounds = component.getBounds();
+        return new Rectangle2D.Double(
+            getPosition().getX(),  // Actual JComponent doesn't get positioned until next draw
+            getPosition().getY(),
+            bounds.getWidth(),
+            bounds.getHeight());
     }
 }
