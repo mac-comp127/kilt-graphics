@@ -44,6 +44,10 @@ public class TextField extends EmbeddedSwingComponent {
                 }
 
                 private void triggerCallback() {
+                    if (getCanvas() == null) {
+                        return;
+                    }
+
                     getCanvas().performEventAction(() ->
                         callback.accept(field.getText()));
                 }
