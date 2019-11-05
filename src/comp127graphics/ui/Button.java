@@ -16,7 +16,11 @@ public class Button extends EmbeddedSwingComponent {
     }
 
     public void onClick(Runnable callback) {
-        button.addActionListener(e ->
-            getCanvas().performEventAction(callback));
+        button.addActionListener(e -> {
+            if (getCanvas() == null) {
+                return;
+            }
+            getCanvas().performEventAction(callback);
+        });
     }
 }

@@ -35,10 +35,17 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     /**
+     * Creates an instance with the given text at (0,0).
+     */
+    public GraphicsText(String text) {
+        this(text, 0, 0);
+    }
+
+    /**
      * Creates an instance with null text at (0,0)
      */
     public GraphicsText() {
-        this(null, 0, 0);
+        this(null);
     }
 
     protected void draw(Graphics2D gc) {
