@@ -90,8 +90,6 @@ public class Library {
 
     /**
      * Task 8: Print all books in the library to STDOUT.
-     *
-     * Hint: Use books.forEach()
      */
     public void printLibrary() {
         for (Book book : books) {
