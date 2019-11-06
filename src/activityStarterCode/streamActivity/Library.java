@@ -153,7 +153,8 @@ public class Library {
      * What are all the different genres in the library?
      *
      * Hint: flatMap() is like map(), except the lambda returns a stream, and all the
-     *       elements in that returned stream feed into the larger stream individually.
+     *       elements in that returned stream feed into the larger stream one at a time
+     *       instead of as a whole collection all at once.
      */
     public Set<String> getAllGenres() {
         Set<String> set = new HashSet<>();

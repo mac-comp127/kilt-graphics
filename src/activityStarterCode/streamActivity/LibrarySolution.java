@@ -54,32 +54,36 @@ public class LibrarySolution {
      * Task 4: How many books in the given genre does the library have?
      */
     public long countBooksInGenre(String genre) {
-        //TODO
-        return books.stream()
-            .filter(d -> d.getGenres().contains(genre))
-            .count();
+        long count = 0L;
+        for (Book d : books) {
+            if (d.getGenres().contains(genre)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
      * Task 5: What are the n shortest books in the library?
      */
     public List<Book> findShortestBooks(int n) {
-        //TODO
-        return books.stream()
-            .sorted(Comparator.comparing(Book::getPageCount))
-            .limit(n)
-            .collect(toList());
+        List<Book> booksByLength = new ArrayList<>(books);
+        booksByLength.sort(Comparator.comparing(Book::getPageCount));
+        return booksByLength.subList(0, Math.min(n, booksByLength.size()));
     }
 
     /**
      * Task 6: Finds all books in the given genre, sorted from shortest to longest.
      */
     public List<Book> findBooksInGenreSortedByLength(String genre) {
-        //TODO
-        return books.stream()
-            .filter(book -> book.getGenres().contains(genre))
-            .sorted(Comparator.comparing(Book::getPageCount))
-            .collect(toList());
+        List<Book> booksToSort = new ArrayList<>();
+        for (Book book : books) {
+            if (book.getGenres().contains(genre)) {
+                booksToSort.add(book);
+            }
+        }
+        booksToSort.sort(Comparator.comparing(Book::getPageCount));
+        return booksToSort;
     }
 
     /**
