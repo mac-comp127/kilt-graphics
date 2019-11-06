@@ -52,7 +52,7 @@ class LibraryTest {
     private final Library emptyLibrary = new Library(List.of());
 
     @Test
-    void findTitlesInGenre() {
+    void findTitlesByAuthor() {
         assertEquals(
             List.of("Harry Potter and the Sorceror’s Stone", "Harry Potter and the Chamber of Secrets"),
             library.findTitlesByAuthor("J.K. Rowling"));
@@ -65,7 +65,7 @@ class LibraryTest {
             List.of(),
             library.findTitlesByAuthor("Ludicrous P. Eddingsbuff"));
 
-        assertEquals(List.of(), emptyLibrary.findTitlesByAuthor(""));
+        assertEquals(List.of(), emptyLibrary.findTitlesByAuthor("Michael Chabon"));
     }
 
     @Test

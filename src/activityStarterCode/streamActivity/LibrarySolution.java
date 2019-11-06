@@ -18,7 +18,7 @@ public class LibrarySolution {
      */
     public List<String> findTitlesByAuthor(String authorName) {
         return books.stream()
-            .filter(d -> d.getAuthor().equals(authorName))
+            .filter(book -> book.getAuthor().equals(authorName))
             .map(Book::getTitle)
             .collect(toList());
     }
