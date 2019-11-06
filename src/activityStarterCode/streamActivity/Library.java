@@ -40,19 +40,27 @@ public class Library {
      * Task 3: Describes the titles and authors of all the books in the given genre.
      */
     public List<String> findTitlesAndAuthorsInGenre(String genre) {
-        return books.stream()
-            .filter(d -> d.getGenres().contains(genre))
-            .map(d -> d.getTitle() + " by " + d.getAuthor())
-            .collect(toList());
+        List<String> result = new ArrayList<>();
+        for (Book book : books) {
+            if (book.getGenres().contains(genre)) {
+                result.add(
+                    book.getTitle() + " by " + book.getAuthor());
+            }
+        }
+        return result;
     }
 
     /**
      * Task 4: How many books in the given genre does the library have?
      */
     public long countBooksInGenre(String genre) {
-        return books.stream()
-            .filter(d -> d.getGenres().contains(genre))
-            .count();
+        long count = 0L;
+        for (Book d : books) {
+            if (d.getGenres().contains(genre)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
