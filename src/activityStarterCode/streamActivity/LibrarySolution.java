@@ -76,14 +76,10 @@ public class LibrarySolution {
      * Task 6: Finds all books in the given genre, sorted from shortest to longest.
      */
     public List<Book> findBooksInGenreSortedByLength(String genre) {
-        List<Book> booksToSort = new ArrayList<>();
-        for (Book book : books) {
-            if (book.getGenres().contains(genre)) {
-                booksToSort.add(book);
-            }
-        }
-        booksToSort.sort(Comparator.comparing(Book::getPageCount));
-        return booksToSort;
+        return books.stream()
+            .filter(book -> book.getGenres().contains(genre))
+            .sorted(Comparator.comparing(Book::getPageCount))
+            .collect(toList());
     }
 
     /**
@@ -160,13 +156,10 @@ public class LibrarySolution {
      * What are the names of all the authors who have written in the given genre?
      */
     public Set<String> allAuthorsInGenre(String genre) {
-        Set<String> result = new HashSet<>();
-        for (Book book : books) {
-            if (book.getGenres().contains(genre)) {
-                result.add(book.getAuthor());
-            }
-        }
-        return result;
+        return books.stream()
+            .filter(book -> book.getGenres().contains(genre))
+            .map(Book::getAuthor)
+            .collect(toSet());
     }
 
     /**
