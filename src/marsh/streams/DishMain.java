@@ -24,15 +24,27 @@ public class DishMain {
                 new Dish("prawns", false, 300, Dish.Type.FISH),
                 new Dish("salmon", false, 450, Dish.Type.FISH) );
 
+//
+//        List<String> dishList =
+//                menu.stream()
+//                        .filter(d -> d.getCalories() > 300)
+//                        .sorted(comparing(Dish::getName))
+//                        .map(Dish::getName)
+//                        .collect(toList());
+//        System.out.println(dishList);
 
-        List<String> dishList =
+        long count =
                 menu.stream()
-                        .filter(d -> d.getCalories() > 300)
-                        .sorted(comparing(Dish::getName))
-                        .map(Dish::getName)
-                        .limit(4)
-                        .collect(toList());
-        System.out.println(dishList);
+                        .filter(d -> d.getCalories() > 500)
+                        .count();
+        System.out.println(count);
+
+        System.out.println(menu);
+        menu.stream()
+                .filter(d -> d.getCalories() > 500)
+                .limit(2)
+                .forEach(d -> d.setCalories(499));
+        System.out.println(menu);
 
 //        Map<Dish.Type, List<Dish>> dishMap =
 //                menu.stream()

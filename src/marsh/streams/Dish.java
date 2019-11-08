@@ -3,7 +3,7 @@ package marsh.streams;
 public class Dish {
     private final String name;
     private final boolean vegetarian;
-    private final int calories;
+    private int calories;
     private final Type type;
     public Dish(String name, boolean vegetarian, int calories, Type type) {
         this.name = name;
@@ -20,12 +20,15 @@ public class Dish {
     public int getCalories() {
         return calories;
     }
+    public void setCalories(int calories) {
+        this.calories = calories;
+    }
     public Type getType() {
         return type;
     }
     @Override
     public String toString() {
-        return name;
+        return name + " " + calories;
     }
     public enum Type { MEAT, FISH, OTHER }
 }
