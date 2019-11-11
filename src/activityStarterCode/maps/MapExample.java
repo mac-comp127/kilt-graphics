@@ -17,10 +17,5 @@ public class MapExample {
         // Step 5. Print the restaurant objects (hint: use values())
 
         // Step 6. Print the restaurant names and objects (hint: use entrySet()).
-
-        // Challenge 1 Step: Create a second map that keeps the keys in alphabetical
-        // order. Print out the restaurants in alphabetical object.
-
-        // Challenge 2: Print out the restaurants order by their rating.
     }
 }
