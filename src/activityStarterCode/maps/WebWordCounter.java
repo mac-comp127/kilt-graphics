@@ -42,7 +42,6 @@ public class WebWordCounter {
 
     public static void main(String [] args) {
         // Step 1 Create new map for storing word counts
-        Map<String, Integer> counts = new HashMap<>();
 
         // Step 2: Retrieve the words associated with the data at some URL
         // Hint: You can use TEST_URL, which contains the constitution.
