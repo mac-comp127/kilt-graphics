@@ -9,7 +9,10 @@ public class ArraySortTest {
 
     @Test
     public void testSingleElement() {
-        assertArrayEquals(new String[]{"7"}, sort(new String[]{"7"}));
+        assertArrayEquals(
+                new String[]{"7"},
+                sort(new String[]{"7"})
+        );
     }
 
 }
