@@ -1,7 +1,7 @@
 package activityStarterCode.maps;
 
 
-public class MapExample {
+public class RestaurantExplorer {
     public static void main(String [] args) {
         // Step 1. Create a new empty HashMap.
         // The keys should be the names of the restaurant.
