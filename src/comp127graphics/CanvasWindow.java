@@ -237,7 +237,8 @@ public class CanvasWindow {
      * Returns the topmost graphical object underneath position x, y. If no such object exists it returns null.
      */
     public GraphicsObject getElementAt(double x, double y) {
-        return content.getElementAt(x, y);
+        GraphicsObject result = content.getElementAt(x, y);
+        return (result == background) ? null : result;
     }
 
     /**
