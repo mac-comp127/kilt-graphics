@@ -248,22 +248,6 @@ public class CanvasWindow {
         return getElementAt(position.getX(), position.getY());
     }
 
-// TODO: Where in the course do we use this method? Can we delete it?
-//    /*
-//       Checks to see if clicked within a GraphicsGroup object and returns true if so
-//     */
-//    private boolean isGraphicsGroupAt(GraphicsObject obj, double x, double y) {
-//        if (obj instanceof GraphicsGroup) {
-//            java.awt.Rectangle rect = obj.getBounds();
-//            if (rect.getX() <= x && x<= (rect.getX() + rect.getWidth())) {
-//                if (rect.getY() <= y && y <= (rect.getY()+rect.getHeight())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-
     private void enableAntialiasing(Graphics2D gc) {
         gc.setRenderingHint(
                 RenderingHints.KEY_ANTIALIASING,

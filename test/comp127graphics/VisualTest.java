@@ -11,6 +11,7 @@ public class VisualTest {
     private static final boolean IMMEDIATE_EXIT = false;
 
     private static boolean hitTestVisualization = false;
+    private static double t = 0;
 
     public static void main(String[] args) {
         GraphicsGroup group = new GraphicsGroup();
@@ -77,20 +78,23 @@ public class VisualTest {
             bigDot.moveBy(event.getDelta());
         });
 
+        GraphicsGroup dots = new GraphicsGroup();
+        canvas.add(dots);
+
         //noinspection InfiniteLoopStatement
-        for(double t = 0; ; t += 0.007) {
+        canvas.animate(() -> {
             group.setPosition(
                 (Math.cos(t * Math.E ) / 2 + 0.5) * (canvas.getWidth() / 2.0),
                 (Math.sin(t * Math.PI) / 2 + 0.5) * (canvas.getHeight() / 2.0));
 
-            GraphicsGroup dots = new GraphicsGroup();
+            dots.removeAll();
             if(hitTestVisualization) {
-                int step = 4;
+                int step = 8;
                 for(int x = -step; x < canvas.getWidth() + step; x += step) {
                     for(int y = -step; y < canvas.getHeight() + step; y += step) {
-                        double r = 3;
+                        double r = 4;
                         Ellipse dot = new Ellipse(x - r/2, y - r/2, r, r);
-                        Object elem = group.getElementAt(x, y);
+                        Object elem = canvas.getElementAt(x, y);
                         if(elem != null) {
                             dot.setFillColor(new Color(System.identityHashCode(elem) & 0x00FFFFFF | 0xCC000000, true));
                             dot.setStroked(false);
@@ -102,18 +106,7 @@ public class VisualTest {
                     }
                 }
             }
-            canvas.add(dots);
-
-            canvas.pause(pause);  // pause comes before draw, so you should initially see nothing
-            pause *= 0.9;
-
-            if(IMMEDIATE_EXIT) {
-                return;
-            }
-
-            canvas.draw();
-
-            canvas.remove(dots);
-        }
+            t += 0.007;
+        });
     }
 }
