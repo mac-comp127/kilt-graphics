@@ -52,7 +52,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         this.x = x;
         this.y = y;
         children = new ConcurrentLinkedDeque<GraphicsObject>();
-        bounds = new Rectangle2D.Double(0, 0, -1, -1);
     }
 
     /**
@@ -72,7 +71,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         gObject.addObserver(this);
         children.add(gObject);
         gObject.setCanvas(getCanvas());
-        recomputeBounds();
+        boundsNeedUpdate();
         changed();
     }
 
@@ -101,7 +100,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         if (!success) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
         }
-        recomputeBounds();
+        boundsNeedUpdate();
         changed();
     }
 
@@ -116,7 +115,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
             obj.setCanvas(null);
             it.remove();
         }
-        recomputeBounds();
+        boundsNeedUpdate();
         changed();
     }
 
@@ -175,14 +174,14 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * Get the width of the rectangle that encloses all the elements in the group.
      */
     public double getWidth() {
-        return bounds.getWidth();
+        return getBounds().getWidth();
     }
 
     /**
      * Get the height of the rectangle that encloses all the elements in the group.
      */
     public double getHeight() {
-        return bounds.getHeight();
+        return getBounds().getHeight();
     }
 
     /**
@@ -232,22 +231,26 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         return "A graphics group at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
     }
 
+    private void boundsNeedUpdate() {
+        bounds = null;
+    }
+
     /**
      * Returns an axis aligned bounding rectangle for the graphical object in canvas coordinates.
      */
     public Rectangle2D getBounds() {
-        return new Rectangle2D.Double(
-            this.x + bounds.getX(),
-            this.y + bounds.getY(),
-            bounds.getWidth(),
-            bounds.getHeight());
-    }
-
-    private void recomputeBounds() {
-        bounds.setRect(0, 0, 0, 0);
-        for (GraphicsObject child : children) {
-            Rectangle2D.union(bounds, child.getBounds(), bounds);
+        if (bounds == null) {
+            Rectangle2D.Double newBounds = new Rectangle2D.Double(0, 0, 0, 0);
+            for (GraphicsObject child : children) {
+                if(child.getBounds() != null) {
+                    Rectangle2D.union(newBounds, child.getBounds(), newBounds);
+                }
+            }
+            newBounds.x += this.x;
+            newBounds.y += this.y;
+            bounds = newBounds;
         }
+        return bounds;
     }
 
     /**
@@ -277,27 +280,9 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Implementation of GraphicsObserver method. Notifies Java to repaint the image if any of the objects drawn on the canvas
      * have changed.
-     *
-     * @param changedObject
      */
     public void graphicChanged(GraphicsObject changedObject) {
-        updateBounds();
+        boundsNeedUpdate();
         changed();
-    }
-
-    private void updateBounds() {
-        Rectangle2D totalBounds = null;
-        for (GraphicsObject gObject : children) {
-            Rectangle2D curBounds = gObject.getBounds();
-            if (curBounds != null) {
-                if (totalBounds != null) {
-                    Rectangle2D.union(totalBounds, curBounds, totalBounds);
-                } else {
-                    totalBounds = new Rectangle2D.Double();
-                    totalBounds.setRect(curBounds);
-                }
-            }
-        }
-        bounds = totalBounds;
     }
 }
