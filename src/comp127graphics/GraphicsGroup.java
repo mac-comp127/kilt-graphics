@@ -71,7 +71,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         gObject.addObserver(this);
         children.add(gObject);
         gObject.setCanvas(getCanvas());
-        boundsNeedUpdate();
         changed();
     }
 
@@ -100,7 +99,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         if (!success) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
         }
-        boundsNeedUpdate();
         changed();
     }
 
@@ -115,7 +113,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
             obj.setCanvas(null);
             it.remove();
         }
-        boundsNeedUpdate();
         changed();
     }
 
@@ -275,6 +272,12 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         for (GraphicsObject child : children) {
             child.setCanvas(canvas);
         }
+    }
+
+    @Override
+    protected void changed() {
+        boundsNeedUpdate();
+        super.changed();
     }
 
     /**
