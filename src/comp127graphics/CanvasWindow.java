@@ -1,5 +1,6 @@
 package comp127graphics;
 
+import comp127graphics.events.Key;
 import comp127graphics.events.KeyboardEvent;
 import comp127graphics.events.KeyboardEventHandler;
 import comp127graphics.events.MouseButtonEvent;
@@ -21,6 +22,8 @@ import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
@@ -29,6 +32,8 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -67,6 +72,7 @@ public class CanvasWindow {
     private final Object repaintLock = new Object();
 
     private Point curMousePos, prevMousePos;
+    private Set<Key> keysPressed = EnumSet.noneOf(Key.class);
 
     /**
      * Opens a new window for drawing.
@@ -97,6 +103,7 @@ public class CanvasWindow {
         windowFrame.setVisible(true);
 
         setUpMousePositionTracking();
+        setUpKeyTracking();
 
         updateBackgroundSize();
         canvas.addComponentListener(new ComponentAdapter() {
@@ -507,6 +514,47 @@ public class CanvasWindow {
                 });
             }
         });
+    }
+
+    private void setUpKeyTracking() {
+        onKeyDown(e -> {
+            if (e.getKey() != Key.UNKNOWN) {
+                keysPressed.add(e.getKey());
+            }
+        });
+
+        onKeyUp(e -> {
+            if (e.getKey() != Key.UNKNOWN) {
+                keysPressed.remove(e.getKey());
+            }
+        });
+
+        // If the user switches app while a key is down, Java _never_ reports the key release.
+        // We therefore assume all keys were released (even if they aren't) when the user switches
+        // focus; otherwise, the app will report a key is pressed forever.
+        //
+        // Java still has numerous key event consistency issues around the edges. There is AFAICT no
+        // way to detect that a key is already down when we gain focus. Java doesn't detect focus
+        // loss caused by key-intercepting apps such as LaunchBar, so summoning one with keys down
+        // can cause “sticky key” issues. Still, what's here should be good enough for most projects.
+
+        canvas.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                keysPressed.clear();
+            }
+        });
+    }
+
+    /**
+     * Returns all keys currently pressed on the keyboard. You can poll this repeatedly (e.g. in an
+     * animate() callback) to continuously take some action as long as a key is held down.
+     *
+     * If instead you want to do something only at the moment a key goes down or comes back up, use
+     * {@link #onKeyDown(KeyboardEventHandler)} and {@link #onKeyUp(KeyboardEventHandler)} instead.
+     */
+    public Set<Key> getKeysPressed() {
+        return Collections.unmodifiableSet(keysPressed);
     }
 
     /**
