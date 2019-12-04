@@ -149,7 +149,12 @@ public enum Key {
     F21(KeyEvent.VK_F21),
     F22(KeyEvent.VK_F22),
     F23(KeyEvent.VK_F23),
-    F24(KeyEvent.VK_F24);
+    F24(KeyEvent.VK_F24),
+
+    /**
+     * A key that Java or comp127graphics does not recognize.
+     */
+    UNKNOWN();
 
     private final int[] awtKeyCodes;
 
@@ -158,7 +163,8 @@ public enum Key {
     }
 
     static Key fromAwtKeyCode(int awtKeyCode) {
-        return keysByAwtCode.get(awtKeyCode);
+        Key key = keysByAwtCode.get(awtKeyCode);
+        return key != null ? key : UNKNOWN;
     }
 
     private static Map<Integer,Key> keysByAwtCode;
