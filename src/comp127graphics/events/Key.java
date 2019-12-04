@@ -7,8 +7,8 @@ import java.util.Map;
 
 /**
  * A key on the keyboard. Note that this represents the <b>key itself</b>, not the character the
- * user typed. For example, if the user types an exclamation point, the Key you receive will be
- * be NUM_1 with a SHIFT modifier.
+ * user typed. For example, if the user types an exclamation point, the KeyEvent the app receives
+ * will be NUM_1 with a SHIFT modifier.
  *
  * @see KeyboardEvent
  */

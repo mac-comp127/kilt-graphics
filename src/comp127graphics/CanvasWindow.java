@@ -445,8 +445,11 @@ public class CanvasWindow {
     /**
      * Adds a listener that will receive an event when a key on the keyboard is pressed.
      *
-     * Note that this reports actual keys on the keyboard, not any characters they produce.
-     * See {@link #onKeyUp(KeyboardEventHandler)} for more information.
+     * Note that this reports actual keys on the keyboard, not which characters they produce.
+     * See {@link #onKeyUp(KeyboardEventHandler) onKeyUp()} for more information.
+     *
+     * If you want to take some continuous action as long as a key is pressed, consider
+     * {@link #getKeysPressed()} instead.
      *
      * @see #onKeyUp(KeyboardEventHandler)
      * @see #onCharacterTyped(Consumer)
@@ -466,14 +469,21 @@ public class CanvasWindow {
      *
      * Note that this reports actual keys on the keyboard, not any characters they produce.
      * For example, if the user types a plus sign, you will receive the following events:
+     * <p>
+     * <table>
+     *   <tr><td>1.</td><td><b>keyDown</b></td><td>Key.SHIFT</td><td>modifiers=[ModifierKey.SHIFT]</td></tr>
+     *   <tr><td>2.</td><td><b>keyDown</b></td><td>Key.EQUALS</td><td>modifiers=[ModifierKey.SHIFT]</td></tr>
+     *   <tr><td>3.</td><td><b>keyUp</b></td><td>Key.EQUALS</td><td>modifiers=[ModifierKey.SHIFT]</td></tr>
+     *   <tr><td>4.</td><td><b>characterTyped</b></td><td><code>'+'</code></td></tr>
+     *   <tr><td>5.</td><td><b>keyUp</b></td><td>Key.SHIFT</td><td>modifiers=[]</td></tr>
+     * </table>
+     * </p>
+     * If you want to know what character the user typed, taking keyboard layout and modifier keys
+     * into account (e.g. 'a' vs 'A'), consider {@link #onCharacterTyped(Consumer) onCharacterTyped()}
+     * instead.
      *
-     * <ol>
-     *   <li><b>keyDown</b>: Key.SHIFT, modifiers=[ModifierKey.SHIFT]}
-     *   <li><b>keyDown</b>: Key.EQUALS, modifiers=[ModifierKey.SHIFT]}
-     *   <li><b>keyUp</b>: Key.EQUALS, modifiers=[ModifierKey.]}
-     *   <li><b>characterTyped</b>: <code>'+'</code>
-     *   <li><b>keyUp</b>: Key.SHIFT, modifiers=[]
-     * </ol>
+     * If you want to take some continuous action as long as a key is pressed, consider
+     * {@link #getKeysPressed()} instead.
      *
      * @see #onKeyDown(KeyboardEventHandler)
      * @see #onCharacterTyped(Consumer)
@@ -495,7 +505,7 @@ public class CanvasWindow {
      * Note that this only reports key combinations that produce characters; it does not report
      * special keys such as arrow keys, backspace, modifiers, etc.
      *
-     * See {@link #onKeyUp(KeyboardEventHandler)} for more information.
+     * See {@link #onKeyUp(KeyboardEventHandler) onKeyUp()} for more information.
      *
      * @see #onKeyDown(KeyboardEventHandler)
      * @see #onKeyUp(KeyboardEventHandler)
@@ -551,7 +561,8 @@ public class CanvasWindow {
      * animate() callback) to continuously take some action as long as a key is held down.
      *
      * If instead you want to do something only at the moment a key goes down or comes back up, use
-     * {@link #onKeyDown(KeyboardEventHandler)} and {@link #onKeyUp(KeyboardEventHandler)} instead.
+     * {@link #onKeyDown(KeyboardEventHandler) onKeyDown} and
+     * {@link #onKeyUp(KeyboardEventHandler) onKeyUp()} instead.
      */
     public Set<Key> getKeysPressed() {
         return Collections.unmodifiableSet(keysPressed);
