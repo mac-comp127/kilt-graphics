@@ -1,5 +1,7 @@
 package comp127graphics;
 
+import comp127graphics.events.KeyboardEvent;
+import comp127graphics.events.KeyboardEventHandler;
 import comp127graphics.events.MouseButtonEvent;
 import comp127graphics.events.MouseButtonEventHandler;
 import comp127graphics.events.MouseMotionEvent;
@@ -10,14 +12,27 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A window frame that can contain graphical objects.
@@ -73,6 +88,7 @@ public class CanvasWindow {
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
         canvas.setBackground(Color.WHITE);
+        canvas.setFocusable(true);  // enables key events
 
         windowFrame = new JFrame(title);
         windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -415,6 +431,80 @@ public class CanvasWindow {
             public void mouseDragged(MouseEvent e) {
                 performEventAction(() ->
                     handler.handleEvent(new MouseMotionEvent(e, prevMousePos)));
+            }
+        });
+    }
+
+    /**
+     * Adds a listener that will receive an event when a key on the keyboard is pressed.
+     *
+     * Note that this reports actual keys on the keyboard, not any characters they produce.
+     * See {@link #onKeyUp(KeyboardEventHandler)} for more information.
+     *
+     * @see #onKeyUp(KeyboardEventHandler)
+     * @see #onCharacterTyped(Consumer)
+     */
+    public void onKeyDown(KeyboardEventHandler handler) {
+        canvas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                performEventAction(() ->
+                    handler.handleEvent(new KeyboardEvent(e)));
+            }
+        });
+    }
+
+    /**
+     * Adds a listener that will receive an event when a key on the keyboard is released.
+     *
+     * Note that this reports actual keys on the keyboard, not any characters they produce.
+     * For example, if the user types a plus sign, you will receive the following events:
+     *
+     * <ol>
+     *   <li><b>keyDown</b>: Key.SHIFT, modifiers=[ModifierKey.SHIFT]}
+     *   <li><b>keyDown</b>: Key.EQUALS, modifiers=[ModifierKey.SHIFT]}
+     *   <li><b>keyUp</b>: Key.EQUALS, modifiers=[ModifierKey.]}
+     *   <li><b>characterTyped</b>: <code>'+'</code>
+     *   <li><b>keyUp</b>: Key.SHIFT, modifiers=[]
+     * </ol>
+     *
+     * @see #onKeyDown(KeyboardEventHandler)
+     * @see #onCharacterTyped(Consumer)
+     */
+    public void onKeyUp(KeyboardEventHandler handler) {
+        canvas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                performEventAction(() ->
+                    handler.handleEvent(new KeyboardEvent(e)));
+            }
+        });
+    }
+
+    /**
+     * Adds a listener that will be notified when the use types a combination of keys that produce
+     * a character.
+     *
+     * Note that this only reports key combinations that produce characters; it does not report
+     * special keys such as arrow keys, backspace, modifiers, etc.
+     *
+     * See {@link #onKeyUp(KeyboardEventHandler)} for more information.
+     *
+     * @see #onKeyDown(KeyboardEventHandler)
+     * @see #onKeyUp(KeyboardEventHandler)
+     */
+    public void onCharacterTyped(Consumer<Character> handler) {
+        canvas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                performEventAction(() -> {
+                    // Arrows, modifier keys, tab, escape, etc. come back as either control chars
+                    // or \uFFFF. We don't pass them to handler; clients will have to use onKeyUp
+                    // for special keys.
+                    if (e.getKeyChar() >= ' ' && e.getKeyChar() != '\uFFFF') {
+                        handler.accept(e.getKeyChar());
+                    }
+                });
             }
         });
     }
