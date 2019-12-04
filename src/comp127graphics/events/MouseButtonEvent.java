@@ -28,4 +28,12 @@ public final class MouseButtonEvent extends AbstractEvent {
     public Point getPosition() {
         return position;
     }
+
+    @Override
+    public String toString() {
+        return "MouseButtonEvent{"
+            + "position=" + position
+            + ", modifiers=" + getModifiers()
+            + '}';
+    }
 }

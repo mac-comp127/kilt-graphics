@@ -33,4 +33,12 @@ public final class KeyboardEvent extends AbstractEvent {
     public Key getKey() {
         return key;
     }
+
+    @Override
+    public String toString() {
+        return "KeyboardEvent{"
+            + "key=" + key
+            + ",modifiers=" + getModifiers()
+            + '}';
+    }
 }

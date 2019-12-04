@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.Set;
 
 /**
- * Carries information about the mouse moving from one location to another
+ * Carries information about the mouse moving from one location to another.
  *
  * @author Paul Cantrell
  * @see comp127graphics.CanvasWindow#onMouseMove(MouseMotionEventHandler)
@@ -47,5 +47,15 @@ public final class MouseMotionEvent extends AbstractEvent {
      */
     public Point getDelta() {
         return delta;
+    }
+
+    @Override
+    public String toString() {
+        return "MouseMotionEvent{"
+            + "position=" + position
+            + ", previousPosition=" + previousPosition
+            + ", delta=" + delta
+            + ", modifiers=" + getModifiers()
+            + '}';
     }
 }
