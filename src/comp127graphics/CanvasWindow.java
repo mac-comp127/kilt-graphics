@@ -1,5 +1,8 @@
 package comp127graphics;
 
+import comp127graphics.events.Key;
+import comp127graphics.events.KeyboardEvent;
+import comp127graphics.events.KeyboardEventHandler;
 import comp127graphics.events.MouseButtonEvent;
 import comp127graphics.events.MouseButtonEventHandler;
 import comp127graphics.events.MouseMotionEvent;
@@ -10,14 +13,31 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A window frame that can contain graphical objects.
@@ -52,6 +72,7 @@ public class CanvasWindow {
     private final Object repaintLock = new Object();
 
     private Point curMousePos, prevMousePos;
+    private Set<Key> keysPressed = EnumSet.noneOf(Key.class);
 
     /**
      * Opens a new window for drawing.
@@ -73,6 +94,7 @@ public class CanvasWindow {
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
         canvas.setBackground(Color.WHITE);
+        canvas.setFocusable(true);  // enables key events
 
         windowFrame = new JFrame(title);
         windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,6 +103,7 @@ public class CanvasWindow {
         windowFrame.setVisible(true);
 
         setUpMousePositionTracking();
+        setUpKeyTracking();
 
         updateBackgroundSize();
         canvas.addComponentListener(new ComponentAdapter() {
@@ -417,6 +440,132 @@ public class CanvasWindow {
                     handler.handleEvent(new MouseMotionEvent(e, prevMousePos)));
             }
         });
+    }
+
+    /**
+     * Adds a listener that will receive an event when a key on the keyboard is pressed.
+     *
+     * Note that this reports actual keys on the keyboard, not which characters they produce.
+     * See {@link #onKeyUp(KeyboardEventHandler) onKeyUp()} for more information.
+     *
+     * If you want to take some continuous action as long as a key is pressed, consider
+     * {@link #getKeysPressed()} instead.
+     *
+     * @see #onKeyUp(KeyboardEventHandler)
+     * @see #onCharacterTyped(Consumer)
+     */
+    public void onKeyDown(KeyboardEventHandler handler) {
+        canvas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                performEventAction(() ->
+                    handler.handleEvent(new KeyboardEvent(e)));
+            }
+        });
+    }
+
+    /**
+     * Adds a listener that will receive an event when a key on the keyboard is released.
+     *
+     * Note that this reports actual keys on the keyboard, not any characters they produce.
+     * For example, if the user types a plus sign, you will receive the following events:
+     * <p>
+     * <table>
+     *   <tr><td>1.</td><td><b>keyDown</b></td><td>Key.SHIFT</td><td>modifiers=[ModifierKey.SHIFT]</td></tr>
+     *   <tr><td>2.</td><td><b>keyDown</b></td><td>Key.EQUALS</td><td>modifiers=[ModifierKey.SHIFT]</td></tr>
+     *   <tr><td>3.</td><td><b>keyUp</b></td><td>Key.EQUALS</td><td>modifiers=[ModifierKey.SHIFT]</td></tr>
+     *   <tr><td>4.</td><td><b>characterTyped</b></td><td><code>'+'</code></td></tr>
+     *   <tr><td>5.</td><td><b>keyUp</b></td><td>Key.SHIFT</td><td>modifiers=[]</td></tr>
+     * </table>
+     * </p>
+     * If you want to know what character the user typed, taking keyboard layout and modifier keys
+     * into account (e.g. 'a' vs 'A'), consider {@link #onCharacterTyped(Consumer) onCharacterTyped()}
+     * instead.
+     *
+     * If you want to take some continuous action as long as a key is pressed, consider
+     * {@link #getKeysPressed()} instead.
+     *
+     * @see #onKeyDown(KeyboardEventHandler)
+     * @see #onCharacterTyped(Consumer)
+     */
+    public void onKeyUp(KeyboardEventHandler handler) {
+        canvas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                performEventAction(() ->
+                    handler.handleEvent(new KeyboardEvent(e)));
+            }
+        });
+    }
+
+    /**
+     * Adds a listener that will be notified when the use types a combination of keys that produce
+     * a character.
+     *
+     * Note that this only reports key combinations that produce characters; it does not report
+     * special keys such as arrow keys, backspace, modifiers, etc.
+     *
+     * See {@link #onKeyUp(KeyboardEventHandler) onKeyUp()} for more information.
+     *
+     * @see #onKeyDown(KeyboardEventHandler)
+     * @see #onKeyUp(KeyboardEventHandler)
+     */
+    public void onCharacterTyped(Consumer<Character> handler) {
+        canvas.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                performEventAction(() -> {
+                    // Arrows, modifier keys, tab, escape, etc. come back as either control chars
+                    // or \uFFFF. We don't pass them to handler; clients will have to use onKeyUp
+                    // for special keys.
+                    if (e.getKeyChar() >= ' ' && e.getKeyChar() != '\uFFFF') {
+                        handler.accept(e.getKeyChar());
+                    }
+                });
+            }
+        });
+    }
+
+    private void setUpKeyTracking() {
+        onKeyDown(e -> {
+            if (e.getKey() != Key.UNKNOWN) {
+                keysPressed.add(e.getKey());
+            }
+        });
+
+        onKeyUp(e -> {
+            if (e.getKey() != Key.UNKNOWN) {
+                keysPressed.remove(e.getKey());
+            }
+        });
+
+        // If the user switches app while a key is down, Java _never_ reports the key release.
+        // We therefore assume all keys were released (even if they aren't) when the user switches
+        // focus; otherwise, the app will report a key is pressed forever.
+        //
+        // Java still has numerous key event consistency issues around the edges. There is AFAICT no
+        // way to detect that a key is already down when we gain focus. Java doesn't detect focus
+        // loss caused by key-intercepting apps such as LaunchBar, so summoning one with keys down
+        // can cause “sticky key” issues. Still, what's here should be good enough for most projects.
+
+        canvas.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                keysPressed.clear();
+            }
+        });
+    }
+
+    /**
+     * Returns all keys currently pressed on the keyboard. You can poll this repeatedly (e.g. in an
+     * animate() callback) to continuously take some action as long as a key is held down.
+     *
+     * If instead you want to do something only at the moment a key goes down or comes back up, use
+     * {@link #onKeyDown(KeyboardEventHandler) onKeyDown} and
+     * {@link #onKeyUp(KeyboardEventHandler) onKeyUp()} instead.
+     */
+    public Set<Key> getKeysPressed() {
+        return Collections.unmodifiableSet(keysPressed);
     }
 
     /**
