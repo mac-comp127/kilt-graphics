@@ -419,9 +419,13 @@ public class CanvasWindow {
         });
     }
 
+    /**
+     * Call the given callback repeatedly forever, up to 60 times per second. Automatically draws
+     * the canvas after each time the callback runs.
+     */
     public void animate(Runnable callback) {
         mainThreadWatcher.afterThreadExits(() -> {
-            Timer timer = new Timer(1, e -> {
+            Timer timer = new Timer(15, e -> {
                 callback.run();
                 draw();
             });
