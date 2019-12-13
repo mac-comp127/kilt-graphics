@@ -12,6 +12,7 @@ public class Button extends EmbeddedSwingComponent {
     private Button(JButton button) {
         super(button);
         this.button = button;
+        button.setFocusable(false);
         changed();
     }
 
