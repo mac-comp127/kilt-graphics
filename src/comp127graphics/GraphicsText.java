@@ -49,21 +49,20 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     protected void draw(Graphics2D gc) {
-
         Font curFont = gc.getFont();
-        gc.setFont(font);
         Paint curColor = gc.getPaint();
+        gc.setFont(font);
         gc.setPaint(textColor);
-        //gc.drawString(text, x, y); // This would look better but doesn't seem to work with hit testing.
 
-        gc.fill(recomputeTextShape(gc));
+        gc.fill(getTextShape());
+
         gc.setFont(curFont);
         gc.setPaint(curColor);
     }
 
     private Shape recomputeTextShape(Graphics2D gc) {
         if (text == null || text.isEmpty()) {  // textLayout doesn't like empty strings
-            return textShape = new Rectangle2D.Double(0, 0, 0, 0);
+            return textShape = new Rectangle2D.Double(x, y, 0, 0);
         }
         FontRenderContext frc = gc.getFontRenderContext();
         TextLayout textLayout = new TextLayout(text, font, frc);
