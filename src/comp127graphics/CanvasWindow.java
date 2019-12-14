@@ -74,6 +74,8 @@ public class CanvasWindow {
     private Point curMousePos, prevMousePos;
     private Set<Key> keysPressed = EnumSet.noneOf(Key.class);
 
+    private FrameRateReporter fpsReporter = new FrameRateReporter();
+
     /**
      * Opens a new window for drawing.
      *
@@ -189,6 +191,8 @@ public class CanvasWindow {
      * synchronous: it waits for the drawing to complete before proceeding.
      */
     public void draw() {
+        fpsReporter.tick();
+
         try {
             synchronized (repaintLock) {
                 drawingInitiated = true;
