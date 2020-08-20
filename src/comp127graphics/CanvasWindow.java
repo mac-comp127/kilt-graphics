@@ -309,6 +309,7 @@ public class CanvasWindow {
     /**
      * @deprecated Do not mix Swing and comp127graphics APIs
      */
+    @Deprecated
     public JFrame getWindowFrame() {
         return windowFrame;
     }
