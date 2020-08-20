@@ -32,9 +32,11 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -68,11 +70,16 @@ public class CanvasWindow {
     private Set<JComponent> embeddedComponents = Set.of();
     private final Rectangle background;
 
-    private boolean drawingInitiated = false;
+    private boolean drawingInitiated = false, redrawNeeded = false;
     private final Object repaintLock = new Object();
+
+    private List<Runnable> animations = new ArrayList<>();
+    private Timer animationTimer;
 
     private Point curMousePos, prevMousePos;
     private Set<Key> keysPressed = EnumSet.noneOf(Key.class);
+
+    private FrameRateReporter fpsReporter = new FrameRateReporter();
 
     /**
      * Opens a new window for drawing.
@@ -113,7 +120,23 @@ public class CanvasWindow {
             }
         });
 
+        // Any time any graphics object changes, we'll need to redraw
+        content.addObserver(obj -> {
+            synchronized (repaintLock) {
+                redrawNeeded = true;
+            }
+        });
+
+        // Always draw once when main() exits
         mainThreadWatcher.afterThreadExits(this::draw);
+
+        // After main() is done, if there are any subsequent updates, they trigger a timer-based
+        // redraw that batches changes from the various animations and event handlers.
+        mainThreadWatcher.afterThreadExits(() -> {
+            content.addObserver(obj ->
+                startRefreshTimer()
+            );
+        });
     }
 
     /**
@@ -189,8 +212,15 @@ public class CanvasWindow {
      * synchronous: it waits for the drawing to complete before proceeding.
      */
     public void draw() {
+        fpsReporter.tick();
+
         try {
             synchronized (repaintLock) {
+                if (!redrawNeeded) {
+                    return;
+                }
+                redrawNeeded = false;
+
                 drawingInitiated = true;
 
                 updateEmbeddedComponents();
@@ -305,6 +335,7 @@ public class CanvasWindow {
     /**
      * @deprecated Do not mix Swing and comp127graphics APIs
      */
+    @Deprecated
     public JFrame getWindowFrame() {
         return windowFrame;
     }
@@ -572,15 +603,25 @@ public class CanvasWindow {
      * Call the given callback repeatedly forever, up to 60 times per second. Automatically draws
      * the canvas after each time the callback runs.
      */
-    public void animate(Runnable callback) {
-        mainThreadWatcher.afterThreadExits(() -> {
-            Timer timer = new Timer(15, e -> {
-                callback.run();
-                draw();
-            });
-            timer.setRepeats(true);
-            timer.start();
+    public void animate(Runnable animation) {
+        startRefreshTimer();
+        animations.add(animation);
+    }
+
+    private void startRefreshTimer() {
+        if (animationTimer != null) {
+            return;
+        }
+
+        System.out.println("Starting CanvasWindow refresh timer");
+        animationTimer = new Timer(15, e -> {
+            for (var animation : animations) {
+                animation.run();
+            }
+            draw();
         });
+        animationTimer.setRepeats(true);
+        animationTimer.start();
     }
 
     /**
