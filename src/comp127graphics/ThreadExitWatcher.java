@@ -19,13 +19,13 @@ import javax.swing.Timer;
 class ThreadExitWatcher {
     private final Object lock = new Object();
     private final long watchedThreadID;
-    private final String watcheThreadName;
+    private final String watchedThreadName;
     private Timer exitCheck;
     private LinkedList<Runnable> queuedTasks = new LinkedList<>();
 
     ThreadExitWatcher() {
         watchedThreadID = Thread.currentThread().getId();
-        watcheThreadName = Thread.currentThread().getName();
+        watchedThreadName = Thread.currentThread().getName();
 
         exitCheck = new Timer(100, e -> checkForThreadExit());
         exitCheck.setRepeats(true);
@@ -55,7 +55,7 @@ class ThreadExitWatcher {
             }
             exitCheck.stop();
 
-            System.out.println(watcheThreadName + " has exited; running queued tasks");
+            System.out.println(watchedThreadName + " has exited; running queued tasks");
 
             for (Runnable task : queuedTasks) {
                 task.run();
