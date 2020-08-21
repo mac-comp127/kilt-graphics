@@ -1,9 +1,6 @@
 package comp127graphics.events;
 
-import comp127graphics.Point;
-
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.function.Consumer;
 
 /**

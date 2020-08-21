@@ -1,11 +1,9 @@
 package comp127graphics;
 
+import java.util.LinkedList;
+
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
-import java.util.LinkedList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * In order to shield students from getting into thread hot water with Swing’s “multithreaded but

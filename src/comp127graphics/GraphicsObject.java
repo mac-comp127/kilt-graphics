@@ -1,11 +1,12 @@
 package comp127graphics;
 
-import javax.swing.JComponent;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
+
+import javax.swing.JComponent;
 
 /**
  * Abstract class representing some sort of graphical object that can be drawn and positioned in a canvaswindow.

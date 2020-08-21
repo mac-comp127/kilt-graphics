@@ -1,11 +1,12 @@
 package comp127graphics.ui;
 
-import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.util.function.Consumer;
+
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 public class TextField extends EmbeddedSwingComponent {
     private final JTextField field;

@@ -1,7 +1,6 @@
 package comp127graphics;
 
 
-import javax.imageio.ImageIO;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -10,6 +9,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import javax.imageio.ImageIO;
 
 /**
  * A bitmap image that can be drawn to the screen.
@@ -133,7 +134,6 @@ public class Image extends GraphicsObject {
     }
 
     private double getScaleToFit() {
-        double width = getImageWidth(), height = getImageHeight();
         return Math.min(
             1,
             Math.min(

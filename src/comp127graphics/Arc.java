@@ -20,8 +20,6 @@ public class Arc extends GraphicsObject implements Strokable {
     private BasicStroke stroke;
     private boolean isStroked = true;
 
-    private double x; // upper left x position
-    private double y; // upper left y position
     private double width;
     private double height;
     private double startAngle;
@@ -58,8 +56,6 @@ public class Arc extends GraphicsObject implements Strokable {
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
 
-        this.x = x;
-        this.y = y;
         this.width = width;
         this.height = height;
         this.startAngle = startAngle;
@@ -112,8 +108,6 @@ public class Arc extends GraphicsObject implements Strokable {
     @Override
     public void setPosition(double x, double y) {
         shape.setArc(x, y, width, height, startAngle, sweepAngle, type);
-        this.x = x;
-        this.y = y;
         changed();
     }
 

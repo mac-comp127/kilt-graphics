@@ -2,11 +2,6 @@ package comp127graphics.events;
 
 import comp127graphics.Point;
 
-import java.awt.event.InputEvent;
-import java.awt.event.MouseEvent;
-import java.util.Collections;
-import java.util.Set;
-
 /**
  * Carries information about the mouse moving from one location to another.
  *

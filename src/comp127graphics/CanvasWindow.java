@@ -1,18 +1,5 @@
 package comp127graphics;
 
-import comp127graphics.events.Key;
-import comp127graphics.events.KeyboardEvent;
-import comp127graphics.events.KeyboardEventHandler;
-import comp127graphics.events.MouseButtonEvent;
-import comp127graphics.events.MouseButtonEventHandler;
-import comp127graphics.events.MouseMotionEvent;
-import comp127graphics.events.MouseMotionEventHandler;
-
-import javax.imageio.ImageIO;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -40,6 +27,20 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import javax.imageio.ImageIO;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.Timer;
+
+import comp127graphics.events.Key;
+import comp127graphics.events.KeyboardEvent;
+import comp127graphics.events.KeyboardEventHandler;
+import comp127graphics.events.MouseButtonEvent;
+import comp127graphics.events.MouseButtonEventHandler;
+import comp127graphics.events.MouseMotionEvent;
+import comp127graphics.events.MouseMotionEventHandler;
 
 /**
  * A window frame that can contain graphical objects.
@@ -327,7 +328,6 @@ public class CanvasWindow {
                 System.out.println("-- saved");
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -348,6 +348,8 @@ public class CanvasWindow {
     }
 
     class Canvas extends JPanel {
+        private static final long serialVersionUID = -5878605235166927084L;
+
         /**
          * Called automatically by Java to redraw the graphics
          */

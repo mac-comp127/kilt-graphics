@@ -7,9 +7,6 @@ import java.awt.Color;
 import java.util.List;
 
 public class VisualTest {
-    // Graphics should still appear if main() exits without calling draw()
-    private static final boolean IMMEDIATE_EXIT = false;
-
     private static boolean hitTestVisualization = false;
     private static double t = 0;
 
@@ -59,8 +56,6 @@ public class VisualTest {
 
         CanvasWindow canvas = new CanvasWindow("comp127graphics visual test", 400, 300);
         canvas.add(group);
-
-        double pause = 1000;
 
         canvas.onMouseMove((event) -> {
             text.setText(event.getPosition().toString());

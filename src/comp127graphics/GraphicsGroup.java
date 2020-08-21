@@ -1,17 +1,13 @@
 package comp127graphics;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * A group of graphical objects that can be added, moved, and removed as a single unit.
