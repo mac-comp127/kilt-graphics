@@ -1,0 +1,21 @@
+plugins {
+    id 'java'
+}
+
+group 'edu.macalester'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.6.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+sourceSets.main.java.srcDirs = ['src']
+sourceSets.test.java.srcDirs = ['test']
