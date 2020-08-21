@@ -28,5 +28,9 @@ gradle-app.setting
 
 
 
-# Generate IntelliJ metadata from Gradle config
+# IDE-specific config (IDEs can generate from Gradle config)
 .idea
+.classpath
+.project
+.settings
+.vscode
