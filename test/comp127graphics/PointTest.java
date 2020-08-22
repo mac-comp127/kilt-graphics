@@ -13,6 +13,7 @@ class PointTest {
     @SuppressWarnings({"SimplifiableAssertion"})
     @Test
     void equality() {
+        assertTrue(p.equals(p));
         assertTrue(p.equals(new Point(1,2)));
         assertFalse(p.equals(new Point(1,3)));
         assertFalse(p.equals(new Point(2,2)));
@@ -25,6 +26,8 @@ class PointTest {
         Point nanPoint = new Point(NaN, NaN);
         assertTrue(nanPoint.equals(new Point(NaN, NaN)));
         assertFalse(nanPoint.equals(new Point(NaN, 0)));
+
+        assertEquals(p.hashCode(), new Point(1, 2).hashCode());
     }
 
     @Test
