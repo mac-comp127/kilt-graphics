@@ -1,5 +1,7 @@
 package comp127graphics;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.awt.Color;
 
 public class RectangleTest implements GraphicsObjectTestSuite {
@@ -37,11 +39,14 @@ public class RectangleTest implements GraphicsObjectTestSuite {
     }
     
     @RenderingTest
-    void filledNoStroke() {
-        rect = new Rectangle(17, 24.5, 60.3, 30.1);
+    void filledNoStrokeWithRearrangement() {
+        rect = new Rectangle(17, 24.5, 60.5, 30.1);
         assertChangedAtEachStep(
             () -> rect.setStroked(false),
-            () -> rect.setFillColor(Color.BLUE)
+            () -> rect.setFillColor(Color.BLUE),
+            () -> rect.setCenter(new Point(45, 60)),
+            () -> rect.setSize(new Point(56.5, 33.3))
         );
+        assertEquals(new Rectangle(14.75, 44.95, 56.5, 33.3), rect);
     }
 }
