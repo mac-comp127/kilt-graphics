@@ -60,25 +60,7 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
         }
 
         BufferedImage deltaImage = createImage(suite);
-        double totalDiff = 0;
-        for (int y = 0; y < deltaImage.getHeight(); y++) {
-            for (int x = 0; x < deltaImage.getWidth(); x++) {
-                int expectedPix = expectedImage.getRGB(x, y);
-                int actualPix = actualImage.getRGB(x, y);
-                int maxDiff = 0;
-                for (int channel = 0; channel < 4; channel++) {
-                    maxDiff = Math.max(maxDiff,
-                        Math.abs((expectedPix & 0xFF) - (actualPix & 0xFF)));
-                    expectedPix >>= 8;
-                    actualPix >>= 8;
-                }
-                totalDiff += Math.pow(maxDiff / 255.0, 2);
-                deltaImage.setRGB(x, y, 0xFF000000
-                    | diffCurve(maxDiff, 0.03) << 16
-                    | diffCurve(maxDiff, 1) << 8
-                    | diffCurve(maxDiff, 4));
-            }
-        }
+        double totalDiff = compareImages(expectedImage, actualImage, deltaImage);
 
         File deltaFile = getImageFile(context, "(delta)");
         if (totalDiff > 0) {
@@ -97,12 +79,6 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
                 + "\n    " + actualFile
                 + "\n    " + deltaFile);
         }
-    }
-
-    private int diffCurve(int diff, double gamma) {
-        return Math.min(255, Math.max(0,
-            (int) Math.ceil(
-                Math.pow(diff / 255.0, gamma) * 255.0)));
     }
 
     private GraphicsObjectTestSuite getGraphicsObjectTestSuite(ExtensionContext context) {
@@ -167,5 +143,37 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
         g.setStroke(new BasicStroke(1f));
         g.setPaint(new Color(0, 0, 0, 64));
         g.draw(cropMarks);
+    }
+
+    private double compareImages(BufferedImage expectedImage, BufferedImage actualImage, BufferedImage deltaImage) {
+        double totalDiff = 0;
+        for (int y = 0; y < deltaImage.getHeight(); y++) {
+            for (int x = 0; x < deltaImage.getWidth(); x++) {
+                int expectedPix = expectedImage.getRGB(x, y);
+                int actualPix = actualImage.getRGB(x, y);
+                int maxDiff = 0;
+                for (int channel = 0; channel < 4; channel++) {
+                    maxDiff = Math.max(maxDiff,
+                        Math.abs((expectedPix & 0xFF) - (actualPix & 0xFF)));
+                    expectedPix >>= 8;
+                    actualPix >>= 8;
+                }
+                totalDiff += Math.pow(maxDiff / 255.0, 2);
+                deltaImage.setRGB(x, y, 0xFF000000
+                    | diffCurve(maxDiff, 0.03) << 16
+                    | diffCurve(maxDiff, 1) << 8
+                    | diffCurve(maxDiff, 4));
+            }
+        }
+        return totalDiff;
+    }
+
+    /**
+     * Helps create color curves in different color channels to highlight both small and large differences.
+     */
+    private int diffCurve(int diff, double gamma) {
+        return Math.min(255, Math.max(0,
+            (int) Math.ceil(
+                Math.pow(diff / 255.0, gamma) * 255.0)));
     }
 }
