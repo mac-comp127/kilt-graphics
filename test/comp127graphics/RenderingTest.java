@@ -2,13 +2,20 @@ package comp127graphics;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.nio.file.Paths;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -31,15 +38,18 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
     public void afterTestExecution(ExtensionContext context) throws Exception {
         var suite = getGraphicsObjectTestSuite(context);
         var gobj = suite.getGraphicsObject();
+
         var actualImage = createImage(suite);
-        gobj.draw(actualImage.createGraphics());
+        Graphics2D g = actualImage.createGraphics();
+        gobj.draw(g);
+        visualizeBounds(g, gobj);
         File actualFile = getImageFile(context, "actual");
-        ImageIO.write(actualImage, "png", actualFile);
+        writeImage(actualImage, actualFile);
 
         File expectedFile = getImageFile(context, "expected");
         if (!expectedFile.exists()) {
             System.err.println("WARNING: Using generated image from new RenderingTest as the expected image for future runs: " + expectedFile);
-            ImageIO.write(actualImage, "png", expectedFile);
+            writeImage(actualImage, expectedFile);
             return;
         }
         
@@ -72,14 +82,17 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
 
         File deltaFile = getImageFile(context, "(delta)");
         if (totalDiff > 0) {
-            ImageIO.write(deltaImage, "png", deltaFile);
-        } else {
-            deltaFile.delete();            
+            writeImage(deltaImage, deltaFile);
+        } else if (deltaFile.exists()) {
+            if (!deltaFile.delete()) {
+                throw new IOException("can't delete delta image file: " + deltaFile);
+            }
         }
 
         if (totalDiff > totalDiffFailureThreshold) {
-            fail("image does not match expected (difference factor of " + totalDiff + " exceeds threshold of " + totalDiffFailureThreshold
-                + ")\nFor visual comparison, see:"
+            fail("image does not match expected (difference factor of " + totalDiff
+                + " exceeds threshold of " + totalDiffFailureThreshold + ")"
+                + "\nFor visual comparison, see:"
                 + "\n    " + expectedFile
                 + "\n    " + actualFile
                 + "\n    " + deltaFile);
@@ -128,5 +141,31 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
                 (int) Math.round(suite.getCanvasSize().getX()),
                 (int) Math.round(suite.getCanvasSize().getY()),
                 BufferedImage.TYPE_INT_ARGB);
+    }
+
+    private void writeImage(BufferedImage image, File file) throws IOException {
+        if (!ImageIO.write(image, "png", file)) {
+            throw new IOException("Cannot write image to " + file);
+        }
+    }
+
+    private void visualizeBounds(Graphics2D g, GraphicsObject gobj) {
+        var bounds = gobj.getBounds();
+        var cropMarks = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);
+        for(int side = 0; side < 2; side++) {
+            for (double y : List.of(bounds.getMinY(), bounds.getMaxY() - 1)) {
+                double x = bounds.getMinX() + bounds.getWidth() * side;
+                cropMarks.moveTo(x + (side * 2 - 1) * 16, y);
+                cropMarks.lineTo(x + (side * 2 - 1) * 4, y);
+            }
+            for (double x : List.of(bounds.getMinX(), bounds.getMaxX() - 1)) {
+                double y = bounds.getMinY() + bounds.getHeight() * side;
+                cropMarks.moveTo(x, y + (side * 2 - 1) * 16);
+                cropMarks.lineTo(x, y + (side * 2 - 1) * 4);
+            }
+        }
+        g.setStroke(new BasicStroke(1f));
+        g.setPaint(new Color(0, 0, 0, 64));
+        g.draw(cropMarks);
     }
 }
