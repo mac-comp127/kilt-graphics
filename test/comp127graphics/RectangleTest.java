@@ -20,22 +20,28 @@ public class RectangleTest implements GraphicsObjectTestSuite {
     // @HitTest // TODO
     void unfilledCustomStroke() {
         rect = new Rectangle(new Point(10, 20), new Point(30, 40));
-        rect.setStrokeColor(Color.MAGENTA);
-        rect.setStrokeWidth(12);
+        assertChangedAtEachStep(
+            () -> rect.setStrokeColor(Color.MAGENTA),
+            () -> rect.setStrokeWidth(12)
+        );
     }
     
     @RenderingTest
     void filledStroked() {
         rect = new Rectangle(17.5, 24, 60, 30);
-        rect.setStrokeColor(Color.CYAN);
-        rect.setStrokeWidth(3);
-        rect.setFillColor(Color.BLUE);
+        assertChangedAtEachStep(
+            () -> rect.setStrokeColor(Color.CYAN),
+            () -> rect.setStrokeWidth(3),
+            () -> rect.setFillColor(Color.BLUE)
+        );
     }
     
     @RenderingTest
     void filledNoStroke() {
         rect = new Rectangle(17, 24.5, 60.3, 30.1);
-        rect.setStroked(false);
-        rect.setFillColor(Color.BLUE);
+        assertChangedAtEachStep(
+            () -> rect.setStroked(false),
+            () -> rect.setFillColor(Color.BLUE)
+        );
     }
 }
