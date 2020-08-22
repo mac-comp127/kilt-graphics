@@ -16,6 +16,9 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    testLogging {
+        showStandardStreams = true
+    }
 }
 
 sourceCompatibility = 1.12
