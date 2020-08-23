@@ -148,8 +148,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     /**
      * Changes the width and height of the ellipse, preserving the position of its upper left corner.
      */
-    public void setWidthAndHeight(double width, double height) {
-        shape.setFrame(shape.getX(), shape.getY(), width, height);
+    public void setSize(Point size) {
+        shape.setFrame(shape.getX(), shape.getY(), size.getX(), size.getY());
         changed();
     }
 

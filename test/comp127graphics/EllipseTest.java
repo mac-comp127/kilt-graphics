@@ -17,9 +17,10 @@ public class EllipseTest implements GraphicsObjectTestSuite {
         ellipse = new Ellipse(17, 24.5, 60.5, 30.1);
         assertChangedAtEachStep(
             () -> ellipse.setCenter(new Point(45, 60)),
+            () -> ellipse.setSize(new Point(56.5, 33.3)),
             () -> ellipse.moveBy(5, 3)
         );
-        assertEquals(new Ellipse(19.75, 47.95, 60.5, 30.1), ellipse);
+        assertEquals(new Ellipse(19.75, 47.95, 56.5, 33.3), ellipse);
     }
 
     @RenderingTest(modes = { STROKED, FILLED, HIT_TEST })
