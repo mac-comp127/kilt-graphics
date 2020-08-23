@@ -26,9 +26,9 @@ public class ImageComparison {
 
     public void compare() throws IOException {
         var actualImage = createTestImage();
-        if (!renderer.render(actualImage.createGraphics(), getGraphicsObjectTestSuite().getGraphicsObject())) {
-            return;
-        }
+        renderer.render(
+            actualImage.createGraphics(),
+            getGraphicsObjectTestSuite().getGraphicsObject());
         File actualFile = getImageFile("actual");
         writeImage(actualImage, actualFile);
 
@@ -58,7 +58,7 @@ public class ImageComparison {
         }
 
         if (totalDiff > totalDiffFailureThreshold) {
-            fail("image does not match expected (difference factor of " + totalDiff
+            fail(variant + " image does not match expected (difference factor of " + totalDiff
                 + " exceeds threshold of " + totalDiffFailureThreshold + ")"
                 + "\nFor visual comparison, see:"
                 + "\n    " + expectedFile
@@ -155,6 +155,6 @@ public class ImageComparison {
          * @return True if the method rendered the graphics, or false if this renderer does not apply and the
         *          test system should skip this test case.
          */
-        boolean render(Graphics2D graphics, GraphicsObject gobjToRender);
+        void render(Graphics2D graphics, GraphicsObject gobjToRender);
     }
 }
