@@ -15,7 +15,7 @@ public class RectangleTest implements GraphicsObjectTestSuite {
         return rect;
     }
     
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST })
     void regularRect() {
         rect = new Rectangle(17, 24.5, 60.5, 30.1);
         assertChangedAtEachStep(

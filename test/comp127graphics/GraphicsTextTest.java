@@ -45,7 +45,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         );
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void unicode() {
         text = new GraphicsText("优雅");
         assertChangedAtEachStep(
@@ -55,7 +55,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         assertEquals("\u4f18\u96c5", text.getText());
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void nullString() {
         text = new GraphicsText(null, 50, 50);
     }

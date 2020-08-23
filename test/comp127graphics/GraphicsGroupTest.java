@@ -1,6 +1,5 @@
 package comp127graphics;
 
-import static comp127graphics.testsupport.RenderingTestMode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -37,7 +36,7 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         return group;
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void simple() {
         group = new GraphicsGroup();
         assertChangedAtEachStep(
@@ -47,7 +46,7 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         );
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void changesPropagateToGroup() {
         group = new GraphicsGroup();
         assertChangedAtEachStep(
@@ -63,7 +62,7 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         assertNotChanged(() -> triangle.setStrokeWidth(10));
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void removeAll() {
         group = new GraphicsGroup();
         assertChangedAtEachStep(
@@ -88,7 +87,7 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
             group.remove(triangle));
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void nested() {
         group = new GraphicsGroup();
         var subgroup = new GraphicsGroup(8, 4);
@@ -108,7 +107,7 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         assertEquals(null, group.getElementAt(42, 67));
     }
 
-    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    @RenderingTest
     void empty() {
         group = new GraphicsGroup(1, 1);
     }

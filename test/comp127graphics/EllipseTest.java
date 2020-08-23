@@ -15,7 +15,7 @@ public class EllipseTest implements GraphicsObjectTestSuite {
         return ellipse;
     }
     
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST })
     void regularEllipse() {
         ellipse = new Ellipse(17, 24.5, 60.5, 30.1);
         assertChangedAtEachStep(

@@ -17,13 +17,13 @@ public class PathTest implements GraphicsObjectTestSuite {
         return path;
     }
 
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST })
     void triangle() {
         path = Path.makeTriangle(60, 20, 20, 40, 35, 73);
         assertTrue(path.isClosed());
     }
 
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST })
     void clockwise() {
         path = new Path(
             new Point(10, 10),
@@ -35,7 +35,7 @@ public class PathTest implements GraphicsObjectTestSuite {
         assertTrue(path.isClosed());
     }
 
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST })
     void counterclockwise() {
         path = new Path(
             new Point(20, 80),
@@ -47,7 +47,7 @@ public class PathTest implements GraphicsObjectTestSuite {
         assertTrue(path.isClosed());
     }
 
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST })
     void open() {
         path = new Path(
             List.of(
