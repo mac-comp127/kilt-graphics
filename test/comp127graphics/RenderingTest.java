@@ -24,7 +24,6 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         for (var mode : context.getRequiredTestMethod().getAnnotation(RenderingTest.class).modes()) {
-            System.out.println(mode);
             new ImageComparison(context, mode.name().toLowerCase(), mode).compare();
         }
     }

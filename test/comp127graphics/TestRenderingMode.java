@@ -9,19 +9,20 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
 public enum TestRenderingMode implements ImageComparison.Renderer {
     PLAIN {
         @Override
-        public void render(Graphics2D g, GraphicsObject gobj) {
-            renderWithBounds(g, gobj);
+        public void render(BufferedImage image, GraphicsObject gobj) {
+            renderWithBounds(image, gobj);
         }
     },
 
     STROKED {
         @Override
-        public void render(Graphics2D g, GraphicsObject gobj) {
+        public void render(BufferedImage image, GraphicsObject gobj) {
             if (gobj instanceof Fillable) {
                 ((Fillable) gobj).setFilled(false);
             }
@@ -41,13 +42,13 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
                 }
             );
 
-            renderWithBounds(g, gobj);
+            renderWithBounds(image, gobj);
         }
     },
 
     FILLED {
         @Override
-        public void render(Graphics2D g, GraphicsObject gobj) {
+        public void render(BufferedImage image, GraphicsObject gobj) {
             if (gobj instanceof Strokable) {
                 ((Strokable) gobj).setStroked(false);
             }
@@ -63,13 +64,13 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
                     assertTrue(fillable.isFilled());
                 }
             );
-            renderWithBounds(g, gobj);
+            renderWithBounds(image, gobj);
         }
     },
 
     FILLED_AND_STROKED {
         @Override
-        public void render(Graphics2D g, GraphicsObject gobj) {
+        public void render(BufferedImage image, GraphicsObject gobj) {
             var fillAndStroke = (Fillable & Strokable) gobj;
             assertChangedAtEachStep(gobj,
                 () -> fillAndStroke.setStrokeColor(Color.BLUE),
@@ -78,19 +79,25 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             );
             assertTrue(fillAndStroke.isStroked());
             assertTrue(fillAndStroke.isFilled());
-            renderWithBounds(g, gobj);
+            renderWithBounds(image, gobj);
         }
     },
     
     HIT_TEST {
         @Override
-        public void render(Graphics2D g, GraphicsObject gobj) {
-            var bounds = g.getClipBounds();
-            System.out.println(bounds);
+        public void render(BufferedImage image, GraphicsObject gobj) {
+            for (int y = 0; y < image.getHeight(); y++) {
+                for(int x = 0; x < image.getWidth(); x++) {
+                    image.setRGB(x, y, 0xFF000000
+                        | (gobj.isInBounds(new Point(x, y)) ? 0xFF00ABCD : 0)
+                        | (gobj.testHit(x, y) ? 0xFFFF1234 : 0));
+                }                
+            }
         }
     };
 
-    private static void renderWithBounds(Graphics2D g, GraphicsObject gobj) {
+    private static void renderWithBounds(BufferedImage image, GraphicsObject gobj) {
+        var g = image.createGraphics();
         gobj.draw(g);
         visualizeBounds(g, gobj);
     }

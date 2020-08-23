@@ -2,7 +2,6 @@ package comp127graphics;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -26,9 +25,7 @@ public class ImageComparison {
 
     public void compare() throws IOException {
         var actualImage = createTestImage();
-        renderer.render(
-            actualImage.createGraphics(),
-            getGraphicsObjectTestSuite().getGraphicsObject());
+        renderer.render(actualImage, getGraphicsObjectTestSuite().getGraphicsObject());
         File actualFile = getImageFile("actual");
         writeImage(actualImage, actualFile);
 
@@ -155,6 +152,6 @@ public class ImageComparison {
          * @return True if the method rendered the graphics, or false if this renderer does not apply and the
         *          test system should skip this test case.
          */
-        void render(Graphics2D graphics, GraphicsObject gobjToRender);
+        void render(BufferedImage image, GraphicsObject gobjToRender);
     }
 }
