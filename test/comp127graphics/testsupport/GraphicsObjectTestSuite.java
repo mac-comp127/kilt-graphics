@@ -71,21 +71,45 @@ public interface GraphicsObjectTestSuite {
      * a change notification (typically by calling its changed() method internally).
      */
     static void assertChanged(GraphicsObject gobj, Runnable action) {
+        int changeCount = applyActionAndCountChanges(gobj, action);
+        assertTrue(
+            changeCount > 0,
+            "Expected action to cause graphics object to broadcast a changed() notification (" + gobj + ")");
+    }
+
+    /**
+     * Asserts that running the specified action should NOT cause the given graphics object to emit
+     * a change notification.
+     */
+    static void assertNotChanged(GraphicsObject gobj, Runnable action) {
+        int changeCount = applyActionAndCountChanges(gobj, action);
+        assertTrue(
+            changeCount == 0,
+            "Expected action NOT to cause graphics object to broadcast a changed() notification (" + gobj + ")");
+    }
+
+    static int applyActionAndCountChanges(GraphicsObject gobj, Runnable action) {
         var changeCounter = new ChangeCountingObserver();
         gobj.addObserver(changeCounter);
         action.run();
         gobj.removeObserver(changeCounter);
-        assertTrue(
-            changeCounter.getChangeCount() > 0,
-            "Expected action to cause graphics object to broadcast a changed() notification (" + gobj + ")");
+        return changeCounter.getChangeCount();
     }
-
+    
     /**
      * Asserts that running the specified action should cause this test suite's graphics object
      * (the one getGraphicsObject() returns) to emit a change notification.
      */
     default void assertChanged(Runnable action) {
         assertChanged(getGraphicsObject(), action);
+    }
+
+    /**
+     * Asserts that running the specified action should NOT cause this test suite's graphics object
+     * to emit a change notification.
+     */
+    default void assertNotChanged(Runnable action) {
+        assertNotChanged(getGraphicsObject(), action);
     }
 
     /**
