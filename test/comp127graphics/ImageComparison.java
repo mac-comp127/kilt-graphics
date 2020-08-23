@@ -2,16 +2,11 @@ package comp127graphics;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -20,23 +15,24 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 public class ImageComparison {
     private final ExtensionContext context;
     private final double totalDiffFailureThreshold = 0;  // could allow customization in annotation
+    private final String variant;
+    private final Renderer renderer;
 
-    public ImageComparison(ExtensionContext context) {
+    public ImageComparison(ExtensionContext context, String variant, Renderer renderer) {
         this.context = context;
+        this.variant = variant;
+        this.renderer = renderer;
     }
 
     public void compare() throws IOException {
-        var suite = getGraphicsObjectTestSuite(context);
-        var gobj = suite.getGraphicsObject();
-
-        var actualImage = createImage(suite);
-        Graphics2D g = actualImage.createGraphics();
-        gobj.draw(g);
-        visualizeBounds(g, gobj);
-        File actualFile = getImageFile(context, "actual");
+        var actualImage = createTestImage();
+        if (!renderer.render(actualImage.createGraphics(), getGraphicsObjectTestSuite().getGraphicsObject())) {
+            return;
+        }
+        File actualFile = getImageFile("actual");
         writeImage(actualImage, actualFile);
 
-        File expectedFile = getImageFile(context, "expected");
+        File expectedFile = getImageFile("expected");
         if (!expectedFile.exists()) {
             System.err.println("WARNING: Using generated image from new RenderingTest as the expected image for future runs: " + expectedFile);
             writeImage(actualImage, expectedFile);
@@ -49,10 +45,10 @@ public class ImageComparison {
                 + "), but got (" + actualImage.getWidth() + "," + actualImage.getHeight() + ")");
         }
 
-        BufferedImage deltaImage = createImage(suite);
+        BufferedImage deltaImage = createTestImage();
         double totalDiff = compareImages(expectedImage, actualImage, deltaImage);
 
-        File deltaFile = getImageFile(context, "(delta)");
+        File deltaFile = getImageFile("(delta)");
         if (totalDiff > 0) {
             writeImage(deltaImage, deltaFile);
         } else if (deltaFile.exists()) {
@@ -71,7 +67,7 @@ public class ImageComparison {
         }
     }
 
-    private static GraphicsObjectTestSuite getGraphicsObjectTestSuite(ExtensionContext context) {
+    private GraphicsObjectTestSuite getGraphicsObjectTestSuite() {
         var testInstance = context.getRequiredTestInstance();
         if (!(testInstance instanceof GraphicsObjectTestSuite)) {
             fail(context.getRequiredTestMethod().getName()
@@ -83,12 +79,16 @@ public class ImageComparison {
         return (GraphicsObjectTestSuite) testInstance;
     }
 
-    private File getImageFile(ExtensionContext context, String role) {
+    private File getImageFile(String role) {
         File suiteDir = new File(getFixturesDir(), context.getRequiredTestClass().getSimpleName());
         if (!suiteDir.exists()) {
             suiteDir.mkdir();
         }
-        return new File(suiteDir, context.getRequiredTestMethod().getName() + "-" + role + ".png");
+        String baseName = context.getRequiredTestMethod().getName();
+        if (variant != null) {
+            baseName += "-" + variant;
+        }
+        return new File(suiteDir, baseName + "." + role + ".png");
     }
 
     private File getFixturesDir() {
@@ -102,37 +102,18 @@ public class ImageComparison {
         return fixtureDir;
     }
 
-    private BufferedImage createImage(GraphicsObjectTestSuite suite) {
+    private BufferedImage createTestImage() {
+        Point imageSize = getGraphicsObjectTestSuite().getCanvasSize();
         return new BufferedImage(
-                (int) Math.round(suite.getCanvasSize().getX()),
-                (int) Math.round(suite.getCanvasSize().getY()),
-                BufferedImage.TYPE_INT_ARGB);
+            (int) Math.round(imageSize.getX()),
+            (int) Math.round(imageSize.getY()),
+            BufferedImage.TYPE_INT_ARGB);
     }
 
     private void writeImage(BufferedImage image, File file) throws IOException {
         if (!ImageIO.write(image, "png", file)) {
             throw new IOException("Cannot write image to " + file);
         }
-    }
-
-    private void visualizeBounds(Graphics2D g, GraphicsObject gobj) {
-        var bounds = gobj.getBounds();
-        var cropMarks = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);
-        for(int side = 0; side < 2; side++) {
-            for (double y : List.of(bounds.getMinY(), bounds.getMaxY() - 1)) {
-                double x = bounds.getMinX() + bounds.getWidth() * side;
-                cropMarks.moveTo(x + (side * 2 - 1) * 16, y);
-                cropMarks.lineTo(x + (side * 2 - 1) * 4, y);
-            }
-            for (double x : List.of(bounds.getMinX(), bounds.getMaxX() - 1)) {
-                double y = bounds.getMinY() + bounds.getHeight() * side;
-                cropMarks.moveTo(x, y + (side * 2 - 1) * 16);
-                cropMarks.lineTo(x, y + (side * 2 - 1) * 4);
-            }
-        }
-        g.setStroke(new BasicStroke(1f));
-        g.setPaint(new Color(0, 0, 0, 64));
-        g.draw(cropMarks);
     }
 
     private double compareImages(BufferedImage expectedImage, BufferedImage actualImage, BufferedImage deltaImage) {
@@ -165,5 +146,15 @@ public class ImageComparison {
         return Math.min(255, Math.max(0,
             (int) Math.ceil(
                 Math.pow(diff / 255.0, gamma) * 255.0)));
+    }
+
+    public interface Renderer {
+        /**
+         * Renders an image of the given graphics objects for the purpose of comparing against previous runs.
+         * 
+         * @return True if the method rendered the graphics, or false if this renderer does not apply and the
+        *          test system should skip this test case.
+         */
+        boolean render(Graphics2D graphics, GraphicsObject gobjToRender);
     }
 }
