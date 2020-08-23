@@ -3,7 +3,7 @@ package comp127graphics;
 import comp127graphics.testsupport.GraphicsObjectTestSuite;
 import comp127graphics.testsupport.RenderingTest;
 
-import static comp127graphics.testsupport.TestRenderingMode.*;
+import static comp127graphics.testsupport.RenderingTestMode.*;
 
 public class ArcTest implements GraphicsObjectTestSuite {
     private Arc arc;

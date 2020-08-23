@@ -22,7 +22,7 @@ import comp127graphics.Strokable;
 /**
  * Specifies how a @RenderingTest should render its graphics object to an image.
  */
-public enum TestRenderingMode implements ImageComparison.Renderer {
+public enum RenderingTestMode implements ImageComparison.Renderer {
     /**
      * Renders the graphics object as is, with no modification.
      */

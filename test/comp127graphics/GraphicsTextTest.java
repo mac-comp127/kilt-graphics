@@ -1,6 +1,6 @@
 package comp127graphics;
 
-import static comp127graphics.testsupport.TestRenderingMode.*;
+import static comp127graphics.testsupport.RenderingTestMode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import comp127graphics.testsupport.GraphicsObjectTestSuite;

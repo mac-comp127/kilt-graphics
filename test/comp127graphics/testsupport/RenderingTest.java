@@ -1,6 +1,6 @@
 package comp127graphics.testsupport;
 
-import static comp127graphics.testsupport.TestRenderingMode.*;
+import static comp127graphics.testsupport.RenderingTestMode.*;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -30,7 +30,7 @@ public @interface RenderingTest {
      * have side effects that may affect subsequence modes, e.g. if you specify STROKED (which enables
      * the stroke) and then PLAIN (which changes nothing), the object will still be stroked.
      */
-    TestRenderingMode[] modes() default { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST };
+    RenderingTestMode[] modes() default { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST };
 
     double tolerance() default 10;
 }
