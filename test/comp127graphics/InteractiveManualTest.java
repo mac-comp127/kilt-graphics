@@ -6,7 +6,7 @@ import comp127graphics.ui.TextField;
 import java.awt.Color;
 import java.util.List;
 
-public class VisualTest {
+public class InteractiveManualTest {
     private static boolean hitTestVisualization = false;
     private static double t = 0;
 

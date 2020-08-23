@@ -1,6 +1,6 @@
-package comp127graphics;
+package comp127graphics.testsupport;
 
-import static comp127graphics.GraphicsObjectTestSuite.assertChangedAtEachStep;
+import static comp127graphics.testsupport.GraphicsObjectTestSuite.assertChangedAtEachStep;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,7 +11,13 @@ import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+
+import comp127graphics.Fillable;
+import comp127graphics.GraphicsObject;
+import comp127graphics.Point;
+import comp127graphics.Strokable;
 
 public enum TestRenderingMode implements ImageComparison.Renderer {
     PLAIN {
@@ -29,19 +35,15 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             }
 
             var strokable = (Strokable) gobj;
-            assertChangedAtEachStep(gobj,
-                () -> {
-                    strokable.setStroked(false);
-                    assertFalse(strokable.isStroked());
-                },
-                () -> {
-                    strokable.setStrokeColor(Color.MAGENTA);
-                    assertTrue(strokable.isStroked());
-                },
-                () -> {
-                    strokable.setStrokeWidth(4);
-                }
-            );
+            assertChangedAtEachStep(gobj, () -> {
+                strokable.setStroked(false);
+                assertFalse(strokable.isStroked());
+            }, () -> {
+                strokable.setStrokeColor(Color.MAGENTA);
+                assertTrue(strokable.isStroked());
+            }, () -> {
+                strokable.setStrokeWidth(4);
+            });
 
             renderWithBounds(image, gobj);
         }
@@ -55,16 +57,13 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             }
 
             var fillable = (Fillable) gobj;
-            assertChangedAtEachStep(gobj,
-                () -> {
-                    fillable.setFilled(false);
-                    assertFalse(fillable.isFilled());
-                },
-                () -> {
-                    fillable.setFillColor(Color.CYAN);
-                    assertTrue(fillable.isFilled());
-                }
-            );
+            assertChangedAtEachStep(gobj, () -> {
+                fillable.setFilled(false);
+                assertFalse(fillable.isFilled());
+            }, () -> {
+                fillable.setFillColor(Color.CYAN);
+                assertTrue(fillable.isFilled());
+            });
             renderWithBounds(image, gobj);
         }
     },
@@ -73,42 +72,43 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
             var fillAndStroke = (Fillable & Strokable) gobj;
-            assertChangedAtEachStep(gobj,
-                () -> fillAndStroke.setStrokeColor(Color.BLUE),
-                () -> fillAndStroke.setStrokeWidth(3),
-                () -> fillAndStroke.setFillColor(Color.YELLOW)
-            );
+            assertChangedAtEachStep(gobj, () -> fillAndStroke.setStrokeColor(Color.BLUE),
+                    () -> fillAndStroke.setStrokeWidth(3), () -> fillAndStroke.setFillColor(Color.YELLOW));
             assertTrue(fillAndStroke.isStroked());
             assertTrue(fillAndStroke.isFilled());
             renderWithBounds(image, gobj);
         }
     },
-    
+
     HIT_TEST {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
             for (int y = 0; y < image.getHeight(); y++) {
-                for(int x = 0; x < image.getWidth(); x++) {
-                    image.setRGB(x, y, 0xFF000000
-                        | (gobj.isInBounds(new Point(x, y)) ? 0xFF006789 : 0)
-                        | (gobj.testHit(x, y) ? 0xFFFF0000 : 0));
-                }                
+                for (int x = 0; x < image.getWidth(); x++) {
+                    image.setRGB(x, y, 0xFF000000 | (gobj.isInBounds(new Point(x, y)) ? 0xFF006789 : 0)
+                            | (gobj.testHit(x, y) ? 0xFFFF0000 : 0));
+                }
             }
         }
     };
 
     private static void renderWithBounds(BufferedImage image, GraphicsObject gobj) {
         var gc = image.createGraphics();
-        gc.setRenderingHint(
-            RenderingHints.KEY_ANTIALIASING,
-            RenderingHints.VALUE_ANTIALIAS_ON);
-        gc.setRenderingHint(
-            RenderingHints.KEY_RENDERING,
-            RenderingHints.VALUE_RENDER_QUALITY);
-        gc.setRenderingHint(
-            RenderingHints.KEY_STROKE_CONTROL,
-            RenderingHints.VALUE_STROKE_PURE);
-        gobj.draw(gc);
+        gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        gc.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        gc.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+
+        // This messy reflection code is secretly just `gobj.draw(gc)`. We could make
+        // GraphicsObject.draw() a public method, but it would confuse students by showing up in
+        // autocomplete. We could move this class into the same package as GraphicsObject, but
+        // that makes the tests harder to navigate. The mess thus lives here.
+        try {
+            var drawMethod = gobj.getClass().getDeclaredMethod("draw", new Class[] { Graphics2D.class });
+            drawMethod.setAccessible(true);
+            drawMethod.invoke(gobj, gc);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to draw " + gobj, e);
+        }
         visualizeBounds(gc, gobj);
     }
 

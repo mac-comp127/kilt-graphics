@@ -1,4 +1,4 @@
-package comp127graphics;
+package comp127graphics.testsupport;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -10,6 +10,9 @@ import java.nio.file.Paths;
 import javax.imageio.ImageIO;
 
 import org.junit.jupiter.api.extension.ExtensionContext;
+
+import comp127graphics.GraphicsObject;
+import comp127graphics.Point;
 
 public class ImageComparison {
     private final ExtensionContext context;

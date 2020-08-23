@@ -1,9 +1,14 @@
-package comp127graphics;
+package comp127graphics.testsupport;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.AfterEach;
+
+import comp127graphics.GraphicsObject;
+import comp127graphics.GraphicsObserver;
+import comp127graphics.Point;
+import comp127graphics.Rectangle;
 
 public interface GraphicsObjectTestSuite {
     GraphicsObject getGraphicsObject();

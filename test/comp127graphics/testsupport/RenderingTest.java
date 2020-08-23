@@ -1,6 +1,6 @@
-package comp127graphics;
+package comp127graphics.testsupport;
 
-import static comp127graphics.TestRenderingMode.*;
+import static comp127graphics.testsupport.TestRenderingMode.*;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

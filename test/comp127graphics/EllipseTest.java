@@ -1,7 +1,10 @@
 package comp127graphics;
 
-import static comp127graphics.TestRenderingMode.*;
+import static comp127graphics.testsupport.TestRenderingMode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import comp127graphics.testsupport.GraphicsObjectTestSuite;
+import comp127graphics.testsupport.RenderingTest;
 
 public class EllipseTest implements GraphicsObjectTestSuite {
 
