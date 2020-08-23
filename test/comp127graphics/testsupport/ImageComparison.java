@@ -16,7 +16,7 @@ import comp127graphics.Point;
 
 /**
  * Renders the GraphicsObject from a GraphicsObjectTestSuite to an image and compares it with a
- * saved image in the project's `test/fixtures` directory. The first time a test with a given
+ * saved image in the project's `test/testImages` directory. The first time a test with a given
  * name runs, this class saves the rendered image as the expected one. After that, when the
  * expected image already exists, this class compared the newly rendered image to the old
  * expected one. If the two images differ at all, this class emits a `(delta)` file
@@ -90,7 +90,7 @@ class ImageComparison {
     }
 
     private File getImageFile(String role) {
-        File suiteDir = new File(getFixturesDir(), context.getRequiredTestClass().getSimpleName());
+        File suiteDir = new File(getTestImagesDir(), context.getRequiredTestClass().getSimpleName());
         if (!suiteDir.exists()) {
             suiteDir.mkdir();
         }
@@ -101,15 +101,15 @@ class ImageComparison {
         return new File(suiteDir, baseName + "." + role + ".png");
     }
 
-    private File getFixturesDir() {
-        var fixtureDir = Paths.get(".").toAbsolutePath().normalize()
+    private File getTestImagesDir() {
+        var testImageDir = Paths.get(".").toAbsolutePath().normalize()
             .resolve("test")
-            .resolve("fixtures")
+            .resolve("testImages")
             .toFile();
-        if (!fixtureDir.isDirectory()) {
-            throw new RuntimeException("Cannot find test fixture directory at " + fixtureDir);
+        if (!testImageDir.isDirectory()) {
+            throw new RuntimeException("Cannot find test test image directory at " + testImageDir);
         }
-        return fixtureDir;
+        return testImageDir;
     }
 
     private BufferedImage createTestImage() {
