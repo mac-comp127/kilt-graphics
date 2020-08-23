@@ -103,10 +103,12 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         setStroked(true);
     }
 
+    @Override
     public double getX() {
         return shape.getX();
     }
 
+    @Override
     public double getY() {
         return shape.getY();
     }

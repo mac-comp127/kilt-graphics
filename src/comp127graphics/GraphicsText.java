@@ -113,19 +113,23 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
+    @Override
     public double getX() {
         return x;
     }
 
+    @Override
     public void setX(double x) {
         this.x = x;
         changed();
     }
 
+    @Override
     public double getY() {
         return y;
     }
 
+    @Override
     public void setY(double y) {
         this.y = y;
         changed();

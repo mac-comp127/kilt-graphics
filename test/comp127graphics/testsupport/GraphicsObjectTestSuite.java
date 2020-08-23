@@ -1,6 +1,7 @@
 package comp127graphics.testsupport;
 
 import static comp127graphics.PointTest.assertClose;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,8 +48,20 @@ public interface GraphicsObjectTestSuite {
     default void performRepositioningSmokeTest() {
         GraphicsObject gobj = getGraphicsObject();
         var p = new Point(73.2, 19.7);
+
         gobj.setPosition(p);
         assertClose(p, gobj.getPosition(), 0.5);
+        assertEquals(73.2, gobj.getX(), 0.5);
+        assertEquals(19.7, gobj.getY(), 0.5);
+
+        gobj.setX(85.4);
+        assertEquals(85.4, gobj.getX(), 0.5);
+        assertEquals(19.7, gobj.getY(), 0.5);
+
+        gobj.setY(13.1);
+        assertEquals(85.4, gobj.getX(), 0.5);
+        assertEquals(13.1, gobj.getY(), 0.5);
+
         gobj.setCenter(p);
         assertClose(p, gobj.getCenter(), 0.5);
     }

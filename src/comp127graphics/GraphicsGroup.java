@@ -152,6 +152,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Get the x position of the group's local coordinate system relative to the group's container.
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -159,6 +160,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Get the y position of the group's local coordinate system relative to the group's container.
      */
+    @Override
     public double getY() {
         return y;
     }

@@ -204,6 +204,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the leftmost position of the path's vertices.
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -211,6 +212,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the topmost position of the path's vertices.
      */
+    @Override
     public double getY() {
         return y;
     }

@@ -139,6 +139,7 @@ public class Image extends GraphicsObject {
     /**
      * Returns the position of the image's left edge.
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -146,6 +147,7 @@ public class Image extends GraphicsObject {
     /**
      * Returns the position of the image's top edge.
      */
+    @Override
     public double getY() {
         return y;
     }

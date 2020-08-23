@@ -19,15 +19,15 @@ public abstract class GraphicsObject {
     private CanvasWindow canvas;
 
     /**
+     * For internal use. Draws this graphics object on the screen.
+     */
+    protected abstract void draw(Graphics2D gc);
+
+    /**
      * Gets the position of the object on the canvas. The location of the anchor point
      * that we call the “position” can vary, but is typically the upper left.
      */
     public abstract Point getPosition();
-
-    /**
-     * For internal use. Draws this graphics object on the screen.
-     */
-    protected abstract void draw(Graphics2D gc);
 
     /**
      * Moves this object to the given position.
@@ -42,6 +42,36 @@ public abstract class GraphicsObject {
      */
     public final void setPosition(Point pos) {
         setPosition(pos.getX(), pos.getY());
+    }
+
+    /**
+     * Returns the object's current horizontal position.
+     * @see getPosition()
+     */
+    public double getX() {
+        return getPosition().getX();
+    }
+
+    /**
+     * Changes this object's horizontal position while preserving its vertical position.
+     */
+    public void setX(double x) {
+        setPosition(new Point(x, getY()));
+    }
+
+    /**
+     * Returns the object's current vertical position.
+     * @see getPosition()
+     */
+    public double getY() {
+        return getPosition().getY();
+    }
+
+    /**
+     * Changes this object's vertical position while preserving its horizontal position.
+     */
+    public void setY(double y) {
+        setPosition(new Point(getX(), y));
     }
 
     /**
