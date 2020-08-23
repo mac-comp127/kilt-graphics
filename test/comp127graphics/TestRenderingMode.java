@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
@@ -89,36 +90,45 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             for (int y = 0; y < image.getHeight(); y++) {
                 for(int x = 0; x < image.getWidth(); x++) {
                     image.setRGB(x, y, 0xFF000000
-                        | (gobj.isInBounds(new Point(x, y)) ? 0xFF00ABCD : 0)
-                        | (gobj.testHit(x, y) ? 0xFFFF1234 : 0));
+                        | (gobj.isInBounds(new Point(x, y)) ? 0xFF006789 : 0)
+                        | (gobj.testHit(x, y) ? 0xFFFF0000 : 0));
                 }                
             }
         }
     };
 
     private static void renderWithBounds(BufferedImage image, GraphicsObject gobj) {
-        var g = image.createGraphics();
-        gobj.draw(g);
-        visualizeBounds(g, gobj);
+        var gc = image.createGraphics();
+        gc.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_ON);
+        gc.setRenderingHint(
+            RenderingHints.KEY_RENDERING,
+            RenderingHints.VALUE_RENDER_QUALITY);
+        gc.setRenderingHint(
+            RenderingHints.KEY_STROKE_CONTROL,
+            RenderingHints.VALUE_STROKE_PURE);
+        gobj.draw(gc);
+        visualizeBounds(gc, gobj);
     }
 
     private static void visualizeBounds(Graphics2D g, GraphicsObject gobj) {
         var bounds = gobj.getBounds();
         var cropMarks = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);
         for(int side = 0; side < 2; side++) {
-            for (double y : List.of(bounds.getMinY(), bounds.getMaxY() - 1)) {
+            for (double y : List.of(bounds.getMinY() + 0.25, bounds.getMaxY() - 0.25)) {
                 double x = bounds.getMinX() + bounds.getWidth() * side;
                 cropMarks.moveTo(x + (side * 2 - 1) * 16, y);
                 cropMarks.lineTo(x + (side * 2 - 1) * 4, y);
             }
-            for (double x : List.of(bounds.getMinX(), bounds.getMaxX() - 1)) {
+            for (double x : List.of(bounds.getMinX() + 0.25, bounds.getMaxX() - 0.25)) {
                 double y = bounds.getMinY() + bounds.getHeight() * side;
                 cropMarks.moveTo(x, y + (side * 2 - 1) * 16);
                 cropMarks.lineTo(x, y + (side * 2 - 1) * 4);
             }
         }
-        g.setStroke(new BasicStroke(1f));
-        g.setPaint(new Color(0, 0, 0, 64));
+        g.setStroke(new BasicStroke(0.5f));
+        g.setPaint(new Color(0, 0, 0, 128));
         g.draw(cropMarks);
     }
 }
