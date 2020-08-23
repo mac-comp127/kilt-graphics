@@ -18,13 +18,16 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 @Test
 public @interface RenderingTest {
     TestRenderingMode[] modes() default { PLAIN, STROKED, FILLED, FILLED_AND_STROKED, HIT_TEST };
+
+    double tolerance() default 10;
 }
 
 class RenderingTestHandler implements AfterTestExecutionCallback {
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
-        for (var mode : context.getRequiredTestMethod().getAnnotation(RenderingTest.class).modes()) {
-            new ImageComparison(context, mode.name().toLowerCase(), mode).compare();
+        RenderingTest renderingOptions = context.getRequiredTestMethod().getAnnotation(RenderingTest.class);
+        for (var mode : renderingOptions.modes()) {
+            new ImageComparison(context, mode.name().toLowerCase(), mode, renderingOptions.tolerance()).compare();
         }
     }
 }

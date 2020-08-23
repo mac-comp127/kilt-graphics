@@ -13,14 +13,15 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 
 public class ImageComparison {
     private final ExtensionContext context;
-    private final double totalDiffFailureThreshold = 0;  // could allow customization in annotation
+    private final double totalDiffFailureThreshold;  // could allow customization in annotation
     private final String variant;
     private final Renderer renderer;
 
-    public ImageComparison(ExtensionContext context, String variant, Renderer renderer) {
+    public ImageComparison(ExtensionContext context, String variant, Renderer renderer, double totalDiffFailureThreshold) {
         this.context = context;
         this.variant = variant;
         this.renderer = renderer;
+        this.totalDiffFailureThreshold = totalDiffFailureThreshold;
     }
 
     public void compare() throws IOException {
