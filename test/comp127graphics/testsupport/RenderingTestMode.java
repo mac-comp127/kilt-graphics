@@ -2,6 +2,7 @@ package comp127graphics.testsupport;
 
 import static comp127graphics.testsupport.GraphicsObjectTestSuite.assertChanged;
 import static comp127graphics.testsupport.GraphicsObjectTestSuite.assertChangedAtEachStep;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -60,6 +61,8 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
                     strokable.setStrokeWidth(4);
                 }
             );
+            assertEquals(Color.MAGENTA, strokable.getStrokeColor());
+            assertEquals(4, strokable.getStrokeWidth());
 
             renderWithBounds(image, gobj);
         }
@@ -89,6 +92,8 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
                     assertTrue(fillable.isFilled());
                 }
             );
+            assertEquals(Color.CYAN, fillable.getFillColor());
+
             renderWithBounds(image, gobj);
         }
     },
@@ -108,6 +113,9 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
                 () -> fillAndStroke.setFillColor(Color.YELLOW));
             assertTrue(fillAndStroke.isStroked());
             assertTrue(fillAndStroke.isFilled());
+            assertEquals(Color.BLUE, fillAndStroke.getStrokeColor());
+            assertEquals(3, fillAndStroke.getStrokeWidth());
+            assertEquals(Color.YELLOW, fillAndStroke.getFillColor());
             renderWithBounds(image, gobj);
         }
     },

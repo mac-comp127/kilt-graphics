@@ -49,7 +49,11 @@ public abstract class GraphicsObject {
      */
     public final Point getCenter() {
         Rectangle2D bounds = getBounds();
-        return new Point(bounds.getCenterX(), bounds.getCenterY());
+        // width and height can sometimes be NaN, e.g. in an empty Path. If the bounds
+        // have NaNs, just use the nominal position from getPosition().
+        return new Point(
+            Double.isNaN(bounds.getCenterX()) ? getPosition().getX() : bounds.getCenterX(),
+            Double.isNaN(bounds.getCenterY()) ? getPosition().getY() : bounds.getCenterY());
     }
 
     /**

@@ -7,7 +7,7 @@ import static java.lang.Math.PI;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class PointTest {
+public class PointTest {
     private final Point p = new Point(1, 2);
 
     @SuppressWarnings({"SimplifiableAssertion"})
@@ -96,7 +96,7 @@ class PointTest {
         assertClose(new Point(1, 8), Point.interpolate(p0, p1, -0.5), 0.001);
     }
 
-    private void assertClose(Point expected, Point actual, double maxDistance) {
+    public static void assertClose(Point expected, Point actual, double maxDistance) {
         assertTrue(expected.distance(actual) <= maxDistance,
             "Expected " + actual + " to be close to " + expected);
 	}
