@@ -1,5 +1,6 @@
 package comp127graphics.testsupport;
 
+import static comp127graphics.testsupport.GraphicsObjectTestSuite.assertChanged;
 import static comp127graphics.testsupport.GraphicsObjectTestSuite.assertChangedAtEachStep;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,7 +12,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import comp127graphics.Fillable;
@@ -19,7 +19,13 @@ import comp127graphics.GraphicsObject;
 import comp127graphics.Point;
 import comp127graphics.Strokable;
 
+/**
+ * Specifies how a @RenderingTest should render its graphics object to an image.
+ */
 public enum TestRenderingMode implements ImageComparison.Renderer {
+    /**
+     * Renders the graphics object as is, with no modification.
+     */
     PLAIN {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
@@ -27,11 +33,17 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
         }
     },
 
+    /**
+     * Adds a stroke to the graphics object, and disables the fill if it is Fillable.
+     * 
+     * This suite's GraphicsObject must be Strokable.
+     */
     STROKED {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
             if (gobj instanceof Fillable) {
-                ((Fillable) gobj).setFilled(false);
+                assertChanged(gobj, () -> 
+                    ((Fillable) gobj).setFilled(false));
             }
 
             var strokable = (Strokable) gobj;
@@ -49,11 +61,17 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
         }
     },
 
+    /**
+     * Adds a fill color to the graphics object, and disables the stroke if it is Strokable.
+     * 
+     * This suite's GraphicsObject must be Fillable.
+     */
     FILLED {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
             if (gobj instanceof Strokable) {
-                ((Strokable) gobj).setStroked(false);
+                assertChanged(gobj, () -> 
+                    ((Strokable) gobj).setStroked(false));
             }
 
             var fillable = (Fillable) gobj;
@@ -68,6 +86,11 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
         }
     },
 
+    /**
+     * Adds both a fill and a stroke to the graphics object.
+     * 
+     * This suite's GraphicsObject must be Fillable and Strokable.
+     */
     FILLED_AND_STROKED {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
@@ -80,6 +103,9 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
         }
     },
 
+    /**
+     * Colors each pixel of the image according to the return values of testHit() and isInBounds().
+     */
     HIT_TEST {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
@@ -112,6 +138,7 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
         visualizeBounds(gc, gobj);
     }
 
+    /// Draws printer-style crop marks around the bounding box of the graphics object.
     private static void visualizeBounds(Graphics2D g, GraphicsObject gobj) {
         var bounds = gobj.getBounds();
         var cropMarks = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);

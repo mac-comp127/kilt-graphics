@@ -10,13 +10,26 @@ import comp127graphics.GraphicsObserver;
 import comp127graphics.Point;
 import comp127graphics.Rectangle;
 
+/**
+ * Shared support for suites that test a GraphicsObject. Adds standard across-the-board testing,
+ * supports the @RenderingTest annotation, and provides assertion helpers.
+ */
 public interface GraphicsObjectTestSuite {
+    /**
+     * The graphics object whose image @RenderingTest methods should render and compare.
+     */
     GraphicsObject getGraphicsObject();
 
+    /**
+     * The size of image to create in @RenderingTest methods.
+     */
     default Point getCanvasSize() {
         return new Point(100, 100);
     }
 
+    /**
+     * Checks for simple, generic errors in the GraphicsObject's equals() method.
+     */
     @AfterEach
     default void performEqualitySmokeTest() {
         GraphicsObject gobj = getGraphicsObject();
@@ -26,6 +39,10 @@ public interface GraphicsObjectTestSuite {
         assertFalse(gobj.equals(new Rectangle(1, 2, 3, 4)));
     }
 
+    /**
+     * Asserts that running the specified action should cause the given graphics object to emit
+     * a change notification (typically by calling its changed() method internally).
+     */
     static void assertChanged(GraphicsObject gobj, Runnable action) {
         var changeCounter = new ChangeCountingObserver();
         gobj.addObserver(changeCounter);
@@ -36,16 +53,28 @@ public interface GraphicsObjectTestSuite {
             "Expected action to cause graphics object to broadcast a changed() notification (" + gobj + ")");
     }
 
+    /**
+     * Asserts that running the specified action should cause this test suite's graphics object
+     * (the one getGraphicsObject() returns) to emit a change notification.
+     */
     default void assertChanged(Runnable action) {
         assertChanged(getGraphicsObject(), action);
     }
 
+    /**
+     * Asserts that each of the specified actions should cause the given graphics object to emit
+     * a separate change notification.
+     */
     static void assertChangedAtEachStep(GraphicsObject gobj, Runnable... actions) {
         for (Runnable action : actions) {
             assertChanged(gobj, action);
         }
     }
 
+    /**
+     * Asserts that each of the specified actions should cause this test suite's graphics object
+     * (the one getGraphicsObject() returns) to emit a change notification.
+     */
     default void assertChangedAtEachStep(Runnable... actions) {
         assertChangedAtEachStep(getGraphicsObject(), actions);
     }

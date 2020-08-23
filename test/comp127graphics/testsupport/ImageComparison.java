@@ -14,6 +14,15 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import comp127graphics.GraphicsObject;
 import comp127graphics.Point;
 
+/**
+ * Renders the GraphicsObject from a GraphicsObjectTestSuite to an image and compares it with a
+ * saved image in the project's `test/fixtures` directory. The first time a test with a given
+ * name runs, this class saves the rendered image as the expected one. After that, when the
+ * expected image already exists, this class compared the newly rendered image to the old
+ * expected one. If the two images differ at all, this class emits a `(delta)` file
+ * highlighting the differing pixels. If the sum of squares difference between the images exceeds
+ * the given threshold, the test suite fails.
+ */
 class ImageComparison {
     private final ExtensionContext context;
     private final double totalDiffFailureThreshold;  // could allow customization in annotation
