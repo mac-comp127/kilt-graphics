@@ -194,6 +194,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     @Override
     public void setFilled(boolean filled) {
         this.filled = filled;
+        changed();
     }
 
     public double getWidth() {
