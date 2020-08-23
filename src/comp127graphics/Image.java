@@ -54,8 +54,18 @@ public class Image extends GraphicsObject {
     }
 
     /**
+     * Creates a bitmap image from the given file, positioned at (0,0).
+     * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP.
+     *
+     * @param path path of image file to load, relative to the res/ directory.
+     */
+    public Image(String path) {
+        this(0, 0, path);
+	}
+
+    /**
      * Creates a bitmap image from the given file.
-     * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP
+     * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP.
      *
      * @param path path of image file to load, relative to the res/ directory.
      */
@@ -65,7 +75,7 @@ public class Image extends GraphicsObject {
         setImagePath(path);
     }
 
-    /**
+	/**
      * Changes the image displayed by this graphics element.
      *
      * @param path path of image file to load, relative to the res/ directory.
@@ -73,6 +83,7 @@ public class Image extends GraphicsObject {
     public void setImagePath(String path) {
         this.path = path;
         this.img = loadImage(path);
+        changed();
     }
 
     /**
@@ -81,6 +92,7 @@ public class Image extends GraphicsObject {
      */
     public void setMaxWidth(double maxWidth) {
         this.maxWidth = maxWidth;
+        changed();
     }
 
     /**
@@ -89,6 +101,7 @@ public class Image extends GraphicsObject {
      */
     public void setMaxHeight(double maxHeight) {
         this.maxHeight = maxHeight;
+        changed();
     }
 
     protected void draw(Graphics2D gc) {
