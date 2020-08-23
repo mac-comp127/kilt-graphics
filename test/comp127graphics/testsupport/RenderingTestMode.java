@@ -47,15 +47,19 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
             }
 
             var strokable = (Strokable) gobj;
-            assertChangedAtEachStep(gobj, () -> {
-                strokable.setStroked(false);
-                assertFalse(strokable.isStroked());
-            }, () -> {
-                strokable.setStrokeColor(Color.MAGENTA);
-                assertTrue(strokable.isStroked());
-            }, () -> {
-                strokable.setStrokeWidth(4);
-            });
+            assertChangedAtEachStep(gobj,
+                () -> {
+                    strokable.setStroked(false);
+                    assertFalse(strokable.isStroked());
+                },
+                () -> {
+                    strokable.setStrokeColor(Color.MAGENTA);
+                    assertTrue(strokable.isStroked());
+                },
+                () -> {
+                    strokable.setStrokeWidth(4);
+                }
+            );
 
             renderWithBounds(image, gobj);
         }
@@ -75,13 +79,16 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
             }
 
             var fillable = (Fillable) gobj;
-            assertChangedAtEachStep(gobj, () -> {
-                fillable.setFilled(false);
-                assertFalse(fillable.isFilled());
-            }, () -> {
-                fillable.setFillColor(Color.CYAN);
-                assertTrue(fillable.isFilled());
-            });
+            assertChangedAtEachStep(gobj,
+                () -> {
+                    fillable.setFilled(false);
+                    assertFalse(fillable.isFilled());
+                },
+                () -> {
+                    fillable.setFillColor(Color.CYAN);
+                    assertTrue(fillable.isFilled());
+                }
+            );
             renderWithBounds(image, gobj);
         }
     },
@@ -95,8 +102,10 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
         @Override
         public void render(BufferedImage image, GraphicsObject gobj) {
             var fillAndStroke = (Fillable & Strokable) gobj;
-            assertChangedAtEachStep(gobj, () -> fillAndStroke.setStrokeColor(Color.BLUE),
-                    () -> fillAndStroke.setStrokeWidth(3), () -> fillAndStroke.setFillColor(Color.YELLOW));
+            assertChangedAtEachStep(gobj,
+                () -> fillAndStroke.setStrokeColor(Color.BLUE),
+                () -> fillAndStroke.setStrokeWidth(3),
+                () -> fillAndStroke.setFillColor(Color.YELLOW));
             assertTrue(fillAndStroke.isStroked());
             assertTrue(fillAndStroke.isFilled());
             renderWithBounds(image, gobj);
@@ -111,8 +120,9 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
         public void render(BufferedImage image, GraphicsObject gobj) {
             for (int y = 0; y < image.getHeight(); y++) {
                 for (int x = 0; x < image.getWidth(); x++) {
-                    image.setRGB(x, y, 0xFF000000 | (gobj.isInBounds(new Point(x, y)) ? 0xFF006789 : 0)
-                            | (gobj.testHit(x, y) ? 0xFFFF0000 : 0));
+                    image.setRGB(x, y, 0xFF000000
+                        | (gobj.isInBounds(new Point(x, y)) ? 0xFF006789 : 0)
+                        | (gobj.testHit(x, y) ? 0xFFFF0000 : 0));
                 }
             }
         }
