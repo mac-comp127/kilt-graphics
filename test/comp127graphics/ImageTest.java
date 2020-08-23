@@ -58,4 +58,9 @@ public class ImageTest implements GraphicsObjectTestSuite {
         image = new Image(1, 1);
         assertEquals(Point.ORIGIN, image.getSize());
     }
+
+    @RenderingTest(modes = { PLAIN, HIT_TEST })
+    void missing() {
+        image = new Image(20, 20, "frotzle.png");
+    }
 }

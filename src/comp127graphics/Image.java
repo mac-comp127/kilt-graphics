@@ -1,6 +1,8 @@
 package comp127graphics;
 
-
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -39,10 +41,28 @@ public class Image extends GraphicsObject {
                     imageCache.put(path, image);
                 } catch (IOException e) {
                     System.err.println("Could not load image from " + path + ": " + e);
+                    image = createPlaceholderImage(path, 64, 64);
                 }
             }
             return image;
         }
+    }
+
+    private static BufferedImage createPlaceholderImage(String path, int width, int height) {
+        var image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        var gc = image.createGraphics();
+        gc.setColor(new Color(255, 128, 128, 32));
+        gc.fillRect(0, 0, width, height);
+        gc.setStroke(new BasicStroke(4));
+        gc.setColor(new Color(128, 0, 0));
+        gc.drawRect(0, 0, width, height);
+        gc.setStroke(new BasicStroke(1));
+        gc.drawLine(0, 0, width, height);
+        gc.drawLine(0, width, height, 0);
+        gc.setColor(Color.BLACK);
+        gc.setFont(new Font("Tahoma", Font.PLAIN, 9));
+        gc.drawString(path, 4, height - 4);
+        return image;
     }
 
     /**
