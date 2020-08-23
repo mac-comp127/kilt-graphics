@@ -1,5 +1,6 @@
 package comp127graphics;
 
+import static comp127graphics.GraphicsObjectTestSuite.assertChangedAtEachStep;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -17,7 +18,7 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             renderWithBounds(g, gobj);
         }
     },
-    
+
     STROKED {
         @Override
         public void render(Graphics2D g, GraphicsObject gobj) {
@@ -26,16 +27,24 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             }
 
             var strokable = (Strokable) gobj;
-            strokable.setStroked(false);
-            assertFalse(strokable.isStroked());
-            strokable.setStrokeColor(Color.MAGENTA);
-            strokable.setStrokeWidth(4);
-            assertTrue(strokable.isStroked());
+            assertChangedAtEachStep(gobj,
+                () -> {
+                    strokable.setStroked(false);
+                    assertFalse(strokable.isStroked());
+                },
+                () -> {
+                    strokable.setStrokeColor(Color.MAGENTA);
+                    assertTrue(strokable.isStroked());
+                },
+                () -> {
+                    strokable.setStrokeWidth(4);
+                }
+            );
 
             renderWithBounds(g, gobj);
         }
     },
-    
+
     FILLED {
         @Override
         public void render(Graphics2D g, GraphicsObject gobj) {
@@ -44,21 +53,29 @@ public enum TestRenderingMode implements ImageComparison.Renderer {
             }
 
             var fillable = (Fillable) gobj;
-            fillable.setFilled(false);
-            assertFalse(fillable.isFilled());
-            fillable.setFillColor(Color.CYAN);
-            assertTrue(fillable.isFilled());
+            assertChangedAtEachStep(gobj,
+                () -> {
+                    fillable.setFilled(false);
+                    assertFalse(fillable.isFilled());
+                },
+                () -> {
+                    fillable.setFillColor(Color.CYAN);
+                    assertTrue(fillable.isFilled());
+                }
+            );
             renderWithBounds(g, gobj);
         }
     },
-    
+
     FILLED_AND_STROKED {
         @Override
         public void render(Graphics2D g, GraphicsObject gobj) {
             var fillAndStroke = (Fillable & Strokable) gobj;
-            fillAndStroke.setStrokeColor(Color.BLUE);
-            fillAndStroke.setStrokeWidth(3);
-            fillAndStroke.setFillColor(Color.YELLOW);
+            assertChangedAtEachStep(gobj,
+                () -> fillAndStroke.setStrokeColor(Color.BLUE),
+                () -> fillAndStroke.setStrokeWidth(3),
+                () -> fillAndStroke.setFillColor(Color.YELLOW)
+            );
             assertTrue(fillAndStroke.isStroked());
             assertTrue(fillAndStroke.isFilled());
             renderWithBounds(g, gobj);

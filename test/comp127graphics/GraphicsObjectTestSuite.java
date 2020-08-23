@@ -21,18 +21,28 @@ public interface GraphicsObjectTestSuite {
         assertFalse(gobj.equals(new Rectangle(1, 2, 3, 4)));
     }
 
-    default void assertChanged(Runnable action) {
+    static void assertChanged(GraphicsObject gobj, Runnable action) {
         var changeCounter = new ChangeCountingObserver();
-        getGraphicsObject().addObserver(changeCounter);
+        gobj.addObserver(changeCounter);
         action.run();
-        getGraphicsObject().removeObserver(changeCounter);
-        assertTrue(changeCounter.getChangeCount() > 0);
+        gobj.removeObserver(changeCounter);
+        assertTrue(
+            changeCounter.getChangeCount() > 0,
+            "Expected action to cause graphics object to broadcast a changed() notification (" + gobj + ")");
+    }
+
+    default void assertChanged(Runnable action) {
+        assertChanged(getGraphicsObject(), action);
+    }
+
+    static void assertChangedAtEachStep(GraphicsObject gobj, Runnable... actions) {
+        for (Runnable action : actions) {
+            assertChanged(gobj, action);
+        }
     }
 
     default void assertChangedAtEachStep(Runnable... actions) {
-        for (Runnable action : actions) {
-            assertChanged(action);
-        }
+        assertChangedAtEachStep(getGraphicsObject(), actions);
     }
 }
 
