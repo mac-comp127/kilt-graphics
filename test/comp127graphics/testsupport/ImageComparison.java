@@ -14,7 +14,7 @@ import org.junit.jupiter.api.extension.ExtensionContext;
 import comp127graphics.GraphicsObject;
 import comp127graphics.Point;
 
-public class ImageComparison {
+class ImageComparison {
     private final ExtensionContext context;
     private final double totalDiffFailureThreshold;  // could allow customization in annotation
     private final String variant;
