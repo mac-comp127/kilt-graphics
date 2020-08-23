@@ -35,6 +35,16 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         assertEquals(37, text.getHeight(), 0.5);
     }
 
+    @RenderingTest(modes = { PLAIN })
+    void changed() {
+        text = new GraphicsText("plobble", 10, 50);
+        assertChangedAtEachStep(
+            () -> text.setFont("Arial", FontStyle.BOLD, 9),
+            () -> text.setFont(FontStyle.BOLD, 20),
+            () -> text.setText("zeep")
+        );
+    }
+
     @RenderingTest(modes = { PLAIN, HIT_TEST })
     void unicode() {
         text = new GraphicsText("优雅");
