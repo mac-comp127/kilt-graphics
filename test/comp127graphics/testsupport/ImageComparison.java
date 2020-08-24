@@ -9,11 +9,6 @@ import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
-import org.junit.jupiter.api.extension.ExtensionContext;
-
-import comp127graphics.GraphicsObject;
-import comp127graphics.Point;
-
 /**
  * Renders the GraphicsObject from a GraphicsObjectTestSuite to an image and compares it with a
  * saved image in the project's `test/testImages` directory. The first time a test with a given
@@ -24,21 +19,22 @@ import comp127graphics.Point;
  * the given threshold, the test suite fails.
  */
 class ImageComparison {
-    private final ExtensionContext context;
     private final double totalDiffFailureThreshold;  // could allow customization in annotation
-    private final String variant;
-    private final Renderer renderer;
+    private final String groupName, imageName;
+    private final BufferedImage actualImage;
 
-    public ImageComparison(ExtensionContext context, String variant, Renderer renderer, double totalDiffFailureThreshold) {
-        this.context = context;
-        this.variant = variant;
-        this.renderer = renderer;
+    public ImageComparison(
+            String groupName,
+            String testName,
+            BufferedImage actualImage,
+            double totalDiffFailureThreshold) {
+        this.groupName = groupName;
+        this.imageName = testName;
+        this.actualImage = actualImage;
         this.totalDiffFailureThreshold = totalDiffFailureThreshold;
     }
 
     public void compare() throws IOException {
-        var actualImage = createTestImage();
-        renderer.render(actualImage, getGraphicsObjectTestSuite().getGraphicsObject());
         File actualFile = getImageFile("actual");
         writeImage(actualImage, actualFile);
 
@@ -55,7 +51,7 @@ class ImageComparison {
                 + "), but got (" + actualImage.getWidth() + "," + actualImage.getHeight() + ")");
         }
 
-        BufferedImage deltaImage = createTestImage();
+        BufferedImage deltaImage = new BufferedImage(actualImage.getWidth(), actualImage.getHeight(), BufferedImage.TYPE_INT_RGB);
         double totalDiff = compareImages(expectedImage, actualImage, deltaImage);
 
         File deltaFile = getImageFile("(delta)");
@@ -68,7 +64,8 @@ class ImageComparison {
         }
 
         if (totalDiff > totalDiffFailureThreshold) {
-            fail(variant + " image does not match expected (difference factor of " + totalDiff
+            fail("Actual " + imageName + " image does not match expected"
+                + " (difference factor of " + totalDiff
                 + " exceeds threshold of " + totalDiffFailureThreshold + ")"
                 + "\nFor visual comparison, see:"
                 + "\n    " + expectedFile
@@ -77,28 +74,12 @@ class ImageComparison {
         }
     }
 
-    private GraphicsObjectTestSuite getGraphicsObjectTestSuite() {
-        var testInstance = context.getRequiredTestInstance();
-        if (!(testInstance instanceof GraphicsObjectTestSuite)) {
-            fail(context.getRequiredTestMethod().getName()
-                + " cannot be a @RenderingTest, because "
-                + context.getRequiredTestClass().getSimpleName()
-                + " does not implement "
-                + GraphicsObjectTestSuite.class.getSimpleName());
-        }
-        return (GraphicsObjectTestSuite) testInstance;
-    }
-
     private File getImageFile(String role) {
-        File suiteDir = new File(getTestImagesDir(), context.getRequiredTestClass().getSimpleName());
+        File suiteDir = new File(getTestImagesDir(), groupName);
         if (!suiteDir.exists()) {
             suiteDir.mkdir();
         }
-        String baseName = context.getRequiredTestMethod().getName();
-        if (variant != null) {
-            baseName += "-" + variant;
-        }
-        return new File(suiteDir, baseName + "." + role + ".png");
+        return new File(suiteDir, imageName + "." + role + ".png");
     }
 
     private File getTestImagesDir() {
@@ -110,14 +91,6 @@ class ImageComparison {
             throw new RuntimeException("Cannot find test test image directory at " + testImageDir);
         }
         return testImageDir;
-    }
-
-    private BufferedImage createTestImage() {
-        Point imageSize = getGraphicsObjectTestSuite().getCanvasSize();
-        return new BufferedImage(
-            (int) Math.round(imageSize.getX()),
-            (int) Math.round(imageSize.getY()),
-            BufferedImage.TYPE_INT_ARGB);
     }
 
     private void writeImage(BufferedImage image, File file) throws IOException {
@@ -156,15 +129,5 @@ class ImageComparison {
         return Math.min(255, Math.max(0,
             (int) Math.ceil(
                 Math.pow(diff / 255.0, gamma) * 255.0)));
-    }
-
-    public interface Renderer {
-        /**
-         * Renders an image of the given graphics objects for the purpose of comparing against previous runs.
-         * 
-         * @return True if the method rendered the graphics, or false if this renderer does not apply and the
-        *          test system should skip this test case.
-         */
-        void render(BufferedImage image, GraphicsObject gobjToRender);
     }
 }

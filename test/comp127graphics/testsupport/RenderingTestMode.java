@@ -23,7 +23,7 @@ import comp127graphics.Strokable;
 /**
  * Specifies how a @RenderingTest should render its graphics object to an image.
  */
-public enum RenderingTestMode implements ImageComparison.Renderer {
+public enum RenderingTestMode {
     /**
      * Renders the graphics object as is, with no modification.
      */
@@ -135,6 +135,8 @@ public enum RenderingTestMode implements ImageComparison.Renderer {
             }
         }
     };
+
+    public abstract void render(BufferedImage image, GraphicsObject gobj);
 
     private static void renderWithBounds(BufferedImage image, GraphicsObject gobj) {
         var gc = image.createGraphics();
