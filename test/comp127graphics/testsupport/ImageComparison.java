@@ -107,16 +107,18 @@ public class ImageComparison {
                 int actualPix = actualImage.getRGB(x, y);
                 int maxDiff = 0;
                 for (int channel = 0; channel < 4; channel++) {
-                    maxDiff = Math.max(maxDiff,
-                        Math.abs((expectedPix & 0xFF) - (actualPix & 0xFF)));
+                    int delta = (expectedPix & 0xFF) - (actualPix & 0xFF);
+                    if (Math.abs(maxDiff) < Math.abs(delta)) {
+                        maxDiff = delta;
+                    }
                     expectedPix >>= 8;
                     actualPix >>= 8;
                 }
                 totalDiff += Math.pow(maxDiff / 255.0, 2);
                 deltaImage.setRGB(x, y, 0xFF000000
-                    | diffCurve(maxDiff, 0.03) << 16
-                    | diffCurve(maxDiff, 1) << 8
-                    | diffCurve(maxDiff, 4));
+                    | (maxDiff > 0 ? diffCurve(maxDiff, 0.2) << 16 : 0)
+                    | (maxDiff < 0 ? diffCurve(maxDiff, 0.2) << 8 : 0)
+                    | diffCurve(maxDiff, 2));
             }
         }
         return totalDiff;
@@ -128,6 +130,6 @@ public class ImageComparison {
     private int diffCurve(int diff, double gamma) {
         return Math.min(255, Math.max(0,
             (int) Math.ceil(
-                Math.pow(diff / 255.0, gamma) * 255.0)));
+                Math.pow(Math.abs(diff) / 255.0, gamma) * 255.0)));
     }
 }
