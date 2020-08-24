@@ -5,21 +5,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.awt.Color;
 import java.io.IOException;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import comp127graphics.testsupport.ImageComparison;
 
 public class CanvasWindowTest {
     private CanvasWindow canvas;
-
-    @AfterEach
-    void closeTestWindow() {
-        if (canvas != null) {
-            canvas.closeWindow();
-        }
-    }
-
+    
     @Test
     void geometry() {
         canvas = new CanvasWindow("geometry", 120, 80);
