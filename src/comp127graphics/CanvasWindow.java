@@ -315,14 +315,23 @@ public class CanvasWindow {
     }
 
     /**
+     * Captures a screenshot of the currently drawn canvas' contents to an image.
+     */
+    public BufferedImage screenShot() {
+        BufferedImage bImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D cg = bImg.createGraphics();
+        draw();
+        canvas.paintAll(cg);
+        return bImg;
+    }
+
+    /**
      * Saves a screenshot of the currently drawn canvas' contents to the filename specified as a parameter
      *
      * @param filename The filename for where you would like to save.
      */
     public void screenShot(String filename) {
-        BufferedImage bImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D cg = bImg.createGraphics();
-        canvas.paintAll(cg);
+        BufferedImage bImg = screenShot();
         try {
             if (ImageIO.write(bImg, "png", new File(filename))) {
                 System.out.println("-- saved");

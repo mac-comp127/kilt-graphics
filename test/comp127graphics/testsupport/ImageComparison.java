@@ -18,7 +18,7 @@ import javax.imageio.ImageIO;
  * highlighting the differing pixels. If the sum of squares difference between the images exceeds
  * the given threshold, the test suite fails.
  */
-class ImageComparison {
+public class ImageComparison {
     private final double totalDiffFailureThreshold;  // could allow customization in annotation
     private final String groupName, imageName;
     private final BufferedImage actualImage;
