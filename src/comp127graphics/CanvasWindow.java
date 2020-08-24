@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -318,10 +319,12 @@ public class CanvasWindow {
      * Captures a screenshot of the currently drawn canvas' contents to an image.
      */
     public BufferedImage screenShot() {
-        BufferedImage bImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D cg = bImg.createGraphics();
-        draw();
-        canvas.paintAll(cg);
+        BufferedImage bImg = new BufferedImage(canvas.getWidth() * 2, canvas.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        Graphics2D screenshotGC = bImg.createGraphics();
+        enableAntialiasing(screenshotGC);
+        screenshotGC.setTransform(AffineTransform.getScaleInstance(2, 2));
+        draw();  // Otherwise paintAll will have no effect
+        canvas.paintAll(screenshotGC);
         return bImg;
     }
 
