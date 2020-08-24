@@ -14,15 +14,16 @@ public class CanvasWindowTest {
     
     @Test
     void geometry() {
-        canvas = new CanvasWindow("geometry", 120, 80);
-        assertEquals(120, canvas.getWidth());
+        // Note that Windows has a minimum window width of 312 (as of Windows 10)
+        canvas = new CanvasWindow("geometry", 324, 80);
+        assertEquals(324, canvas.getWidth());
         assertEquals(80, canvas.getHeight());
-        assertEquals(new Point(60, 40), canvas.getCenter());
+        assertEquals(new Point(162, 40), canvas.getCenter());
     }
 
     @Test
     void graphics() throws IOException {
-        canvas = new CanvasWindow("graphics", 240, 160);
+        canvas = new CanvasWindow("graphics", 320, 160);
         compareScreenShot("graphics-0-empty");
     
         canvas.setBackground(Color.BLUE);
@@ -57,7 +58,7 @@ public class CanvasWindowTest {
         triangle.setFillColor(Color.MAGENTA);
         rect.setFillColor(Color.ORANGE);
 
-        canvas = new CanvasWindow("getElementAt", 100, 80);
+        canvas = new CanvasWindow("getElementAt", 350, 80);
         var group = new GraphicsGroup();
         group.add(triangle);
         group.add(rect);
