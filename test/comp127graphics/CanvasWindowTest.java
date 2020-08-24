@@ -49,8 +49,28 @@ public class CanvasWindowTest {
     }
 
     @Test
-    void getElementAt() {
-        // TODO
+    void getElementAt() throws IOException {
+        var ellipse = new Ellipse(0, 0, 40, 30);
+        var triangle = Path.makeTriangle(0, 50, 25, 0, 50, 50);
+        var rect = new Rectangle(new Point(0, 0), new Point(40, 20));
+        ellipse.setFillColor(Color.RED);
+        triangle.setFillColor(Color.MAGENTA);
+        rect.setFillColor(Color.ORANGE);
+
+        canvas = new CanvasWindow("getElementAt", 100, 80);
+        var group = new GraphicsGroup();
+        group.add(triangle);
+        group.add(rect);
+        canvas.add(ellipse, 20, 20);
+        canvas.add(group, 40, 10);
+
+        // Doesn't add much test coverage benefit, but makes the subsequent lines easier to write
+        compareScreenShot("getElementAt");
+
+        assertEquals(ellipse, canvas.getElementAt(48, 37));
+        assertEquals(triangle, canvas.getElementAt(new Point(52, 40)));
+        assertEquals(rect, canvas.getElementAt(new Point(57, 28)));
+        assertEquals(null, canvas.getElementAt(new Point(41, 51)));
     }
 
     @Test
