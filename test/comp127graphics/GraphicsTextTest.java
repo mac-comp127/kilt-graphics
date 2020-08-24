@@ -8,13 +8,14 @@ import comp127graphics.testsupport.RenderingTest;
 
 public class GraphicsTextTest implements GraphicsObjectTestSuite {
     private GraphicsText text;
+    private static final boolean IS_MAC = System.getProperty("os.name").toLowerCase().contains("mac os");
 
     @Override
     public GraphicsObject getGraphicsObject() {
         return text;
     }
 
-    @RenderingTest(modes = { PLAIN, FILLED, HIT_TEST })
+    @RenderingTest(modes = { PLAIN, FILLED, HIT_TEST }, tolerance = 170)
     void plain() {
         text = new GraphicsText("plax");
         assertChangedAtEachStep(
@@ -22,7 +23,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         );
     }
 
-    @RenderingTest(modes = { PLAIN })
+    @RenderingTest(modes = { PLAIN }, tolerance = 120)
     void styled() {
         text = new GraphicsText("zonk");
         assertChangedAtEachStep(
@@ -31,7 +32,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
             () -> text.setFontSize(32),
             () -> text.setFontStyle(FontStyle.BOLD)
         );
-        assertEquals(74, text.getWidth(), 0.5);
+        assertEquals(IS_MAC ? 74 : 72, text.getWidth(), 0.5);
         assertEquals(37, text.getHeight(), 0.5);
     }
 
@@ -45,14 +46,14 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         );
     }
 
-    @RenderingTest
+    @RenderingTest(modes = { PLAIN })
     void unicode() {
-        text = new GraphicsText("优雅");
+        text = new GraphicsText("Φ̟̽");
         assertChangedAtEachStep(
-            () -> text.setFont("Fang Song", FontStyle.PLAIN, 32),
-            () -> text.setPosition(30, 60)
+            () -> text.setFont("Tahoma", FontStyle.PLAIN, 32),
+            () -> text.setPosition(10, 60)
         );
-        assertEquals("\u4f18\u96c5", text.getText());
+        assertEquals("\u03a6\u033d\u031f", text.getText());
     }
 
     @RenderingTest
