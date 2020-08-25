@@ -102,6 +102,7 @@ public class CanvasWindow {
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
+        canvas.setLayout(null);
         canvas.setBackground(Color.WHITE);
         canvas.setFocusable(true);  // enables key events
 
@@ -260,6 +261,10 @@ public class CanvasWindow {
             if (!embeddedComponents.contains(newComponent)) {
                 canvas.add(newComponent);
             }
+        }
+        int z = updatedComponents.size() - 1;
+        for (JComponent component : updatedComponents) {
+            canvas.setComponentZOrder(component, z--);
         }
         embeddedComponents = updatedComponents;
     }
