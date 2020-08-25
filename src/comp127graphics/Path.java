@@ -35,6 +35,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     private Paint strokeColor;
     private boolean isFilled;
     private boolean isStroked;
+    private boolean isClosed;
     private BasicStroke stroke;
 
     private double x;
@@ -86,18 +87,16 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Changes the verices of this path to a closed polygon, replacing any existing ones. The
-     * coordinates are relative to the path’s container; the method ignores (and then changes)
-     * the path’s current position.
+     * Replaces the path's coordinates, preserving its open/close status. The coordinates are relative
+     * to the path’s container; the method ignores the path’s current position.
      */
     public void setVertices(List<Point> points) {
-        setVertices(points, true);
+        setVertices(points, isClosed());
     }
 
     /**
      * Changes the verices of this path, replacing any existing ones. The coordinates are
-     * relative to the path’s container; the method ignores (and then changes) the path’s
-     * current position.
+     * relative to the path’s container; the method ignores the path’s current position.
      *
      * @param closed If true, a final line connects the end of the path back to the start, forming
      *  a polygon.
@@ -106,6 +105,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         Objects.requireNonNull(points, "points");
 
         shape = new Path2D.Float(GeneralPath.WIND_EVEN_ODD, points.size());
+        this.isClosed = closed;
 
         if(points.isEmpty()) {
             shape.moveTo(NaN, NaN);
@@ -195,8 +195,16 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
+     * Returns true if this path loops back to its starting point.
+     */
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    /**
      * Returns the leftmost position of the path's vertices.
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -204,6 +212,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the topmost position of the path's vertices.
      */
+    @Override
     public double getY() {
         return y;
     }

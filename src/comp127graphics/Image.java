@@ -1,6 +1,8 @@
 package comp127graphics;
 
-
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -39,10 +41,28 @@ public class Image extends GraphicsObject {
                     imageCache.put(path, image);
                 } catch (IOException e) {
                     System.err.println("Could not load image from " + path + ": " + e);
+                    image = createPlaceholderImage(path, 64, 64);
                 }
             }
             return image;
         }
+    }
+
+    private static BufferedImage createPlaceholderImage(String path, int width, int height) {
+        var image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
+        var gc = image.createGraphics();
+        gc.setColor(new Color(255, 128, 128, 32));
+        gc.fillRect(0, 0, width, height);
+        gc.setStroke(new BasicStroke(4));
+        gc.setColor(new Color(128, 0, 0));
+        gc.drawRect(0, 0, width, height);
+        gc.setStroke(new BasicStroke(1));
+        gc.drawLine(0, 0, width, height);
+        gc.drawLine(0, width, height, 0);
+        gc.setColor(Color.BLACK);
+        gc.setFont(new Font("Tahoma", Font.PLAIN, 9));
+        gc.drawString(path, 4, height - 4);
+        return image;
     }
 
     /**
@@ -54,8 +74,18 @@ public class Image extends GraphicsObject {
     }
 
     /**
+     * Creates a bitmap image from the given file, positioned at (0,0).
+     * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP.
+     *
+     * @param path path of image file to load, relative to the res/ directory.
+     */
+    public Image(String path) {
+        this(0, 0, path);
+	}
+
+    /**
      * Creates a bitmap image from the given file.
-     * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP
+     * Acceptable file formats include: GIF, PNG, JPEG, BMP, and WBMP.
      *
      * @param path path of image file to load, relative to the res/ directory.
      */
@@ -65,7 +95,7 @@ public class Image extends GraphicsObject {
         setImagePath(path);
     }
 
-    /**
+	/**
      * Changes the image displayed by this graphics element.
      *
      * @param path path of image file to load, relative to the res/ directory.
@@ -73,6 +103,7 @@ public class Image extends GraphicsObject {
     public void setImagePath(String path) {
         this.path = path;
         this.img = loadImage(path);
+        changed();
     }
 
     /**
@@ -81,6 +112,7 @@ public class Image extends GraphicsObject {
      */
     public void setMaxWidth(double maxWidth) {
         this.maxWidth = maxWidth;
+        changed();
     }
 
     /**
@@ -89,6 +121,7 @@ public class Image extends GraphicsObject {
      */
     public void setMaxHeight(double maxHeight) {
         this.maxHeight = maxHeight;
+        changed();
     }
 
     protected void draw(Graphics2D gc) {
@@ -106,6 +139,7 @@ public class Image extends GraphicsObject {
     /**
      * Returns the position of the image's left edge.
      */
+    @Override
     public double getX() {
         return x;
     }
@@ -113,6 +147,7 @@ public class Image extends GraphicsObject {
     /**
      * Returns the position of the image's top edge.
      */
+    @Override
     public double getY() {
         return y;
     }

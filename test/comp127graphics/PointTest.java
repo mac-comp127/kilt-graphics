@@ -7,12 +7,13 @@ import static java.lang.Math.PI;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-class PointTest {
+public class PointTest {
     private final Point p = new Point(1, 2);
 
     @SuppressWarnings({"SimplifiableAssertion"})
     @Test
     void equality() {
+        assertTrue(p.equals(p));
         assertTrue(p.equals(new Point(1,2)));
         assertFalse(p.equals(new Point(1,3)));
         assertFalse(p.equals(new Point(2,2)));
@@ -25,6 +26,8 @@ class PointTest {
         Point nanPoint = new Point(NaN, NaN);
         assertTrue(nanPoint.equals(new Point(NaN, NaN)));
         assertFalse(nanPoint.equals(new Point(NaN, 0)));
+
+        assertEquals(p.hashCode(), new Point(1, 2).hashCode());
     }
 
     @Test
@@ -93,7 +96,7 @@ class PointTest {
         assertClose(new Point(1, 8), Point.interpolate(p0, p1, -0.5), 0.001);
     }
 
-    private void assertClose(Point expected, Point actual, double maxDistance) {
+    public static void assertClose(Point expected, Point actual, double maxDistance) {
         assertTrue(expected.distance(actual) <= maxDistance,
             "Expected " + actual + " to be close to " + expected);
 	}

@@ -19,15 +19,15 @@ public abstract class GraphicsObject {
     private CanvasWindow canvas;
 
     /**
+     * For internal use. Draws this graphics object on the screen.
+     */
+    protected abstract void draw(Graphics2D gc);
+
+    /**
      * Gets the position of the object on the canvas. The location of the anchor point
      * that we call the “position” can vary, but is typically the upper left.
      */
     public abstract Point getPosition();
-
-    /**
-     * For internal use. Draws this graphics object on the screen.
-     */
-    protected abstract void draw(Graphics2D gc);
 
     /**
      * Moves this object to the given position.
@@ -45,11 +45,45 @@ public abstract class GraphicsObject {
     }
 
     /**
+     * Returns the object's current horizontal position.
+     * @see getPosition()
+     */
+    public double getX() {
+        return getPosition().getX();
+    }
+
+    /**
+     * Changes this object's horizontal position while preserving its vertical position.
+     */
+    public void setX(double x) {
+        setPosition(new Point(x, getY()));
+    }
+
+    /**
+     * Returns the object's current vertical position.
+     * @see getPosition()
+     */
+    public double getY() {
+        return getPosition().getY();
+    }
+
+    /**
+     * Changes this object's vertical position while preserving its horizontal position.
+     */
+    public void setY(double y) {
+        setPosition(new Point(getX(), y));
+    }
+
+    /**
      * Returns the center of this shape's bounding box.
      */
     public final Point getCenter() {
         Rectangle2D bounds = getBounds();
-        return new Point(bounds.getCenterX(), bounds.getCenterY());
+        // width and height can sometimes be NaN, e.g. in an empty Path. If the bounds
+        // have NaNs, just use the nominal position from getPosition().
+        return new Point(
+            Double.isNaN(bounds.getCenterX()) ? getPosition().getX() : bounds.getCenterX(),
+            Double.isNaN(bounds.getCenterY()) ? getPosition().getY() : bounds.getCenterY());
     }
 
     /**

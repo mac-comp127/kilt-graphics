@@ -108,6 +108,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the X position of the rectangle's left edge.
      */
+    @Override
     public double getX() {
         return shape.getX();
     }
@@ -115,6 +116,7 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     /**
      * Returns the Y position of the rectangle's top edge.
      */
+    @Override
     public double getY() {
         return shape.getY();
     }

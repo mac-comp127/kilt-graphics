@@ -16,9 +16,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -32,6 +34,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import comp127graphics.events.Key;
@@ -101,6 +104,7 @@ public class CanvasWindow {
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(windowWidth, windowHeight));
+        canvas.setLayout(null);
         canvas.setBackground(Color.WHITE);
         canvas.setFocusable(true);  // enables key events
 
@@ -260,6 +264,10 @@ public class CanvasWindow {
                 canvas.add(newComponent);
             }
         }
+        int z = updatedComponents.size() - 1;
+        for (JComponent component : updatedComponents) {
+            canvas.setComponentZOrder(component, z--);
+        }
         embeddedComponents = updatedComponents;
     }
 
@@ -315,14 +323,32 @@ public class CanvasWindow {
     }
 
     /**
+     * Captures a screenshot of the currently drawn canvas' contents to an image.
+     */
+    public BufferedImage screenShot() {
+        BufferedImage bImg = new BufferedImage(canvas.getWidth() * 2, canvas.getHeight() * 2, BufferedImage.TYPE_INT_RGB);
+        Graphics2D screenshotGC = bImg.createGraphics();
+        enableAntialiasing(screenshotGC);
+        screenshotGC.setTransform(AffineTransform.getScaleInstance(2, 2));
+
+        draw(); // Update embedded components and set drawingInitiated
+        try {
+            // Wait for Swing components to shuffle over to where they're supposed to be
+            SwingUtilities.invokeAndWait(() -> {});
+            Thread.sleep(100);  // Extra pause seems to be necessary on Windows?
+        } catch (InvocationTargetException | InterruptedException e) {
+        }
+        canvas.paintAll(screenshotGC);
+        return bImg;
+    }
+
+    /**
      * Saves a screenshot of the currently drawn canvas' contents to the filename specified as a parameter
      *
      * @param filename The filename for where you would like to save.
      */
     public void screenShot(String filename) {
-        BufferedImage bImg = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-        Graphics2D cg = bImg.createGraphics();
-        canvas.paintAll(cg);
+        BufferedImage bImg = screenShot();
         try {
             if (ImageIO.write(bImg, "png", new File(filename))) {
                 System.out.println("-- saved");
