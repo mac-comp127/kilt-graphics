@@ -335,6 +335,7 @@ public class CanvasWindow {
         try {
             // Wait for Swing components to shuffle over to where they're supposed to be
             SwingUtilities.invokeAndWait(() -> {});
+            Thread.sleep(100);  // Extra pause seems to be necessary on Windows?
         } catch (InvocationTargetException | InterruptedException e) {
         }
         canvas.paintAll(screenshotGC);
