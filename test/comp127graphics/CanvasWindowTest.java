@@ -8,8 +8,12 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import comp127graphics.testsupport.ImageComparison;
+import comp127graphics.ui.Button;
+import comp127graphics.ui.TextField;
 
 public class CanvasWindowTest {
+    private static final String OS_NAME = System.getProperty("os.name").toLowerCase().replaceAll("\\s+", "_");
+    
     private CanvasWindow canvas;
     
     @Test
@@ -75,8 +79,28 @@ public class CanvasWindowTest {
     }
 
     @Test
-    void embeddedComponentHandling() {
-        // TODO
+    void embeddedComponentHandling() throws IOException {
+        canvas = new CanvasWindow("embeddedComponentHandling", 320, 60);
+        Button button = new Button("I am a button");
+        TextField field = new TextField();
+        field.setText("I am not a button");
+        Ellipse ellipse = new Ellipse(10, 10, 50, 30);
+        ellipse.setFillColor(new Color(12, 172, 47, 50));
+
+        // Note the z-order here: the ellipse is in front of button and behind the field, but CanvasWindow
+        // should make all the JComponents float on top of the graphics while stacking consistently
+        // with each other.
+        canvas.add(button, 6, 6);
+        canvas.add(ellipse, 12, 12);
+        canvas.add(field, 18, 18);
+        compareScreenShot(OS_NAME + "-added");
+
+        ellipse.moveBy(0, -10);
+        field.moveBy(10, 0);
+        compareScreenShot(OS_NAME + "-moved");
+
+        canvas.remove(field);
+        compareScreenShot(OS_NAME + "-removed");
     }
 
     private void compareScreenShot(String testName) throws IOException {

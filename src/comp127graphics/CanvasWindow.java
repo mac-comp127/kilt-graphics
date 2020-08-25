@@ -20,6 +20,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -33,6 +34,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import comp127graphics.events.Key;
@@ -328,7 +330,13 @@ public class CanvasWindow {
         Graphics2D screenshotGC = bImg.createGraphics();
         enableAntialiasing(screenshotGC);
         screenshotGC.setTransform(AffineTransform.getScaleInstance(2, 2));
-        draw();  // Otherwise paintAll will have no effect
+
+        draw(); // Update embedded components and set drawingInitiated
+        try {
+            // Wait for Swing components to shuffle over to where they're supposed to be
+            SwingUtilities.invokeAndWait(() -> {});
+        } catch (InvocationTargetException | InterruptedException e) {
+        }
         canvas.paintAll(screenshotGC);
         return bImg;
     }
