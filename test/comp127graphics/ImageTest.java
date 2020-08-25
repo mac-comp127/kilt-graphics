@@ -6,8 +6,8 @@ import comp127graphics.testsupport.RenderingTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ImageTest implements GraphicsObjectTestSuite {
-    private static final String FOXFLOWER_IMAGE = "images/foxflower.png";
-    private static final String FOXBOT_IMAGE = "images/foxbot.png";
+    public static final String FOXFLOWER_IMAGE = "res/foxflower.png";
+    public static final String FOXBOT_IMAGE = "res/foxbot.png";
 
     private Image image;
 

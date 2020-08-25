@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 
 /**
  * Renders the GraphicsObject from a GraphicsObjectTestSuite to an image and compares it with a
- * saved image in the project's `test/testImages` directory. The first time a test with a given
+ * saved image in the project's `test/imageComparisons` directory. The first time a test with a given
  * name runs, this class saves the rendered image as the expected one. After that, when the
  * expected image already exists, this class compared the newly rendered image to the old
  * expected one. If the two images differ at all, this class emits a `(delta)` file
@@ -85,7 +85,7 @@ public class ImageComparison {
     private File getTestImagesDir() {
         var testImageDir = Paths.get(".").toAbsolutePath().normalize()
             .resolve("test")
-            .resolve("testImages")
+            .resolve("imageComparisons")
             .toFile();
         if (!testImageDir.isDirectory()) {
             throw new RuntimeException("Cannot find test test image directory at " + testImageDir);

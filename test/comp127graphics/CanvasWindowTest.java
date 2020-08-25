@@ -32,7 +32,7 @@ public class CanvasWindowTest {
     
         canvas.setBackground(Color.BLUE);
 
-        var image0 = new Image("images/foxflower.png");
+        var image0 = new Image(ImageTest.FOXFLOWER_IMAGE);
         canvas.add(image0);
         image0.setCenter(canvas.getCenter());  // position after add
 
@@ -40,7 +40,7 @@ public class CanvasWindowTest {
         ellipse.setFillColor(Color.CYAN);
         canvas.add(ellipse, 40, 20);
 
-        var image1 = new Image("images/foxbot.png");
+        var image1 = new Image(ImageTest.FOXBOT_IMAGE);
         image1.setY(canvas.getHeight() - image1.getHeight());  // position before add
         canvas.add(image1);
 
