@@ -27,6 +27,9 @@ test {
 sourceCompatibility = 1.12
 targetCompatibility = 1.12
 
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
 sourceSets {
     main.java.srcDirs = ['src']
     test.java.srcDirs = ['test']
