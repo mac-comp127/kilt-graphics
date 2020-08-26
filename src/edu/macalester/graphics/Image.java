@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -51,6 +52,17 @@ public class Image extends GraphicsObject {
     private static BufferedImage createPlaceholderImage(String path, int width, int height) {
         var image = new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB);
         var gc = image.createGraphics();
+
+        gc.setRenderingHint(
+            RenderingHints.KEY_ANTIALIASING,
+            RenderingHints.VALUE_ANTIALIAS_OFF);
+        gc.setRenderingHint(
+            RenderingHints.KEY_RENDERING,
+            RenderingHints.VALUE_RENDER_SPEED);
+        gc.setRenderingHint(
+            RenderingHints.KEY_STROKE_CONTROL,
+            RenderingHints.VALUE_STROKE_NORMALIZE);
+
         gc.setColor(new Color(255, 128, 128, 32));
         gc.fillRect(0, 0, width, height);
         gc.setStroke(new BasicStroke(4));

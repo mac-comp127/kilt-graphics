@@ -1,0 +1,38 @@
+name: Regression tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.14
+
+      - name: Configure macOS font rendering
+        if: ${{ runner.os == 'macOS' }}
+        # For some reason, GitHub's macOS image has this enabled. ?!??
+        run: defaults write -g CGFontRenderingFontSmoothingDisabled 0
+
+      - name: Build and run tests
+        run: ./gradlew test -i --console=plain --no-daemon
+
+      - name: Upload image comparisons (on failure only)
+        if: ${{ failure() }}
+        uses: actions/upload-artifact@v2
+        with:
+          name: imageComparisons
+          path: test/imageComparisons/
