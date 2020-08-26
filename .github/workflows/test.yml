@@ -18,10 +18,15 @@ jobs:
         with:
           java-version: 1.14
 
+      - name: Configure macOS font rendering
+        if: ${{ runner.os == 'macOS' }}
+        # For some reason, GitHub's macOS image has this enabled. ?!??
+        run: defaults write -g CGFontRenderingFontSmoothingDisabled 0
+
       - name: Build and run tests
         run: ./gradlew test -i --console=plain --no-daemon
 
-      - name: Upload image comparisons
+      - name: Upload image comparisons (on failure only)
         if: ${{ failure() }}
         uses: actions/upload-artifact@v2
         with:
