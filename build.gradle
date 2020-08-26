@@ -19,6 +19,9 @@ test {
     testLogging {
         showStandardStreams = true
     }
+    afterTest { desc, result -> 
+        logger.quiet "[${desc.className}] ${desc.name}: ${result.resultType}"
+    }
 }
 
 sourceCompatibility = 1.12
