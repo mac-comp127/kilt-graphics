@@ -4,6 +4,8 @@ plugins {
     id 'maven'
 }
 
+group 'com.github.mac-comp127'
+
 // External dependencies
 
 repositories {
