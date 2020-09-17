@@ -57,10 +57,9 @@ class ThreadExitWatcher {
 
             System.out.println(watchedThreadName + " has exited; running queued tasks");
 
-            for (Runnable task : queuedTasks) {
-                task.run();
-            }
-            queuedTasks = null;
+            var previouslyQueuedTasks = queuedTasks;
+            queuedTasks = null;  // If there is a task cascade, let subsequent tasks execute immediately
+            previouslyQueuedTasks.forEach(Runnable::run);
         }
     }
 }
