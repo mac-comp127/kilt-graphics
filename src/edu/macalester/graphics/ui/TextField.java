@@ -23,7 +23,9 @@ public class TextField extends EmbeddedSwingComponent {
     }
 
     public void setText(String text) {
-        field.setText(text);
+        if (!getText().equals(text)) {
+            field.setText(text);
+        }
     }
 
     public void onChange(Consumer<String> callback) {
