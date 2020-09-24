@@ -14,7 +14,12 @@ public class FrameRateReporter {
         framesSinceLastReport++;
         long curTime = System.currentTimeMillis();
         if(curTime - timeOfLastReport > 200) {
-            System.out.printf("%2.1f fps\n", (double) framesSinceLastReport / (curTime - timeOfLastReport) * 1000);
+            double rate = (double) framesSinceLastReport / (curTime - timeOfLastReport) * 1000;
+            System.out.printf("%2.1f fps ", rate);
+            for (int n = 0; n < Math.round(rate); n++) {
+                System.out.print("🟦");
+            }
+            System.out.println();
             framesSinceLastReport = 0;
             timeOfLastReport = curTime;
         }
