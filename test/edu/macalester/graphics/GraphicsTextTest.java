@@ -2,6 +2,10 @@ package edu.macalester.graphics;
 
 import static edu.macalester.graphics.testsupport.RenderingTestMode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 
 import edu.macalester.graphics.testsupport.GraphicsObjectTestSuite;
 import edu.macalester.graphics.testsupport.RenderingTest;
@@ -64,5 +68,25 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
     @RenderingTest(modes = { PLAIN })
     void emptyString() {
         text = new GraphicsText("", 50, 50);
+    }
+
+    @Test
+    void intersects() {
+        GraphicsText text0 = new GraphicsText("O", 30, 100);
+        text0.setFont("Verdana", FontStyle.ITALIC, 96);
+
+        GraphicsText text1 = new GraphicsText(".", 76, 86);
+        text1.setFont("Arial", FontStyle.PLAIN, 16);
+
+        assertFalse(text0.intersects(text1));
+        assertFalse(text1.intersects(text0));
+
+        text1.setPosition(87, 92);
+        assertTrue(text0.intersects(text1));
+        assertTrue(text1.intersects(text0));
+
+        text1.setPosition(89, 93);
+        assertFalse(text0.intersects(text1));
+        assertFalse(text1.intersects(text0));
     }
 }
