@@ -35,6 +35,9 @@ public interface GraphicsObjectTestSuite {
     @AfterEach
     default void performEqualitySmokeTest() {
         GraphicsObject gobj = getGraphicsObject();
+        if (gobj == null) {
+            return;
+        }
         assertTrue(gobj.equals(gobj));
         assertFalse(gobj.equals(null));
         assertFalse(gobj.equals((Object) "fish"));
@@ -47,8 +50,11 @@ public interface GraphicsObjectTestSuite {
     @AfterEach
     default void performRepositioningSmokeTest() {
         GraphicsObject gobj = getGraphicsObject();
-        var p = new Point(73.2, 19.7);
+        if (gobj == null) {
+            return;
+        }
 
+        var p = new Point(73.2, 19.7);
         gobj.setPosition(p);
         PointTest.assertClose(p, gobj.getPosition(), 0.5);
         assertEquals(73.2, gobj.getX(), 0.5);

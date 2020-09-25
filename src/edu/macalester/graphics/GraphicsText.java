@@ -9,6 +9,7 @@ import java.awt.Shape;
 import java.awt.font.FontRenderContext;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -223,6 +224,21 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     public boolean testHit(double x, double y) {
         return getTextShape().contains(x, y);
+    }
+
+    /**
+     * Returns true if this text visually overlaps the given other text. This method assumes both
+     * are in the some coordinate system; it does not account for them belonging to different
+     * GraphicsGroups.
+     */
+    public boolean intersects(GraphicsText other){
+        Area area = getArea();
+        area.intersect(new Area(other.getTextShape()));
+        return !area.isEmpty();
+    }
+
+    private Area getArea() {
+        return new Area(getTextShape());
     }
 
     @Override
