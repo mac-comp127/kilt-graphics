@@ -29,13 +29,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.DoubleConsumer;
 
 import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import edu.macalester.graphics.events.Key;
 import edu.macalester.graphics.events.KeyboardEvent;
@@ -62,6 +62,8 @@ import edu.macalester.graphics.events.MouseMotionEventHandler;
  * @author Paul Cantrell
  */
 public class CanvasWindow {
+    private static final int TARGET_ANIMATION_RATE = 16;
+
     // This is static because the first CanvasWindow is presumably created on the main thread, but
     // subsequent windows may be created on the AWT thread, and ThreadExitWatcher waits for
     // whatever thread it was created on. So we wait for the _first_ CanvasWindow’s thread to exit
@@ -77,8 +79,8 @@ public class CanvasWindow {
     private boolean drawingInitiated = false, redrawNeeded = false;
     private final Object repaintLock = new Object();
 
-    private List<Runnable> animations = new ArrayList<>();
-    private Timer animationTimer;
+    private List<DoubleConsumer> animations = new ArrayList<>();
+    private AnimationTimer animationTimer;
 
     private Point curMousePos, prevMousePos;
     private Set<Key> keysPressed = EnumSet.noneOf(Key.class);
@@ -629,10 +631,19 @@ public class CanvasWindow {
     }
 
     /**
-     * Call the given callback repeatedly forever, up to 60 times per second. Automatically draws
-     * the canvas after each time the callback runs.
+     * Call the given callback repeatedly forever, up to 60 times per second. Automatically draws the
+     * canvas after each time the callback runs.
      */
     public void animate(Runnable animation) {
+        animate(dt -> animation.run());
+    }
+
+    /**
+     * Call the given callback repeatedly forever, up to 60 times per second, passing the time delta
+     * since the last time it was called. Automatically draws the canvas after each time the callback
+     * runs.
+     */
+    public void animate(DoubleConsumer animation) {
         startRefreshTimer();
         animations.add(animation);
     }
@@ -643,14 +654,20 @@ public class CanvasWindow {
         }
 
         System.out.println("Starting CanvasWindow refresh timer");
-        animationTimer = new Timer(15, e -> {
-            for (var animation : animations) {
-                animation.run();
+        animationTimer = new AnimationTimer(TARGET_ANIMATION_RATE, dt -> {
+            try {
+                SwingUtilities.invokeAndWait(() -> {  // waiting matters: AnimationTimer compensates for actual time taken
+                    for (var animation : animations) {
+                        animation.accept(dt);
+                    }
+                    draw();
+                });
+            } catch (InvocationTargetException | InterruptedException e) {
+                System.err.println("Exception from animation callback:");
+                e.printStackTrace();
+                System.exit(1);
             }
-            draw();
         });
-        animationTimer.setRepeats(true);
-        animationTimer.start();
     }
 
     /**
