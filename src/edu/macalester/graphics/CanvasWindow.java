@@ -644,8 +644,8 @@ public class CanvasWindow {
      * runs.
      */
     public void animate(DoubleConsumer animation) {
-        startRefreshTimer();
         animations.add(animation);
+        mainThreadWatcher.afterThreadExits(this::startRefreshTimer);
     }
 
     private void startRefreshTimer() {

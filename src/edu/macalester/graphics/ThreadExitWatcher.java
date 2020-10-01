@@ -55,7 +55,7 @@ class ThreadExitWatcher {
             }
             exitCheck.stop();
 
-            System.out.println(watchedThreadName + " has exited; running queued tasks");
+            System.out.println(watchedThreadName + " thread is done");
 
             var previouslyQueuedTasks = queuedTasks;
             queuedTasks = null;  // If there is a task cascade, let subsequent tasks execute immediately
