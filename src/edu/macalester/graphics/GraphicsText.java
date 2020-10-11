@@ -19,14 +19,20 @@ import java.awt.image.BufferedImage;
  * @author Bret Jackson
  */
 public class GraphicsText extends GraphicsObject implements Fillable {
+    private static final AffineTransform IDENTITY_TRANFORM = new AffineTransform();
 
     private String text;
     private double x, y;
     private Font font;
     private Paint textColor;
-    private Shape textShape;  // lazily initialized, updated when painted
     private boolean filled = true;
     private FontMetrics metrics;
+
+    // These are both expensive to compute, so we compute them lazily.
+    // Both are in text-local coordinates (not account for this object's position)
+    // so that merely moving text does not force a recomputation.
+    private Shape textShape;
+    private Rectangle2D rawBounds;
 
     /**
      * Creates drawable text at position (x,y)
@@ -59,7 +65,10 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         gc.setFont(font);
         gc.setPaint(textColor);
 
+        AffineTransform oldTransform = gc.getTransform();
+        gc.translate(this.x, this.y);
         gc.fill(getTextShape());
+        gc.setTransform(oldTransform);
 
         gc.setFont(curFont);
         gc.setPaint(curColor);
@@ -71,8 +80,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         }
         FontRenderContext frc = gc.getFontRenderContext();
         TextLayout textLayout = new TextLayout(text, font, frc);
-        AffineTransform moveTo = AffineTransform.getTranslateInstance(x, y);
-        return textLayout.getOutline(moveTo);
+        return textLayout.getOutline(IDENTITY_TRANFORM);
     }
 
     private Shape getTextShape() {
@@ -83,15 +91,21 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         if (textShape == null) {
             BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
             textShape = recomputeTextShape((Graphics2D) img.getGraphics());
+            rawBounds = getTextShape().getBounds2D();
         }
         return textShape;
     }
 
     @Override
     protected void changed() {
-        textShape = null;
         metrics = null;
         super.changed();
+    }
+
+    private void textShapeChanged() {
+        textShape = null;
+        rawBounds = null;
+        changed();
     }
 
     public void setPosition(double x, double y) {
@@ -110,7 +124,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     public void setText(String text) {
         this.text = text;
-        changed();
+        textShapeChanged();
     }
 
     @Override
@@ -140,7 +154,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
      */
     public void setFontSize(double size) {
         this.font = font.deriveFont((float) size);
-        changed();
+        textShapeChanged();
     }
 
     /**
@@ -163,9 +177,9 @@ public class GraphicsText extends GraphicsObject implements Fillable {
      * @param fontFamily A font family name, such as "Helvetica"
      */
     public void setFont(String fontFamily, FontStyle style, double size) {
-        //noinspection MagicConstant
+        // noinspection MagicConstant
         this.font = new Font(fontFamily, style.getAwtCode(), 0).deriveFont((float) size);
-        changed();
+        textShapeChanged();
     }
 
     /**
@@ -176,7 +190,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     @Deprecated
     public void setFont(Font font) {
         this.font = font;
-        changed();
+        textShapeChanged();
     }
 
     @Override
@@ -223,26 +237,32 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     public boolean testHit(double x, double y) {
-        return getTextShape().contains(x, y);
+        return getTextShape().contains(x - this.x, y - this.y);
     }
 
     /**
-     * Returns true if this text visually overlaps the given other text. This method assumes both
-     * are in the some coordinate system; it does not account for them belonging to different
-     * GraphicsGroups.
+     * Returns true if this text visually overlaps the given other text. This method assumes both are in
+     * the some coordinate system; it does not account for them belonging to different GraphicsGroups.
      */
-    public boolean intersects(GraphicsText other){
+    public boolean intersects(GraphicsText other) {
         Area area = getArea();
-        area.intersect(new Area(other.getTextShape()));
+        area.intersect(other.getArea());
         return !area.isEmpty();
     }
 
     private Area getArea() {
-        return new Area(getTextShape());
+        Area area = new Area(getTextShape());
+        area.transform(AffineTransform.getTranslateInstance(x, y));
+        return area;
     }
 
     @Override
     public Rectangle2D getBounds() {
-        return getTextShape().getBounds2D();
+        getTextShape();
+        return new Rectangle2D.Double(
+            rawBounds.getX() + x,
+            rawBounds.getY() + y,
+            rawBounds.getWidth(),
+            rawBounds.getHeight());
     }
 }
