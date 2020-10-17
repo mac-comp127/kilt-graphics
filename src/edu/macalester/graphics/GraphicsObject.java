@@ -130,41 +130,41 @@ public abstract class GraphicsObject {
     /**
      * Offsets the shape from its current position by the given delta.
      */
-    public void moveBy(Point delta) {
+    public final void moveBy(Point delta) {
         setPosition(getPosition().add(delta));
     }
 
-    public double getRotation() {
+    public final double getRotation() {
         return rotation;
     }
 
-    public void setRotation(double rotation) {
+    public final void setRotation(double rotation) {
         this.rotation = rotation;
         updateTransform();
     }
 
-    public double getScaleX() {
+    public final double getScaleX() {
         return scale.getX();
     }
     
-    public double getScaleY() {
+    public final double getScaleY() {
         return scale.getY();
     }
 
-    public Point getScale() {
+    public final Point getScale() {
         return scale;
     }
 
-    public void setScale(Point scale) {
+    public final void setScale(Point scale) {
         setScale(scale.getX(), scale.getY());
     }
 
-    public void setScale(double scaleX, double scaleY) {
+    public final void setScale(double scaleX, double scaleY) {
         this.scale = new Point(scaleX, scaleY);
         updateTransform();
     }
 
-    public void setScale(double scale) {
+    public final void setScale(double scale) {
         setScale(scale, scale);
     }
 
@@ -187,7 +187,7 @@ public abstract class GraphicsObject {
         changed();
     }
 
-    AffineTransform getTransform() {
+    final AffineTransform getTransform() {
         return transform;
     }
 
@@ -220,7 +220,7 @@ public abstract class GraphicsObject {
      * the bounds. So, for example, a point in the upper left corner of an Ellipse’s bounding box
      * could return true for isInBounds(), but false for testHit().
      */
-    public boolean isInBounds(Point position) {
+    public final boolean isInBounds(Point position) {
         return getBounds().contains(position.getX(), position.getY());
     }
 
@@ -248,7 +248,7 @@ public abstract class GraphicsObject {
     /**
      * Returns the width and height of this graphics object.
      */
-    public Point getSize() {
+    public final Point getSize() {
         Rectangle2D bounds = getBounds();
         return new Point(bounds.getWidth(), bounds.getHeight());
     }
@@ -276,7 +276,7 @@ public abstract class GraphicsObject {
     /**
      * Returns the window that this Object is inside, or null if it does not belong to a window.
      */
-    public CanvasWindow getCanvas() {
+    public final CanvasWindow getCanvas() {
         return canvas;
     }
 
@@ -300,14 +300,14 @@ public abstract class GraphicsObject {
      * Adds an observer to be notified of visual changes to this graphics object (typically for the
      * purpose of knowing when to draw it).
      */
-    public void addObserver(GraphicsObserver observer) {
+    public final void addObserver(GraphicsObserver observer) {
         observers.add(observer);
     }
 
     /**
      * Removes the given observer.
      */
-    public void removeObserver(GraphicsObserver observer) {
+    public final void removeObserver(GraphicsObserver observer) {
         observers.remove(observer);
     }
 
