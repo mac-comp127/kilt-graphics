@@ -3,10 +3,11 @@ package edu.macalester.graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.function.BiConsumer;
 
 /**
@@ -20,7 +21,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Holds the objects to be drawn in calls to paintComponent
      */
-    private ConcurrentLinkedDeque<GraphicsObject> children;
+    private List<GraphicsObject> children;
 
     /**
      * X position of group in canvas space
@@ -44,7 +45,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public GraphicsGroup(double x, double y) {
         this.x = x;
         this.y = y;
-        children = new ConcurrentLinkedDeque<GraphicsObject>();
+        children = new ArrayList<GraphicsObject>();
     }
 
     /**
@@ -125,8 +126,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     @Override
     public GraphicsObject getElementAt(double x, double y) {
-        for (Iterator<GraphicsObject> it = children.descendingIterator(); it.hasNext(); ) {
-            GraphicsObject obj = it.next();
+        for (var it = children.listIterator(children.size()); it.hasPrevious(); ) {
+            GraphicsObject obj = it.previous();
             GraphicsObject hit = obj.getElementAt(x - this.x, y - this.y);
             if (hit != null) {
                 return hit;
