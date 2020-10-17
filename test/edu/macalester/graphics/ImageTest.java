@@ -53,6 +53,12 @@ public class ImageTest implements GraphicsObjectTestSuite {
     }
 
     @RenderingTest
+    void pixelAlignment() {
+        image = new Image(FOXBOT_IMAGE);
+        image.setPosition(-1.2, -50.8);
+    }
+
+    @RenderingTest
     void empty() {
         image = new Image(1, 1);
         assertEquals(Point.ORIGIN, image.getSize());

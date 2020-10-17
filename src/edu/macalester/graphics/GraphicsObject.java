@@ -19,6 +19,8 @@ import javax.swing.JComponent;
 public abstract class GraphicsObject {
     private List<GraphicsObserver> observers = new ArrayList<GraphicsObserver>();
     private CanvasWindow canvas;
+
+    private Point position = Point.ORIGIN;
     private double rotation = 0;
     private Point scale = Point.ONE_ONE;
     private AffineTransform transform = new AffineTransform(), inverseTransform = new AffineTransform();
@@ -40,7 +42,9 @@ public abstract class GraphicsObject {
      * Gets the position of the object on the canvas. The location of the anchor point
      * that we call the “position” can vary, but is typically the upper left.
      */
-    public abstract Point getPosition();
+    public final Point getPosition() {
+        return position;
+    }
 
     /**
      * Moves this object to the given position.
@@ -48,27 +52,30 @@ public abstract class GraphicsObject {
      * @param x position
      * @param y position
      */
-    public abstract void setPosition(double x, double y);
+    public final void setPosition(double x, double y) {
+        setPosition(new Point(x, y));
+    }
 
     /**
      * Moves this object to the given position.
      */
-    public final void setPosition(Point pos) {
-        setPosition(pos.getX(), pos.getY());
+    public final void setPosition(Point position) {
+        this.position = position;
+        updateTransform();
     }
 
     /**
      * Returns the object's current horizontal position.
      * @see getPosition()
      */
-    public double getX() {
+    public final double getX() {
         return getPosition().getX();
     }
 
     /**
      * Changes this object's horizontal position while preserving its vertical position.
      */
-    public void setX(double x) {
+    public final void setX(double x) {
         setPosition(new Point(x, getY()));
     }
 
@@ -76,14 +83,14 @@ public abstract class GraphicsObject {
      * Returns the object's current vertical position.
      * @see getPosition()
      */
-    public double getY() {
+    public final double getY() {
         return getPosition().getY();
     }
 
     /**
      * Changes this object's vertical position while preserving its horizontal position.
      */
-    public void setY(double y) {
+    public final void setY(double y) {
         setPosition(new Point(getX(), y));
     }
 
@@ -95,8 +102,8 @@ public abstract class GraphicsObject {
         // width and height can sometimes be NaN, e.g. in an empty Path. If the bounds
         // have NaNs, just use the nominal position from getPosition().
         return new Point(
-            Double.isNaN(bounds.getCenterX()) ? getPosition().getX() : bounds.getCenterX(),
-            Double.isNaN(bounds.getCenterY()) ? getPosition().getY() : bounds.getCenterY());
+            Double.isNaN(bounds.getCenterX()) ? getX() : bounds.getCenterX(),
+            Double.isNaN(bounds.getCenterY()) ? getY() : bounds.getCenterY());
     }
 
     /**
@@ -167,15 +174,21 @@ public abstract class GraphicsObject {
         transform.rotate(Math.toRadians(rotation));
         transform.scale(scale.getX(), scale.getY());
         transform.translate(-center.getX(), -center.getY());
+        transform.translate(position.getX(), position.getY());
 
         // Can't just use invert() for this, because if
         // the scale is zero, the transform non-invertible
-        inverseTransform.setToTranslation(center.getX(), center.getY());
+        inverseTransform.setToTranslation(-position.getX(), -position.getY());
+        inverseTransform.translate(center.getX(), center.getY());
         inverseTransform.scale(1 / scale.getX(), 1 / scale.getY());
         inverseTransform.rotate(Math.toRadians(-rotation));
         inverseTransform.translate(-center.getX(), -center.getY());
 
         changed();
+    }
+
+    AffineTransform getTransform() {
+        return transform;
     }
 
     /**
@@ -243,7 +256,18 @@ public abstract class GraphicsObject {
     /**
      * Returns an axis-aligned bounding rectangle for this graphical object.
      */
-    public abstract Rectangle2D getBounds();
+    public final Rectangle2D getBounds() {
+        Rectangle2D.Double bounds = new Rectangle2D.Double();
+        bounds.setRect(getBoundsLocal());
+        bounds.x += getX();
+        bounds.y += getY();
+        return bounds;
+    }
+
+    /**
+     * Returns the bounding box of this graphics object in its local coordinates.
+     */
+    protected abstract Rectangle2D getBoundsLocal();
 
     void forEachDescendant(Point origin, BiConsumer<GraphicsObject,Point> callback) {
         callback.accept(this, origin.add(getPosition()));

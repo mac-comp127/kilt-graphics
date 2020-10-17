@@ -22,7 +22,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     private static final AffineTransform IDENTITY_TRANFORM = new AffineTransform();
 
     private String text;
-    private double x, y;
     private Font font;
     private Paint textColor;
     private boolean filled = true;
@@ -38,8 +37,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
      * Creates drawable text at position (x,y)
      */
     public GraphicsText(String text, double x, double y) {
-        this.x = x;
-        this.y = y;
+        setPosition(x, y);
         this.text = text;
         textColor = Color.BLACK;
         setFont(Font.SANS_SERIF, FontStyle.PLAIN, 14);
@@ -66,10 +64,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         gc.setFont(font);
         gc.setPaint(textColor);
 
-        AffineTransform oldTransform = gc.getTransform();
-        gc.translate(this.x, this.y);
         gc.fill(getTextShape());
-        gc.setTransform(oldTransform);
 
         gc.setFont(curFont);
         gc.setPaint(curColor);
@@ -77,7 +72,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     private Shape recomputeTextShape(Graphics2D gc) {
         if (text == null || text.isEmpty()) {  // textLayout doesn't like empty strings
-            return new Rectangle2D.Double(x, y, 0, 0);
+            return new Rectangle2D.Double(0, 0, 0, 0);
         }
         FontRenderContext frc = gc.getFontRenderContext();
         TextLayout textLayout = new TextLayout(text, font, frc);
@@ -92,7 +87,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         if (textShape == null) {
             BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
             textShape = recomputeTextShape((Graphics2D) img.getGraphics());
-            rawBounds = getTextShape().getBounds2D();
+            rawBounds = textShape.getBounds2D();
         }
         return textShape;
     }
@@ -109,16 +104,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    public void setPosition(double x, double y) {
-        this.x = x;
-        this.y = y;
-        changed();
-    }
-
-    public Point getPosition() {
-        return new Point(x, y);
-    }
-
     public String getText() {
         return text;
     }
@@ -126,28 +111,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     public void setText(String text) {
         this.text = text;
         textShapeChanged();
-    }
-
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    @Override
-    public void setX(double x) {
-        this.x = x;
-        changed();
-    }
-
-    @Override
-    public double getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(double y) {
-        this.y = y;
-        changed();
     }
 
     /**
@@ -239,7 +202,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
-        return getTextShape().contains(x - this.x, y - this.y);
+        return getTextShape().contains(x, y);
     }
 
     /**
@@ -254,16 +217,16 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     private Area getArea() {
         Area area = new Area(getTextShape());
-        area.transform(AffineTransform.getTranslateInstance(x, y));
+        area.transform(getTransform());
         return area;
     }
 
     @Override
-    public Rectangle2D getBounds() {
+    public Rectangle2D getBoundsLocal() {
         getTextShape();
         return new Rectangle2D.Double(
-            rawBounds.getX() + x,
-            rawBounds.getY() + y,
+            rawBounds.getX(),
+            rawBounds.getY(),
             rawBounds.getWidth(),
             rawBounds.getHeight());
     }

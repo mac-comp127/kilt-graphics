@@ -1,7 +1,6 @@
 package edu.macalester.graphics;
 
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -24,16 +23,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     private List<GraphicsObject> children;
 
     /**
-     * X position of group in canvas space
-     */
-    private double x;
-
-    /**
-     * Y position of group in canvas space
-     */
-    private double y;
-
-    /**
      * Bounding rectangle around all of the graphicObjects contained in this group in window coordinates.
      */
     private Rectangle2D bounds;
@@ -43,9 +32,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * positioned on the canvas at canvas position (x, y) when it is added.
      */
     public GraphicsGroup(double x, double y) {
-        this.x = x;
-        this.y = y;
         children = new ArrayList<GraphicsObject>();
+        setPosition(x, y);
     }
 
     /**
@@ -128,7 +116,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     protected GraphicsObject getElementAtLocalCoordinates(double x, double y) {
         for (var it = children.listIterator(children.size()); it.hasPrevious(); ) {
             GraphicsObject obj = it.previous();
-            GraphicsObject hit = obj.getElementAt(x - this.x, y - this.y);
+            GraphicsObject hit = obj.getElementAt(x, y);
             if (hit != null) {
                 return hit;
             }
@@ -138,29 +126,9 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     @Override
     protected void drawInLocalCoordinates(Graphics2D gc) {
-        AffineTransform savedTransform = gc.getTransform();
-        gc.translate(x, y);
         for (GraphicsObject obj : children) {
             obj.draw(gc);
         }
-        gc.setTransform(savedTransform);
-    }
-
-
-    /**
-     * Get the x position of the group's local coordinate system relative to the group's container.
-     */
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * Get the y position of the group's local coordinate system relative to the group's container.
-     */
-    @Override
-    public double getY() {
-        return y;
     }
 
     /**
@@ -175,22 +143,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     public double getHeight() {
         return getBounds().getHeight();
-    }
-
-    /**
-     * Moves the entire group's coordinate system to (x,y).
-     */
-    public void setPosition(double x, double y) {
-        this.x = x;
-        this.y = y;
-        changed();
-    }
-
-    /**
-     * Get the position of the group's local coordinate system relative to the group's container.
-     */
-    public Point getPosition() {
-        return new Point(x, y);
     }
 
     /**
@@ -210,14 +162,13 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
             return false;
         }
         GraphicsGroup that = (GraphicsGroup) o;
-        return Double.compare(that.x, x) == 0
-                && Double.compare(that.y, y) == 0
-                && children.equals(that.children);
+        return super.equals(o)
+            && children.equals(that.children);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, children);
+        return Objects.hash(super.hashCode(), children);
     }
 
     @Override
@@ -229,10 +180,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         bounds = null;
     }
 
-    /**
-     * Returns an axis aligned bounding rectangle for the graphical object in canvas coordinates.
-     */
-    public Rectangle2D getBounds() {
+    @Override
+    protected Rectangle2D getBoundsLocal() {
         if (bounds == null) {
             Rectangle2D.Double newBounds = new Rectangle2D.Double(0, 0, 0, 0);
             for (GraphicsObject child : children) {
@@ -240,8 +189,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
                     Rectangle2D.union(newBounds, child.getBounds(), newBounds);
                 }
             }
-            newBounds.x += this.x;
-            newBounds.y += this.y;
             bounds = newBounds;
         }
         return bounds;

@@ -29,7 +29,8 @@ public class Line extends GraphicsObject implements Strokable {
      * @param y2 y position of ending point
      */
     public Line(double x1, double y1, double x2, double y2) {
-        shape = new Line2D.Double(x1, y1, x2, y2);
+        shape = new Line2D.Double(0, 0, x2 - x1, y2 - y1);
+        setPosition(x1, y1);
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
     }
@@ -82,7 +83,7 @@ public class Line extends GraphicsObject implements Strokable {
      * @return x position of starting point
      */
     public double getX1() {
-        return shape.getX1();
+        return shape.getX1() + getX();
     }
 
     /**
@@ -91,7 +92,7 @@ public class Line extends GraphicsObject implements Strokable {
      * @return y position of starting point
      */
     public double getY1() {
-        return shape.getY1();
+        return shape.getY1() + getY();
     }
 
     /**
@@ -100,7 +101,7 @@ public class Line extends GraphicsObject implements Strokable {
      * @return x position of ending point
      */
     public double getX2() {
-        return shape.getX2();
+        return shape.getX2() + getX();
     }
 
     /**
@@ -109,14 +110,15 @@ public class Line extends GraphicsObject implements Strokable {
      * @return y position of ending point
      */
     public double getY2() {
-        return shape.getY2();
+        return shape.getY2() + getY();
     }
 
     /**
      * Sets the line's starting position to (x, y) without affecting the end position.
      */
     public void setStartPosition(double x, double y) {
-        shape.setLine(x, y, shape.getX2(), shape.getY2());
+        shape.setLine(0, 0, shape.getX2() + getX() - x, shape.getY2() + getY() - y);
+        setPosition(x, y);
         changed();
     }
 
@@ -131,7 +133,7 @@ public class Line extends GraphicsObject implements Strokable {
      * Sets the line's ending position to (x, y) without affecting the start position.
      */
     public void setEndPosition(double x, double y) {
-        shape.setLine(shape.getX1(), shape.getY1(), x, y);
+        shape.setLine(0, 0, x - getX(), y - getY());
         changed();
     }
 
@@ -142,27 +144,16 @@ public class Line extends GraphicsObject implements Strokable {
         setEndPosition(p.getX(), p.getY());
     }
 
-    /**
-     * Moves the line so that it starts at (x,y) and has the same length and direction.
-     */
-    public void setPosition(double x, double y) {
-        shape.setLine(x, y, (x - shape.getX1()) + shape.getX2(), (y - shape.getY1()) + shape.getY2());
-        changed();
-    }
-
-    public Point getPosition() {
-        return new Point(shape.getX1(), shape.getY1());
-    }
-
     @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 
-    public Rectangle2D getBounds() {
+    @Override
+    protected Rectangle2D getBoundsLocal() {
         double left = Math.min(getX1(), getX2());
         double top = Math.min(getY1(), getY2());
-        return new Rectangle2D.Double(left, top, Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
+        return new Rectangle2D.Double(left - getX(), top - getY(), Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
     }
 
     /**

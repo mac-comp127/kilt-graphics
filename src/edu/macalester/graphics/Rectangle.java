@@ -25,7 +25,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
      * The rectangle has a 1 pixel black stroke outline by default.
      */
     public Rectangle(double x, double y, double width, double height) {
-        shape = new Rectangle2D.Double(x, y, width, height);
+        shape = new Rectangle2D.Double(0, 0, width, height);
+        setPosition(x, y);
         fillColor = Color.black;
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
@@ -107,22 +108,6 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the X position of the rectangle's left edge.
-     */
-    @Override
-    public double getX() {
-        return shape.getX();
-    }
-
-    /**
-     * Returns the Y position of the rectangle's top edge.
-     */
-    @Override
-    public double getY() {
-        return shape.getY();
-    }
-
-    /**
      * Returns the width of the rectangle.
      */
     public double getWidth() {
@@ -134,21 +119,6 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
      */
     public double getHeight() {
         return shape.getHeight();
-    }
-
-    /**
-     * Returns the position of the rectangle's upper left corner.
-     */
-    public Point getPosition() {
-        return new Point(shape.getX(), shape.getY());
-    }
-
-    /**
-     * Moves this rectangle's upper left corner to (x, y), preserving its size.
-     */
-    public void setPosition(double x, double y) {
-        shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
-        changed();
     }
 
     /**
@@ -172,8 +142,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    public Rectangle2D getBounds() {
-        return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+    public Rectangle2D getBoundsLocal() {
+        return new Rectangle2D.Double(0, 0, getWidth(), getHeight());
     }
 
     /**

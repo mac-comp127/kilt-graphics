@@ -20,12 +20,6 @@ public class Arc extends GraphicsObject implements Strokable {
     private BasicStroke stroke;
     private boolean isStroked = true;
 
-    private double width;
-    private double height;
-    private double startAngle;
-    private double sweepAngle;
-    private int type;
-
     // TODO: need to likely add closed arcs and ability to fill them
 
     /**
@@ -50,12 +44,6 @@ public class Arc extends GraphicsObject implements Strokable {
         shape = new Arc2D.Double(x, y, width, height, startAngle, sweepAngle, Arc2D.OPEN);
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
-
-        this.width = width;
-        this.height = height;
-        this.startAngle = startAngle;
-        this.sweepAngle = sweepAngle;
-        this.type = Arc2D.OPEN;
     }
 
     @Override
@@ -101,23 +89,12 @@ public class Arc extends GraphicsObject implements Strokable {
     }
 
     @Override
-    public void setPosition(double x, double y) {
-        shape.setArc(x, y, width, height, startAngle, sweepAngle, type);
-        changed();
-    }
-
-    @Override
-    public Point getPosition() {
-        return new Point(shape.getX(), shape.getY());
-    }
-
-    @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 
     @Override
-    public Rectangle2D getBounds() {
+    public Rectangle2D getBoundsLocal() {
         return shape.getBounds2D();
     }
 }

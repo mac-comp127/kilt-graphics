@@ -31,7 +31,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
      * @param height of the bounding rectangle
      */
     public Ellipse(double x, double y, double width, double height) {
-        shape = new Ellipse2D.Double(x, y, width, height);
+        shape = new Ellipse2D.Double(0, 0, width, height);
+        setPosition(x, y);
         fillColor = Color.black;
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
@@ -104,16 +105,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         setStroked(true);
     }
 
-    @Override
-    public double getX() {
-        return shape.getX();
-    }
-
-    @Override
-    public double getY() {
-        return shape.getY();
-    }
-
     /**
      * Get the width of the bounding rectangle of the ellipse
      *
@@ -133,26 +124,10 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Moves the ellipse so that the upper left corner of its bounding box is at (x,y). Preserves
-     * the size of the ellipse.
-     */
-    public void setPosition(double x, double y) {
-        shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
-        changed();
-    }
-
-    /**
-     * Returns the upper left corner of this ellipse’s bounding box.
-     */
-    public Point getPosition() {
-        return new Point(shape.getX(), shape.getY());
-    }
-
-    /**
      * Changes the width and height of the ellipse, preserving its upper left corner's position.
      */
     public void setSize(double width, double height) {
-        shape.setFrame(shape.getX(), shape.getY(), width, height);
+        shape.setFrame(0, 0, width, height);
         changed();
     }
 
@@ -169,7 +144,7 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    public Rectangle2D getBounds() {
+    public Rectangle2D getBoundsLocal() {
         return shape.getBounds2D();
     }
 
@@ -192,6 +167,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     @Override
     public String toString() {
-        return "Ellipse at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
+        return "Ellipse at position " + getPosition() + " with width=" + getWidth() + " and height=" + getHeight();
     }
 }

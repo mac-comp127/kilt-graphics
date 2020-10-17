@@ -38,8 +38,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     private boolean isClosed;
     private BasicStroke stroke;
 
-    private double x;
-    private double y;
     private double width;
     private double height;
     private int vertexCount;
@@ -120,8 +118,8 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         }
 
         Rectangle shapeBounds = shape.getBounds();
-        x = shapeBounds.getX();
-        y = shapeBounds.getY();
+        setPosition(shapeBounds.getX(), shapeBounds.getY());
+        shape.transform(AffineTransform.getTranslateInstance(-getX(), -getY()));
         width = shapeBounds.getWidth();
         height = shapeBounds.getHeight();
 
@@ -203,22 +201,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the leftmost position of the path's vertices.
-     */
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * Returns the topmost position of the path's vertices.
-     */
-    @Override
-    public double getY() {
-        return y;
-    }
-
-    /**
      * Returns the width of the shape, measured as the x distance from the leftmost
      * point to the rightmost point.
      */
@@ -234,19 +216,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         return height;
     }
 
-    public void setPosition(double x, double y) {
-        double dx = x - getX();
-        double dy = y - getY();
-        shape.transform(AffineTransform.getTranslateInstance(dx, dy));
-        this.x = x;
-        this.y = y;
-        changed();
-    }
-
-    public Point getPosition() {
-        return new Point(getX(), getY());
-    }
-
     /**
      * Tests whether the given point is on the interior of this path. Does not account for stroke width.
      */
@@ -256,7 +225,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    public Rectangle2D getBounds() {
+    public Rectangle2D getBoundsLocal() {
         return shape.getBounds2D();
     }
 
