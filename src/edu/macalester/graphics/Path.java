@@ -250,7 +250,8 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     /**
      * Tests whether the given point is on the interior of this path. Does not account for stroke width.
      */
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 

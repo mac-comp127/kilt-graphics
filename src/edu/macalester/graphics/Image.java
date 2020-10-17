@@ -221,7 +221,8 @@ public class Image extends GraphicsObject {
      * Tests whether the point (x, y) touches the image.
      * Does not take into account image transparency.
      */
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return x >= this.x
                 && x <= this.x + getWidth()
                 && y >= this.y

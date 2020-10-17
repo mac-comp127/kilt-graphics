@@ -111,7 +111,8 @@ public class Arc extends GraphicsObject implements Strokable {
         return new Point(shape.getX(), shape.getY());
     }
 
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 

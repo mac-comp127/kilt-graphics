@@ -237,7 +237,8 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         return metrics;
     }
 
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return getTextShape().contains(x - this.x, y - this.y);
     }
 

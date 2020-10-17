@@ -177,7 +177,15 @@ public abstract class GraphicsObject {
      * <p>
      * Does not account for appearance, including stroke width and transparency.
      */
-    public abstract boolean testHit(double x, double y);
+    public final boolean testHit(double x, double y) {
+        return testHitInLocalCoordinates(x, y);
+    }
+
+    /**
+     * For internal use. Draws this graphics object on the screen in its local coordinates,
+     * without rotation or scaling.
+     */
+    public abstract boolean testHitInLocalCoordinates(double x, double y);
 
     /**
      * Returns true if the given point in the parent's coordinate space is within the bounds of this

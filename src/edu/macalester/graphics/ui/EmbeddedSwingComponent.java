@@ -49,7 +49,7 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
     }
 
     @Override
-    public boolean testHit(double x, double y) {
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return getBounds().contains(x, y);
     }
 

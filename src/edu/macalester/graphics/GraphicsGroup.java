@@ -196,7 +196,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Tests whether the point (x, y) hits some shape inside this group.
      */
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return getElementAt(x, y) != null;
     }
 
