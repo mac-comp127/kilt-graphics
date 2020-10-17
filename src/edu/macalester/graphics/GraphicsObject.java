@@ -2,6 +2,7 @@ package edu.macalester.graphics;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,13 +17,11 @@ import javax.swing.JComponent;
  * @author Bret Jackson
  */
 public abstract class GraphicsObject {
-    private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
-
     private List<GraphicsObserver> observers = new ArrayList<GraphicsObserver>();
     private CanvasWindow canvas;
     private double rotation = 0;
     private Point scale = Point.ONE_ONE;
-    private AffineTransform transform = IDENTITY_TRANSFORM;
+    private AffineTransform transform = new AffineTransform(), inverseTransform = new AffineTransform();
 
     final void draw(Graphics2D gc) {
         AffineTransform oldTransform = gc.getTransform();
@@ -164,10 +163,18 @@ public abstract class GraphicsObject {
 
     private void updateTransform() {
         Point center = getCenter();
-        transform = AffineTransform.getTranslateInstance(center.getX(), center.getY());
+        transform.setToTranslation(center.getX(), center.getY());
         transform.rotate(Math.toRadians(rotation));
         transform.scale(scale.getX(), scale.getY());
         transform.translate(-center.getX(), -center.getY());
+
+        // Can't just use invert() for this, because if
+        // the scale is zero, the transform non-invertible
+        inverseTransform.setToTranslation(center.getX(), center.getY());
+        inverseTransform.scale(1 / scale.getX(), 1 / scale.getY());
+        inverseTransform.rotate(Math.toRadians(-rotation));
+        inverseTransform.translate(-center.getX(), -center.getY());
+
         changed();
     }
 
@@ -178,7 +185,14 @@ public abstract class GraphicsObject {
      * Does not account for appearance, including stroke width and transparency.
      */
     public final boolean testHit(double x, double y) {
-        return testHitInLocalCoordinates(x, y);
+        Point2D.Double pt = convertToLocal(x, y);
+        return testHitInLocalCoordinates(pt.x, pt.y);
+    }
+
+    private Point2D.Double convertToLocal(double x, double y) {
+        Point2D.Double pt = new Point2D.Double(x, y);
+        inverseTransform.transform(pt, pt);
+        return pt;
     }
 
     /**
@@ -205,8 +219,13 @@ public abstract class GraphicsObject {
      * @param y position in the coordinate space of this object’s container
      * @return object at (x,y) or null if it does not exist.
      */
-    public GraphicsObject getElementAt(double x, double y) {
-        if (testHit(x, y)) {
+    public final GraphicsObject getElementAt(double x, double y) {
+        Point2D.Double pt = convertToLocal(x, y);
+        return getElementAtLocalCoordinates(pt.x, pt.y);
+    }
+
+    protected GraphicsObject getElementAtLocalCoordinates(double x, double y) {
+        if (testHitInLocalCoordinates(x, y)) {
             return this;
         } else {
             return null;

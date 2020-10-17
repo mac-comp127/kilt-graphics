@@ -125,7 +125,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * returns null. A GraphicsGroup will only return child elements; it never returns itself.
      */
     @Override
-    public GraphicsObject getElementAt(double x, double y) {
+    protected GraphicsObject getElementAtLocalCoordinates(double x, double y) {
         for (var it = children.listIterator(children.size()); it.hasPrevious(); ) {
             GraphicsObject obj = it.previous();
             GraphicsObject hit = obj.getElementAt(x - this.x, y - this.y);
@@ -198,7 +198,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
-        return getElementAt(x, y) != null;
+        return getElementAtLocalCoordinates(x, y) != null;
     }
 
     @Override
