@@ -108,6 +108,51 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
     }
 
     @RenderingTest
+    void rotated() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup(8, 4);
+        assertChangedAtEachStep(
+            () -> group.add(subgroup),
+            () -> group.add(triangle),
+            () -> subgroup.add(word, 20, 40),
+            () -> word.setRotation(30),
+            () -> triangle.setRotation(-30),
+            () -> subgroup.setRotation(90),
+            () -> group.setRotation(10)
+        );
+    }
+
+    @RenderingTest
+    void scaled() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup(8, 4);
+        assertChangedAtEachStep(
+            () -> group.add(subgroup),
+            () -> group.add(circle),
+            () -> subgroup.add(word, 20, 40),
+            () -> word.setScale(-2),
+            () -> circle.setScale(0.5, 1),
+            () -> subgroup.setScale(1.1, 1),
+            () -> group.setScale(1.1)
+        );
+    }
+
+    @RenderingTest
+    void scaledAndRotated() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup(8, 4);
+        assertChangedAtEachStep(
+            () -> group.add(subgroup),
+            () -> group.add(circle),
+            () -> subgroup.add(word, 20, 40),
+            () -> circle.setRotation(20),
+            () -> circle.setScale(0.5, 1),
+            () -> subgroup.setScale(1.1, 1),
+            () -> subgroup.setRotation(-10)
+        );
+    }
+
+    @RenderingTest
     void empty() {
         group = new GraphicsGroup(1, 1);
     }

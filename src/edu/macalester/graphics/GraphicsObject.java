@@ -10,21 +10,30 @@ import java.util.function.BiConsumer;
 import javax.swing.JComponent;
 
 /**
- * Abstract class representing some sort of graphical object that can be drawn and positioned in a canvaswindow.
+ * Abstract class representing some sort of graphical object that can be drawn and positioned on a
+ * canvas.
  *
  * @author Bret Jackson
  */
 public abstract class GraphicsObject {
+    private static final AffineTransform IDENTITY_TRANSFORM = new AffineTransform();
 
     private List<GraphicsObserver> observers = new ArrayList<GraphicsObserver>();
     private CanvasWindow canvas;
+    private double rotation = 0;
+    private Point scale = Point.ONE_ONE;
+    private AffineTransform transform = IDENTITY_TRANSFORM;
 
     final void draw(Graphics2D gc) {
+        AffineTransform oldTransform = gc.getTransform();
+        gc.transform(transform);
         drawInLocalCoordinates(gc);
+        gc.setTransform(oldTransform);
     }
 
     /**
-     * For internal use. Draws this graphics object on the screen.
+     * For internal use. Draws this graphics object on the screen in its local coordinates,
+     * without rotation or scaling.
      */
     protected abstract void drawInLocalCoordinates(Graphics2D gc);
 
@@ -125,13 +134,14 @@ public abstract class GraphicsObject {
 
     public void setRotation(double rotation) {
         this.rotation = rotation;
+        updateTransform();
     }
 
-    public double getXScale() {
+    public double getScaleX() {
         return scale.getX();
     }
     
-    public double getYScale() {
+    public double getScaleY() {
         return scale.getY();
     }
 
@@ -140,11 +150,25 @@ public abstract class GraphicsObject {
     }
 
     public void setScale(Point scale) {
-        this.scale = scale;
+        setScale(scale.getX(), scale.getY());
+    }
+
+    public void setScale(double scaleX, double scaleY) {
+        this.scale = new Point(scaleX, scaleY);
+        updateTransform();
     }
 
     public void setScale(double scale) {
-        this.scale = new Point(scale, scale);
+        setScale(scale, scale);
+    }
+
+    private void updateTransform() {
+        Point center = getCenter();
+        transform = AffineTransform.getTranslateInstance(center.getX(), center.getY());
+        transform.rotate(Math.toRadians(rotation));
+        transform.scale(scale.getX(), scale.getY());
+        transform.translate(-center.getX(), -center.getY());
+        changed();
     }
 
     /**
