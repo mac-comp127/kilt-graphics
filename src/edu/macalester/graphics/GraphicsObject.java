@@ -1,6 +1,7 @@
 package edu.macalester.graphics;
 
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +19,14 @@ public abstract class GraphicsObject {
     private List<GraphicsObserver> observers = new ArrayList<GraphicsObserver>();
     private CanvasWindow canvas;
 
+    final void draw(Graphics2D gc) {
+        drawInLocalCoordinates(gc);
+    }
+
     /**
      * For internal use. Draws this graphics object on the screen.
      */
-    protected abstract void draw(Graphics2D gc);
+    protected abstract void drawInLocalCoordinates(Graphics2D gc);
 
     /**
      * Gets the position of the object on the canvas. The location of the anchor point
@@ -112,6 +117,34 @@ public abstract class GraphicsObject {
      */
     public void moveBy(Point delta) {
         setPosition(getPosition().add(delta));
+    }
+
+    public double getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
+    }
+
+    public double getXScale() {
+        return scale.getX();
+    }
+    
+    public double getYScale() {
+        return scale.getY();
+    }
+
+    public Point getScale() {
+        return scale;
+    }
+
+    public void setScale(Point scale) {
+        this.scale = scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = new Point(scale, scale);
     }
 
     /**

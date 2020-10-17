@@ -59,7 +59,8 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         this(null);
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Font curFont = gc.getFont();
         Paint curColor = gc.getPaint();
         gc.setFont(font);

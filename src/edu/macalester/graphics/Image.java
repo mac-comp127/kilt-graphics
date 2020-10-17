@@ -136,7 +136,8 @@ public class Image extends GraphicsObject {
         changed();
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         if (img != null) {
             gc.drawImage(
                 img,

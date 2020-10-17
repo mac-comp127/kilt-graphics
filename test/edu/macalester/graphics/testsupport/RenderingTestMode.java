@@ -147,7 +147,7 @@ public enum RenderingTestMode {
         // autocomplete. We could move this class into the same package as GraphicsObject, but
         // that makes the tests harder to navigate. The mess thus lives here.
         try {
-            var drawMethod = gobj.getClass().getDeclaredMethod("draw", new Class[] { Graphics2D.class });
+            var drawMethod = GraphicsObject.class.getDeclaredMethod("draw", new Class[] { Graphics2D.class });
             drawMethod.setAccessible(true);
             drawMethod.invoke(gobj, gc);
         } catch (Exception e) {

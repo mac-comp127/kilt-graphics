@@ -59,7 +59,7 @@ public class Arc extends GraphicsObject implements Strokable {
     }
 
     @Override
-    protected void draw(Graphics2D gc) {
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         if (isStroked) {
             Paint originalColor = gc.getPaint();
             gc.setStroke(stroke);

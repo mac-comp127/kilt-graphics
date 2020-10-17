@@ -39,7 +39,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         isStroked = true;
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);

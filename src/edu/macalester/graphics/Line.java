@@ -34,7 +34,8 @@ public class Line extends GraphicsObject implements Strokable {
         stroke = new BasicStroke(1.0f);
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         if (isStroked) {
             Paint originalColor = gc.getPaint();
             gc.setStroke(stroke);

@@ -41,7 +41,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         this(upperLeft.getX(), upperLeft.getY(), size.getX(), size.getY());
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);

@@ -130,7 +130,8 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         changed();
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);

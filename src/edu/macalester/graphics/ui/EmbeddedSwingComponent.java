@@ -38,7 +38,7 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
     }
 
     @Override
-    protected void draw(Graphics2D gc) {
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         // Swing components are drawn by top-level container, so nothing to do here
     }
 

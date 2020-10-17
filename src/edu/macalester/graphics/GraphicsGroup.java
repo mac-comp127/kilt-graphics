@@ -137,7 +137,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     @Override
-    protected void draw(Graphics2D gc) {
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         AffineTransform savedTransform = gc.getTransform();
         gc.translate(x, y);
         for (GraphicsObject obj : children) {
