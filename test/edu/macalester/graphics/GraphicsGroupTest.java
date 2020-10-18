@@ -152,6 +152,24 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         );
     }
 
+
+    @Test
+    void transformedDimensions() {
+        group = new GraphicsGroup();
+        group.add(triangle, 20, 10);
+        group.add(circle, 40, 60);
+        assertEquals(new Point(36, 66), group.getSize());
+        assertEquals(new Point(36, 66), group.getTransformedSize());
+
+        circle.setScale(2);
+        assertEquals(new Point(44, 74), group.getSize());
+        assertEquals(new Point(44, 74), group.getTransformedSize());
+
+        group.setScale(0.5);
+        assertEquals(new Point(44, 74), group.getSize());
+        assertEquals(new Point(22, 37), group.getTransformedSize());
+    }
+
     @RenderingTest
     void anchored() {
         group = new GraphicsGroup();
