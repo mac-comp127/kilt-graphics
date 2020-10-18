@@ -183,13 +183,22 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     @Override
     protected Rectangle2D getBoundsLocal() {
         if (bounds == null) {
-            Rectangle2D.Double newBounds = new Rectangle2D.Double(0, 0, 0, 0);
+            Rectangle2D allBounds = null;
             for (GraphicsObject child : children) {
-                if(child.getBounds() != null) {
-                    Rectangle2D.union(newBounds, child.getBounds(), newBounds);
+                Rectangle2D bounds = child.getBounds();
+                if(bounds != null) {
+                    if (allBounds == null) {
+                        allBounds = bounds;
+                    } else {
+                        Rectangle2D.union(allBounds, bounds, allBounds);
+                    }
                 }
             }
-            bounds = newBounds;
+            if (allBounds == null) {
+                bounds = new Rectangle2D.Double();
+            } else {
+                bounds = allBounds;
+            }
         }
         return bounds;
     }

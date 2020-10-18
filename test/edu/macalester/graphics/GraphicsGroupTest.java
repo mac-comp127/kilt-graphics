@@ -156,4 +156,21 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
     void empty() {
         group = new GraphicsGroup(1, 1);
     }
+
+    @Test
+    void boundsChangesPropagateUp() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup();
+        var subsubgroup = new GraphicsGroup();
+        subgroup.add(subsubgroup);
+        group.add(subgroup);
+        assertEquals(Point.ORIGIN, group.getSize());
+
+        Rectangle rect = new Rectangle(-10, -20, 40, 50);
+        subsubgroup.add(rect);
+        assertEquals(new Point(40, 50), group.getSize());
+        
+        rect.setSize(3, 5);
+        assertEquals(new Point(3, 5), group.getSize());
+    }
 }
