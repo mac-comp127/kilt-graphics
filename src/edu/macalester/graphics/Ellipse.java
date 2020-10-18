@@ -9,6 +9,8 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * An ellipse that can be drawn on the screen.
+ * <p>
+ * An ellipse’s {@link getPosition() position} is the upper left corner of its bounding box.
  *
  * @author Bret Jackson
  */
@@ -31,7 +33,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
      * @param height of the bounding rectangle
      */
     public Ellipse(double x, double y, double width, double height) {
-        shape = new Ellipse2D.Double(x, y, width, height);
+        shape = new Ellipse2D.Double(0, 0, width, height);
+        setPosition(x, y);
         fillColor = Color.black;
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
@@ -39,7 +42,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         isStroked = true;
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);
@@ -103,55 +107,11 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         setStroked(true);
     }
 
-    @Override
-    public double getX() {
-        return shape.getX();
-    }
-
-    @Override
-    public double getY() {
-        return shape.getY();
-    }
-
-    /**
-     * Get the width of the bounding rectangle of the ellipse
-     *
-     * @return bounding rectangle width
-     */
-    public double getWidth() {
-        return shape.getWidth();
-    }
-
-    /**
-     * Get the height of the bounding rectangle of the ellipse
-     *
-     * @return bounding rectangle height
-     */
-    public double getHeight() {
-        return shape.getHeight();
-    }
-
-    /**
-     * Moves the ellipse so that the upper left corner of its bounding box is at (x,y). Preserves
-     * the size of the ellipse.
-     */
-    public void setPosition(double x, double y) {
-        shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
-        changed();
-    }
-
-    /**
-     * Returns the upper left corner of this ellipse’s bounding box.
-     */
-    public Point getPosition() {
-        return new Point(shape.getX(), shape.getY());
-    }
-
     /**
      * Changes the width and height of the ellipse, preserving its upper left corner's position.
      */
     public void setSize(double width, double height) {
-        shape.setFrame(shape.getX(), shape.getY(), width, height);
+        shape.setFrame(0, 0, width, height);
         changed();
     }
 
@@ -162,7 +122,8 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         setSize(size.getX(), size.getY());
     }
 
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 
@@ -190,6 +151,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     @Override
     public String toString() {
-        return "Ellipse at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
+        return "Ellipse at position " + getPosition() + " with size=" + getSize();
     }
 }

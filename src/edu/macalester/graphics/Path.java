@@ -22,9 +22,12 @@ import static java.lang.Float.NaN;
  * path connecting each adjacent pair of points in the list. The order of the list
  * is thus important. Incorrectly ordering the list can lead to self-intersecting
  * polygon, which are neat, but possibly not what you want.
- *
+ * <p>
  * An optional final edge connects the first and last point in the list. You can
  * disable this by passing `false` to the second argument of setPoints().
+ * <p>
+ * A path’s {@link getPosition() position} is the upper left corner of the bounding box of all its
+ * points, and its {@link getSize() size} is the size of that bounding box.
  *
  * @author Daniel Kluver
  */
@@ -38,10 +41,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     private boolean isClosed;
     private BasicStroke stroke;
 
-    private double x;
-    private double y;
-    private double width;
-    private double height;
     private int vertexCount;
 
     /**
@@ -87,8 +86,8 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Replaces the path's coordinates, preserving its open/close status. The coordinates are relative
-     * to the path’s container; the method ignores the path’s current position.
+     * Replaces the path's coordinates, preserving its open/close status. The coordinates are
+     * relative to the path’s container; the method ignores the path’s current position.
      */
     public void setVertices(List<Point> points) {
         setVertices(points, isClosed());
@@ -120,17 +119,16 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         }
 
         Rectangle shapeBounds = shape.getBounds();
-        x = shapeBounds.getX();
-        y = shapeBounds.getY();
-        width = shapeBounds.getWidth();
-        height = shapeBounds.getHeight();
+        setPosition(shapeBounds.getX(), shapeBounds.getY());
+        shape.transform(AffineTransform.getTranslateInstance(-getX(), -getY()));
 
         vertexCount = points.size();
 
         changed();
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);
@@ -202,54 +200,10 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the leftmost position of the path's vertices.
-     */
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * Returns the topmost position of the path's vertices.
-     */
-    @Override
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * Returns the width of the shape, measured as the x distance from the leftmost
-     * point to the rightmost point.
-     */
-    public double getWidth() {
-        return width;
-    }
-
-    /**
-     * Returns the width of the shape, measured as the x distance from the topmost
-     * point to the bottommost point.
-     */
-    public double getHeight() {
-        return height;
-    }
-
-    public void setPosition(double x, double y) {
-        double dx = x - getX();
-        double dy = y - getY();
-        shape.transform(AffineTransform.getTranslateInstance(dx, dy));
-        this.x = x;
-        this.y = y;
-        changed();
-    }
-
-    public Point getPosition() {
-        return new Point(getX(), getY());
-    }
-
-    /**
      * Tests whether the given point is on the interior of this path. Does not account for stroke width.
      */
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 

@@ -8,6 +8,8 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A rectangle that can be drawn on the screen.
+ * <p>
+ * A rectangle’s {@link getPosition() position} is its upper left corner.
  *
  * @author Bret Jackson
  */
@@ -25,7 +27,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
      * The rectangle has a 1 pixel black stroke outline by default.
      */
     public Rectangle(double x, double y, double width, double height) {
-        shape = new Rectangle2D.Double(x, y, width, height);
+        shape = new Rectangle2D.Double(0, 0, width, height);
+        setPosition(x, y);
         fillColor = Color.black;
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
@@ -41,7 +44,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         this(upperLeft.getX(), upperLeft.getY(), size.getX(), size.getY());
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Paint originalColor = gc.getPaint();
         if (isFilled) {
             gc.setPaint(fillColor);
@@ -106,51 +110,6 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the X position of the rectangle's left edge.
-     */
-    @Override
-    public double getX() {
-        return shape.getX();
-    }
-
-    /**
-     * Returns the Y position of the rectangle's top edge.
-     */
-    @Override
-    public double getY() {
-        return shape.getY();
-    }
-
-    /**
-     * Returns the width of the rectangle.
-     */
-    public double getWidth() {
-        return shape.getWidth();
-    }
-
-    /**
-     * Returns the height of the rectangle.
-     */
-    public double getHeight() {
-        return shape.getHeight();
-    }
-
-    /**
-     * Returns the position of the rectangle's upper left corner.
-     */
-    public Point getPosition() {
-        return new Point(shape.getX(), shape.getY());
-    }
-
-    /**
-     * Moves this rectangle's upper left corner to (x, y), preserving its size.
-     */
-    public void setPosition(double x, double y) {
-        shape.setFrame(x, y, shape.getWidth(), shape.getHeight());
-        changed();
-    }
-
-    /**
      * Changes the width and height of the rectangle, preserving its upper left corner's position.
      */
     public void setSize(double width, double height) {
@@ -165,13 +124,14 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         setSize(size.getX(), size.getY());
     }
 
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 
     @Override
     public Rectangle2D getBounds() {
-        return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+        return shape.getBounds2D();
     }
 
     /**

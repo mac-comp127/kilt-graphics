@@ -9,6 +9,14 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A line segment that can be drawn on the screen.
+ * <p>
+ * A line has a "start point" and an "end point". The only distinction is that the start point is
+ * the line’s {@link getPosition() position}. If you call {@link setPosition(Point) setPosition()}
+ * or {@link moveBy(Point) moveBy()}, both endpoints will move so the line segment has the same
+ * length and angle, and the start point will end up at the position you specify.
+ * <p>
+ * To move one endpoint without affecting the other, use {@link setStartPosition(Point) setStartPosition()}
+ * and {@link setEndPosition(Point) setEndPosition()}.
  *
  * @author Bret Jackson
  */
@@ -29,12 +37,14 @@ public class Line extends GraphicsObject implements Strokable {
      * @param y2 y position of ending point
      */
     public Line(double x1, double y1, double x2, double y2) {
-        shape = new Line2D.Double(x1, y1, x2, y2);
+        shape = new Line2D.Double(0, 0, x2 - x1, y2 - y1);
+        setPosition(x1, y1);
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         if (isStroked) {
             Paint originalColor = gc.getPaint();
             gc.setStroke(stroke);
@@ -81,7 +91,7 @@ public class Line extends GraphicsObject implements Strokable {
      * @return x position of starting point
      */
     public double getX1() {
-        return shape.getX1();
+        return shape.getX1() + getX();
     }
 
     /**
@@ -90,7 +100,7 @@ public class Line extends GraphicsObject implements Strokable {
      * @return y position of starting point
      */
     public double getY1() {
-        return shape.getY1();
+        return shape.getY1() + getY();
     }
 
     /**
@@ -99,7 +109,7 @@ public class Line extends GraphicsObject implements Strokable {
      * @return x position of ending point
      */
     public double getX2() {
-        return shape.getX2();
+        return shape.getX2() + getX();
     }
 
     /**
@@ -108,14 +118,15 @@ public class Line extends GraphicsObject implements Strokable {
      * @return y position of ending point
      */
     public double getY2() {
-        return shape.getY2();
+        return shape.getY2() + getY();
     }
 
     /**
      * Sets the line's starting position to (x, y) without affecting the end position.
      */
     public void setStartPosition(double x, double y) {
-        shape.setLine(x, y, shape.getX2(), shape.getY2());
+        shape.setLine(0, 0, shape.getX2() + getX() - x, shape.getY2() + getY() - y);
+        setPosition(x, y);
         changed();
     }
 
@@ -130,7 +141,7 @@ public class Line extends GraphicsObject implements Strokable {
      * Sets the line's ending position to (x, y) without affecting the start position.
      */
     public void setEndPosition(double x, double y) {
-        shape.setLine(shape.getX1(), shape.getY1(), x, y);
+        shape.setLine(0, 0, x - getX(), y - getY());
         changed();
     }
 
@@ -141,26 +152,16 @@ public class Line extends GraphicsObject implements Strokable {
         setEndPosition(p.getX(), p.getY());
     }
 
-    /**
-     * Moves the line so that it starts at (x,y) and has the same length and direction.
-     */
-    public void setPosition(double x, double y) {
-        shape.setLine(x, y, (x - shape.getX1()) + shape.getX2(), (y - shape.getY1()) + shape.getY2());
-        changed();
-    }
-
-    public Point getPosition() {
-        return new Point(shape.getX1(), shape.getY1());
-    }
-
-    public boolean testHit(double x, double y) {
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return shape.contains(x, y);
     }
 
+    @Override
     public Rectangle2D getBounds() {
         double left = Math.min(getX1(), getX2());
         double top = Math.min(getY1(), getY2());
-        return new Rectangle2D.Double(left, top, Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
+        return new Rectangle2D.Double(left - getX(), top - getY(), Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
     }
 
     /**

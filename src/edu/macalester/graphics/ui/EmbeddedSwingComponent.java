@@ -8,12 +8,10 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JComponent;
 
 import edu.macalester.graphics.GraphicsObject;
-import edu.macalester.graphics.Point;
 
 abstract class EmbeddedSwingComponent extends GraphicsObject {
 
     private final JComponent component;
-    private Point position = Point.ORIGIN;
 
     EmbeddedSwingComponent(JComponent component) {
         this.component = component;
@@ -22,11 +20,6 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
     @Override
     public JComponent getEmbeddedComponent() {
         return component;
-    }
-
-    @Override
-    public Point getPosition() {
-        return position;
     }
 
     protected void changed() {
@@ -38,18 +31,12 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
     }
 
     @Override
-    protected void draw(Graphics2D gc) {
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         // Swing components are drawn by top-level container, so nothing to do here
     }
 
     @Override
-    public void setPosition(double x, double y) {
-        this.position = new Point(x, y);
-        changed();
-    }
-
-    @Override
-    public boolean testHit(double x, double y) {
+    public boolean testHitInLocalCoordinates(double x, double y) {
         return getBounds().contains(x, y);
     }
 
@@ -57,8 +44,8 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
     public Rectangle2D getBounds() {
         Rectangle bounds = component.getBounds();
         return new Rectangle2D.Double(
-            getPosition().getX(),  // Actual JComponent doesn't get positioned until next draw
-            getPosition().getY(),
+            0,  // Actual JComponent is in canvas coordinates, and doesn't get positioned until next draw
+            0,
             bounds.getWidth(),
             bounds.getHeight());
     }

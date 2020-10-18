@@ -27,6 +27,11 @@ public final class Point {
     public static final Point UNIT_Y = new Point(0, 1);
 
     /**
+     * The point (1,1).
+     */
+    public static final Point ONE_ONE = new Point(1, 1);
+
+    /**
      * A point at (-∞,-∞).
      */
     public static final Point MIN = new Point(Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);

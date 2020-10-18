@@ -14,7 +14,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
- * A string of text that can be drawn to the screen
+ * A string of text that can be drawn to the screen.
+ * <p>
+ * A GraphicsText’s {@link getPosition() position} is the beginning of the first character at the
+ * <a href="https://en.wikipedia.org/wiki/Baseline_(typography)">baseline</a>. This means that text
+ * largely extends <i>above</i> the position you specify with {@link setPosition(Point)}. To
+ * position text relative to its top edge, use {@link getHeight()}. To format many GraphicsText
+ * objects as a larger body of text, use the {@link getAdvance()} and {@link getLineHeight()} methods.
  *
  * @author Bret Jackson
  */
@@ -22,7 +28,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     private static final AffineTransform IDENTITY_TRANFORM = new AffineTransform();
 
     private String text;
-    private double x, y;
     private Font font;
     private Paint textColor;
     private boolean filled = true;
@@ -38,8 +43,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
      * Creates drawable text at position (x,y)
      */
     public GraphicsText(String text, double x, double y) {
-        this.x = x;
-        this.y = y;
+        setPosition(x, y);
         this.text = text;
         textColor = Color.BLACK;
         setFont(Font.SANS_SERIF, FontStyle.PLAIN, 14);
@@ -59,16 +63,14 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         this(null);
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         Font curFont = gc.getFont();
         Paint curColor = gc.getPaint();
         gc.setFont(font);
         gc.setPaint(textColor);
 
-        AffineTransform oldTransform = gc.getTransform();
-        gc.translate(this.x, this.y);
         gc.fill(getTextShape());
-        gc.setTransform(oldTransform);
 
         gc.setFont(curFont);
         gc.setPaint(curColor);
@@ -76,7 +78,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     private Shape recomputeTextShape(Graphics2D gc) {
         if (text == null || text.isEmpty()) {  // textLayout doesn't like empty strings
-            return new Rectangle2D.Double(x, y, 0, 0);
+            return new Rectangle2D.Double(0, 0, 0, 0);
         }
         FontRenderContext frc = gc.getFontRenderContext();
         TextLayout textLayout = new TextLayout(text, font, frc);
@@ -91,7 +93,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         if (textShape == null) {
             BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
             textShape = recomputeTextShape((Graphics2D) img.getGraphics());
-            rawBounds = getTextShape().getBounds2D();
+            rawBounds = textShape.getBounds2D();
         }
         return textShape;
     }
@@ -108,16 +110,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    public void setPosition(double x, double y) {
-        this.x = x;
-        this.y = y;
-        changed();
-    }
-
-    public Point getPosition() {
-        return new Point(x, y);
-    }
-
     public String getText() {
         return text;
     }
@@ -125,28 +117,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     public void setText(String text) {
         this.text = text;
         textShapeChanged();
-    }
-
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    @Override
-    public void setX(double x) {
-        this.x = x;
-        changed();
-    }
-
-    @Override
-    public double getY() {
-        return y;
-    }
-
-    @Override
-    public void setY(double y) {
-        this.y = y;
-        changed();
     }
 
     /**
@@ -215,29 +185,9 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    public double getWidth() {
-        if (text == null) {
-            return 0;
-        }
-        return getFontMetrics().stringWidth(text);
-    }
-
-    public double getHeight() {
-        return getFontMetrics().getHeight();
-    }
-
-    private FontMetrics getFontMetrics() {
-        if (metrics == null) {
-            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = (Graphics2D) img.getGraphics();
-            g.setFont(font);
-            metrics = g.getFontMetrics();
-        }
-        return metrics;
-    }
-
-    public boolean testHit(double x, double y) {
-        return getTextShape().contains(x - this.x, y - this.y);
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
+        return getTextShape().contains(x, y);
     }
 
     /**
@@ -252,16 +202,44 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     private Area getArea() {
         Area area = new Area(getTextShape());
-        area.transform(AffineTransform.getTranslateInstance(x, y));
+        area.transform(getTransform());
         return area;
+    }
+
+    /**
+     * Returns how far after this text any subsequent text should appear. This is distinct from getWidth()
+     * because some glyphs may overhang on either the left or the right, overlapping into the neighboring
+     * glyphs’ areas. While getWidth() returns the size of the entire bounding box, including such overhang,
+     * getAdvance() does not include the overhang.
+     */
+    public double getAdvance() {
+        return getFontMetrics().stringWidth(text);
+    }
+
+    /**
+     * Returns the standard spacing between lines of text in the current font, regardless of the height of
+     * the actual characters present.
+     */
+    public double getLineHeight() {
+        return getFontMetrics().getHeight();
+    }
+
+    private FontMetrics getFontMetrics() {
+        if (metrics == null) {
+            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = (Graphics2D) img.getGraphics();
+            g.setFont(font);
+            metrics = g.getFontMetrics();
+        }
+        return metrics;
     }
 
     @Override
     public Rectangle2D getBounds() {
         getTextShape();
         return new Rectangle2D.Double(
-            rawBounds.getX() + x,
-            rawBounds.getY() + y,
+            rawBounds.getX(),
+            rawBounds.getY(),
             rawBounds.getWidth(),
             rawBounds.getHeight());
     }

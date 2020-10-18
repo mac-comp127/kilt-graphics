@@ -4,6 +4,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.RenderingHints;
@@ -17,12 +18,15 @@ import javax.imageio.ImageIO;
 
 /**
  * A bitmap image that can be drawn to the screen.
+ * <p>
+ * An image’s {@link getPosition() position} is the upper left corner of its bounding box.
+ * Its size is the size of the underying image file by default, but you can shrink it using
+ * {@link setMaxWidth(double) setMaxWidth()} and {@link setMaxHeight(double) setMaxHeight()}.
  *
  * @author Bret Jackson
  */
 public class Image extends GraphicsObject {
     private BufferedImage img;
-    private double x,y;
     private double maxWidth = Double.POSITIVE_INFINITY, maxHeight = Double.POSITIVE_INFINITY;
     private String path;
 
@@ -81,8 +85,7 @@ public class Image extends GraphicsObject {
      * Creates an Image placeholder with no current image.
      */
     public Image(double x, double y) {
-        this.x = x;
-        this.y = y;
+        setPosition(x, y);
     }
 
     /**
@@ -102,8 +105,7 @@ public class Image extends GraphicsObject {
      * @param path path of image file to load, relative to the res/ directory.
      */
     public Image(double x, double y, String path) {
-        this.x = x;
-        this.y = y;
+        setPosition(x, y);
         setImagePath(path);
     }
 
@@ -136,56 +138,24 @@ public class Image extends GraphicsObject {
         changed();
     }
 
-    protected void draw(Graphics2D gc) {
+    @Override
+    protected void drawInLocalCoordinates(Graphics2D gc) {
         if (img != null) {
+            AffineTransform oldTransform = gc.getTransform();
+            AffineTransform pixelAligned = new AffineTransform(oldTransform);
+            pixelAligned.translate(
+                Math.round(oldTransform.getTranslateX()) - oldTransform.getTranslateX(),
+                Math.round(oldTransform.getTranslateY()) - oldTransform.getTranslateY());
+            gc.setTransform(pixelAligned);
+
             gc.drawImage(
-                img,
-                (int) Math.round(x),
-                (int) Math.round(y),
+                img, 0, 0,
                 (int) Math.round(getWidth()),
                 (int) Math.round(getHeight()),
                 null);
+
+            gc.setTransform(oldTransform);
         }
-    }
-
-    /**
-     * Returns the position of the image's left edge.
-     */
-    @Override
-    public double getX() {
-        return x;
-    }
-
-    /**
-     * Returns the position of the image's top edge.
-     */
-    @Override
-    public double getY() {
-        return y;
-    }
-
-    /**
-     * Get the width of the rendered image as it will appear on the screen. Affected by the size of
-     * the image as well as setMaxWidth() and setMaxHeight().
-     */
-    public double getWidth() {
-        return getImageWidth() * getScaleToFit();
-    }
-
-    /**
-     * Get the height of the rendered image as it will appear on the screen. Affected by the size of
-     * the image as well as setMaxWidth() and setMaxHeight().
-     */
-    public double getHeight() {
-        return getImageHeight() * getScaleToFit();
-    }
-
-    private double getScaleToFit() {
-        return Math.min(
-            1,
-            Math.min(
-                maxWidth / getImageWidth(),
-                maxHeight / getImageHeight()));
     }
 
     /**
@@ -202,34 +172,32 @@ public class Image extends GraphicsObject {
         return img == null ? 0 : img.getHeight();
     }
 
-    public void setPosition(int x, int y) {
-        this.x = x;
-        this.y = y;
-        changed();
-    }
-
-    public void setPosition(double x, double y) {
-        setPosition((int) Math.round(x), (int) Math.round(y));
-    }
-
-    public Point getPosition() {
-        return new Point(x, y);
-    }
-
     /**
      * Tests whether the point (x, y) touches the image.
      * Does not take into account image transparency.
      */
-    public boolean testHit(double x, double y) {
-        return x >= this.x
-                && x <= this.x + getWidth()
-                && y >= this.y
-                && y <= this.y + getHeight();
+    @Override
+    public boolean testHitInLocalCoordinates(double x, double y) {
+        return x >= 0
+            && x <= getWidth()
+            && y >= 0
+            && y <= getHeight();
     }
 
     @Override
     public Rectangle2D getBounds() {
-        return new Rectangle2D.Double(getX(), getY(), getWidth(), getHeight());
+        return new Rectangle2D.Double(
+            0, 0,
+            getImageWidth() * getScaleToFit(),
+            getImageHeight() * getScaleToFit());
+    }
+
+    private double getScaleToFit() {
+        return Math.min(
+            1,
+            Math.min(
+                maxWidth / getImageWidth(),
+                maxHeight / getImageHeight()));
     }
 
     /**
@@ -244,18 +212,17 @@ public class Image extends GraphicsObject {
             return false;
         }
         Image image = (Image) o;
-        return x == image.x
-                && y == image.y
-                && path.equals(image.path);
+        return super.equals(o)
+            && path.equals(image.path);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, path);
+        return Objects.hash(super.hashCode(), path);
     }
 
     @Override
     public String toString() {
-        return "Image at position (" + x + ", " + y + ") with file " + path;
+        return "Image at position " + getPosition() + " with file " + path;
     }
 }

@@ -36,8 +36,10 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
             () -> text.setFontSize(32),
             () -> text.setFontStyle(FontStyle.BOLD)
         );
-        assertEquals(IS_MAC ? 74 : 72, text.getWidth(), 0.5);
-        assertEquals(37, text.getHeight(), 0.5);
+        assertEquals(IS_MAC ? 74 : 72, text.getAdvance(), 0.5);
+        assertEquals(37, text.getLineHeight(), 0.5);
+        assertEquals(IS_MAC ? 73 : 71, text.getWidth(), 0.5);
+        assertEquals(23, text.getHeight(), 0.5);
     }
 
     @RenderingTest(modes = { PLAIN })

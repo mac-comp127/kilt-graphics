@@ -108,7 +108,98 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
     }
 
     @RenderingTest
+    void rotated() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup(8, 4);
+        assertChangedAtEachStep(
+            () -> group.add(subgroup),
+            () -> group.add(triangle),
+            () -> subgroup.add(word, 20, 40),
+            () -> word.setRotation(30),
+            () -> triangle.setRotation(-30),
+            () -> subgroup.setRotation(90),
+            () -> group.setRotation(10)
+        );
+    }
+
+    @RenderingTest
+    void scaled() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup(8, 4);
+        assertChangedAtEachStep(
+            () -> group.add(subgroup),
+            () -> group.add(circle),
+            () -> subgroup.add(word, 20, 40),
+            () -> word.setScale(-2),
+            () -> circle.setScale(0.5, 1),
+            () -> subgroup.setScale(1.1, 1),
+            () -> group.setScale(1.1)
+        );
+    }
+
+    @RenderingTest
+    void scaledAndRotated() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup(8, 4);
+        assertChangedAtEachStep(
+            () -> group.add(subgroup),
+            () -> group.add(circle),
+            () -> subgroup.add(word, 20, 40),
+            () -> circle.setRotation(20),
+            () -> circle.setScale(0.5, 1),
+            () -> subgroup.setScale(1.1, 1),
+            () -> subgroup.setRotation(-10)
+        );
+    }
+
+
+    @Test
+    void transformedDimensions() {
+        group = new GraphicsGroup();
+        group.add(triangle, 20, 10);
+        group.add(circle, 40, 60);
+        assertEquals(new Point(36, 66), group.getSize());
+        assertEquals(new Point(36, 66), group.getSizeInParent());
+
+        circle.setScale(2);
+        assertEquals(new Point(44, 74), group.getSize());
+        assertEquals(new Point(44, 74), group.getSizeInParent());
+
+        group.setScale(0.5);
+        assertEquals(new Point(44, 74), group.getSize());
+        assertEquals(new Point(22, 37), group.getSizeInParent());
+    }
+
+    @RenderingTest
+    void anchored() {
+        group = new GraphicsGroup();
+        assertChangedAtEachStep(
+            () -> group.add(word, 20, 40),
+            () -> group.setRotation(30),
+            () -> group.setScale(1.1, 1.5),
+            () -> group.setAnchor(30, 80)
+        );
+    }
+
+    @RenderingTest
     void empty() {
         group = new GraphicsGroup(1, 1);
+    }
+
+    @Test
+    void boundsChangesPropagateUp() {
+        group = new GraphicsGroup();
+        var subgroup = new GraphicsGroup();
+        var subsubgroup = new GraphicsGroup();
+        subgroup.add(subsubgroup);
+        group.add(subgroup);
+        assertEquals(Point.ORIGIN, group.getSize());
+
+        Rectangle rect = new Rectangle(-10, -20, 40, 50);
+        subsubgroup.add(rect);
+        assertEquals(new Point(40, 50), group.getSize());
+        
+        rect.setSize(3, 5);
+        assertEquals(new Point(3, 5), group.getSize());
     }
 }
