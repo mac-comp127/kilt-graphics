@@ -14,7 +14,12 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 /**
- * A string of text that can be drawn to the screen
+ * A string of text that can be drawn to the screen.
+ *
+ * A GraphicsText’s {@link getPosition() position} is the beginning of the first character at the
+ * <a href="https://en.wikipedia.org/wiki/Baseline_(typography)">baseline</a>. This means that text
+ * largely extends <i>above</i> the position you specify with {@link setPosition(Point)}. To
+ * position text relative to its top edge, use {@link getHeight()}.
  *
  * @author Bret Jackson
  */

@@ -9,6 +9,14 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A line segment that can be drawn on the screen.
+ * <p>
+ * A line has a "start point" and an "end point". The only distinction is that the start point is
+ * the line’s {@link getPosition() position}. If you call {@link setPosition(Point) setPosition()}
+ * or {@link moveBy(Point) moveBy()}, both endpoints will move so the line segment has the same
+ * length and angle, and the start point will end up at the position you specify.
+ * <p>
+ * To move one endpoint without affecting the other, use {@link setStartPosition(Point) setStartPosition()}
+ * and {@link setEndPosition(Point) setEndPosition()}.
  *
  * @author Bret Jackson
  */

@@ -18,6 +18,8 @@ import javax.imageio.ImageIO;
 
 /**
  * A bitmap image that can be drawn to the screen.
+ * <p>
+ * An image’s {@link getPosition() position} is the upper left corner of its bounding box.
  *
  * @author Bret Jackson
  */

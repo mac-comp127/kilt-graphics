@@ -8,6 +8,8 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * A rectangle that can be drawn on the screen.
+ * <p>
+ * A rectangle’s {@link getPosition() position} is its upper left corner.
  *
  * @author Bret Jackson
  */

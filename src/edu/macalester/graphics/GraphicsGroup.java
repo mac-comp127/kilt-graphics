@@ -13,6 +13,12 @@ import java.util.function.BiConsumer;
  * A group of graphical objects that can be added, moved, and removed as a single unit.
  * The group defines its own coordinate system, so the positions of objects added to it are relative
  * to the whole group's position.
+ * <p>
+ * Calling {@link setPosition(Point)} on a GraphicsGroup sets where the group’s local (0,0) shows up
+ * within its parent. This means that a group’s position is not necessarily the upper left, the
+ * center, or any other fixed relationship with the shapes inside the group. Instead, you determine
+ * how the group’s graphics relate to the whole group’s position when you set the position of each
+ * element within the group.
  *
  * @author Bret Jackson
  */
@@ -20,7 +26,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     /**
      * Holds the objects to be drawn in calls to paintComponent
      */
-    private List<GraphicsObject> children;
+    private final List<GraphicsObject> children;
 
     /**
      * Bounding rectangle around all of the graphicObjects contained in this group in window coordinates.

@@ -22,9 +22,12 @@ import static java.lang.Float.NaN;
  * path connecting each adjacent pair of points in the list. The order of the list
  * is thus important. Incorrectly ordering the list can lead to self-intersecting
  * polygon, which are neat, but possibly not what you want.
- *
+ * <p>
  * An optional final edge connects the first and last point in the list. You can
  * disable this by passing `false` to the second argument of setPoints().
+ * <p>
+ * A path’s {@link getPosition() position} is the upper left corner of the bounding box of all its
+ * point.
  *
  * @author Daniel Kluver
  */
@@ -85,8 +88,8 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Replaces the path's coordinates, preserving its open/close status. The coordinates are relative
-     * to the path’s container; the method ignores the path’s current position.
+     * Replaces the path's coordinates, preserving its open/close status. The coordinates are
+     * relative to the path’s container; the method ignores the path’s current position.
      */
     public void setVertices(List<Point> points) {
         setVertices(points, isClosed());

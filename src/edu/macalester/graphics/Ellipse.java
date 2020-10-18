@@ -9,6 +9,8 @@ import java.awt.geom.Rectangle2D;
 
 /**
  * An ellipse that can be drawn on the screen.
+ * <p>
+ * An ellipse’s {@link getPosition() position} is the upper left corner of its bounding box.
  *
  * @author Bret Jackson
  */
