@@ -153,6 +153,17 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
     }
 
     @RenderingTest
+    void anchored() {
+        group = new GraphicsGroup();
+        assertChangedAtEachStep(
+            () -> group.add(word, 20, 40),
+            () -> group.setRotation(30),
+            () -> group.setScale(1.1, 1.5),
+            () -> group.setAnchor(30, 80)
+        );
+    }
+
+    @RenderingTest
     void empty() {
         group = new GraphicsGroup(1, 1);
     }

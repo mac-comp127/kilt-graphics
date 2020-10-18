@@ -23,6 +23,7 @@ public abstract class GraphicsObject {
     private Point position = Point.ORIGIN;
     private double rotation = 0;
     private Point scale = Point.ONE_ONE;
+    private Point anchor;
     private AffineTransform transform = new AffineTransform(), inverseTransform = new AffineTransform();
 
     final void draw(Graphics2D gc) {
@@ -146,6 +147,10 @@ public abstract class GraphicsObject {
         this.rotation = rotation;
         updateTransform();
     }
+    
+    public final void rotateBy(double angle) {
+        setRotation(getRotation() + angle);
+    }
 
     public final double getScaleX() {
         return scale.getX();
@@ -172,25 +177,38 @@ public abstract class GraphicsObject {
         setScale(scale, scale);
     }
 
+    public Point getAnchor() {
+        return anchor;
+    }
+
+    public void setAnchor(Point anchor) {
+        this.anchor = anchor;
+        updateTransform();
+    }
+
+    public void setAnchor(double x, double y) {
+        setAnchor(new Point(x, y));
+    }
+
     final AffineTransform getTransform() {
         return transform;
     }
 
     private void updateTransform() {
-        Point center = getCenter();
-        transform.setToTranslation(center.getX(), center.getY());
+        Point transformAnchor = (anchor != null) ? anchor.add(position) : getCenter();
+        transform.setToTranslation(transformAnchor.getX(), transformAnchor.getY());
         transform.rotate(Math.toRadians(rotation));
         transform.scale(scale.getX(), scale.getY());
-        transform.translate(-center.getX(), -center.getY());
+        transform.translate(-transformAnchor.getX(), -transformAnchor.getY());
         transform.translate(position.getX(), position.getY());
 
         // Can't just use invert() for this, because if
         // the scale is zero, the transform non-invertible
         inverseTransform.setToTranslation(-position.getX(), -position.getY());
-        inverseTransform.translate(center.getX(), center.getY());
+        inverseTransform.translate(transformAnchor.getX(), transformAnchor.getY());
         inverseTransform.scale(1 / scale.getX(), 1 / scale.getY());
         inverseTransform.rotate(Math.toRadians(-rotation));
-        inverseTransform.translate(-center.getX(), -center.getY());
+        inverseTransform.translate(-transformAnchor.getX(), -transformAnchor.getY());
 
         changed();
     }
