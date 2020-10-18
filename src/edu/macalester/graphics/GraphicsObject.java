@@ -40,8 +40,9 @@ public abstract class GraphicsObject {
     protected abstract void drawInLocalCoordinates(Graphics2D gc);
 
     /**
-     * Gets the position of the object on the canvas. The location of the anchor point
-     * that we call the “position” can vary, but is typically the upper left.
+     * Gets the position of the object on the canvas. The “position” is typically the upper left,
+     * but this can vary. With text, for example, the y component of the position is the baseline,
+     * not the top of the text.
      */
     public final Point getPosition() {
         return position;
@@ -133,59 +134,147 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * Offsets the shape from its current position by the given delta.
+     * Offsets the shape from its current position within its parent by the given delta.
      */
     public final void moveBy(Point delta) {
         setPosition(getPosition().add(delta));
     }
 
+    /**
+     * This graphic object’s visual rotation in degrees from its neutral position.
+     * See {@link setRotation(double) setRotation()} for details.
+     */
     public final double getRotation() {
         return rotation;
     }
 
+    /**
+     * Changes this graphic object’s visual rotation from its neutral position. The offset is in
+     * degrees, zero is neutral, and positive is clockwise.
+     * <p>
+     * Rotation affects the entire local coordinate system of the graphics object, so any size
+     * parameters or child coordinates are within the rotated frame of reference.
+     * <p>
+     * By default, the object rotates around its center, but you can change this;
+     * see {@link setAnchor(Point) setAnchor()}.
+     * <p>
+     * This is an absolute rotation within the coordinate system of this object's parent. If you
+     * want to adjust object’s rotation relative to its current value, use rotateBy().
+     *
+     * @see setAnchor(Point)
+     */
     public final void setRotation(double rotation) {
         this.rotation = rotation;
         updateTransform();
     }
-    
+
+    /**
+     * Rotates the object around its anchor point by the given number of degrees. Positive is
+     * clockwise.
+     *
+     * @see setRotation(double)
+     */    
     public final void rotateBy(double angle) {
         setRotation(getRotation() + angle);
     }
 
+    /**
+     * Returns the horizontal scaling factor for this graphics object.
+     * @see setScale(double,double)
+     */
     public final double getScaleX() {
         return scale.getX();
     }
     
+    /**
+     * Returns the vertical scaling factor for this graphics object.
+     * @see setScale(double,double)
+     */
     public final double getScaleY() {
         return scale.getY();
     }
 
+    /**
+     * Returns the scaling factor for this graphics object.
+     * @see setScale(double,double)
+     */
     public final Point getScale() {
         return scale;
     }
 
+    /**
+     * Changes this graphics object's scaling factor.
+     * @see setScale(double,double)
+     */
     public final void setScale(Point scale) {
         setScale(scale.getX(), scale.getY());
     }
 
+    /**
+     * Stretches / shrinks this graphics object by the given factor. A scale of 1 is natural size.
+     * Either factor can be zero or negative; a negative factor flips the graphics.
+     * <p>
+     * Scaling affects the entire local coordinate system of the graphics object, so any size
+     * parameters, stroke sizes, child coordinates, etc. are within the scaled frame of reference.
+     * <p>
+     * By default, the object scales around its center, but you can change this;
+     * see {@link setAnchor(Point) setAnchor()}.
+     * <p>
+     * Scaling always happens <i>before</i> rotation, so for example if you take a circle, call
+     * {@code setRotation(45)}, then call {@code setScale(1, 0.1)}, you will see a narrow ellipse
+     * whose major axis is at a 45° angle.
+     *
+     * @param scaleX The horizontal scale factor. 1 = original size.
+     * @param scaleY The vertical scale factor. 1 = original size.
+     * @see setAnchor(Point)
+     */
     public final void setScale(double scaleX, double scaleY) {
         this.scale = new Point(scaleX, scaleY);
         updateTransform();
     }
 
+    /**
+     * Scales this object uniformly, setting both the horizontal and vertical scaling factor to the
+     * given value.
+     * @see setScale(double,double)
+     */
     public final void setScale(double scale) {
         setScale(scale, scale);
     }
 
+    /**
+     * The point relative to which scaling and rotation occur.
+     * See {@link setAnchor(Point)} for details.
+     */
     public Point getAnchor() {
         return anchor;
     }
 
+    /**
+     * Changes the point relative to which scaling and rotation occur.
+     * <p>
+     * A graphics object’s <b>anchor point</b> is the one point that remains in a fixed position
+     * when scale and rotation change. It is in the pre-rotation, pre-scaling local coordinates of
+     * this graphics object; it is relative to getPosition() in the parent’s coordinate space.
+     * <p>
+     * By default, the anchor point is the object’s center, and continually changes if the object’s
+     * center changes. This can cause unstable motion if the object’s size is changing while it is
+     * rotated and/or scaled; in this situation, you will usually want to set a fixed anchor point.
+     * To set the anchor back to the default, call {@code setAnchor(null)}.
+     *
+     * @param anchor The new anchor point, or null to follow the object’s center.
+     * @see setRotation(double)
+     * @see setScale(double,double)
+     */
     public void setAnchor(Point anchor) {
         this.anchor = anchor;
         updateTransform();
     }
 
+    /**
+     * Fixes scaling and rotation around the given coordinate.
+     * @see setAnchor(Point)
+     */
     public void setAnchor(double x, double y) {
         setAnchor(new Point(x, y));
     }
@@ -202,8 +291,8 @@ public abstract class GraphicsObject {
         transform.translate(-transformAnchor.getX(), -transformAnchor.getY());
         transform.translate(position.getX(), position.getY());
 
-        // Can't just use invert() for this, because if
-        // the scale is zero, the transform non-invertible
+        // Can't just use invert() for this because if
+        // either scale is zero, the transform non-invertible
         inverseTransform.setToTranslation(-position.getX(), -position.getY());
         inverseTransform.translate(transformAnchor.getX(), transformAnchor.getY());
         inverseTransform.scale(1 / scale.getX(), 1 / scale.getY());
