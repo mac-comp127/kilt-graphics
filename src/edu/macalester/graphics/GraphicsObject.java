@@ -315,8 +315,8 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * Tests whether the given point is on the boundary or interior of this graphic object's shape.
-     * The point is in this object's local coordinates, not canvas coordinates.
+     * Tests whether the given point is on the boundary or interior of this graphic object’s shape.
+     * The point is in the parent object’s local coordinates, not canvas coordinates.
      * <p>
      * Does not account for appearance, including stroke width and transparency.
      */
@@ -326,8 +326,8 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * For internal use. Draws this graphics object on the screen in its local coordinates,
-     * without rotation or scaling.
+     * Tests whether the given point is inside the boundary or interior of this object’s shape.
+     * The point is in this object’s local coordinates.
      */
     public abstract boolean testHitInLocalCoordinates(double x, double y);
 
@@ -342,8 +342,9 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * Returns the topmost graphical object that touches position x, y. If no such object exists,
-     * returns null. If this GraphicsObject has child elements, this method might return a child.
+     * Returns the topmost graphical object that touches the given position in the parent’s
+     * coordinate space. If no such object exists, this method returns null. If this GraphicsObject
+     * has child elements, this method might return a child.
      *
      * @param x position in the coordinate space of this object’s container
      * @param y position in the coordinate space of this object’s container
@@ -354,7 +355,12 @@ public abstract class GraphicsObject {
         return getElementAtLocalCoordinates(pt.x, pt.y);
     }
 
-    protected GraphicsObject getElementAtLocalCoordinates(double x, double y) {
+    /**
+     * Returns the topmost graphical object that touches the given position in this object’s
+     * coordinate space.
+     * @see getElementAt(x,y)
+     */
+    public GraphicsObject getElementAtLocalCoordinates(double x, double y) {
         if (testHitInLocalCoordinates(x, y)) {
             return this;
         } else {

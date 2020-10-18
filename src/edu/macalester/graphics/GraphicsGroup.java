@@ -123,7 +123,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      * returns null. A GraphicsGroup will only return child elements; it never returns itself.
      */
     @Override
-    protected GraphicsObject getElementAtLocalCoordinates(double x, double y) {
+    public GraphicsObject getElementAtLocalCoordinates(double x, double y) {
         for (var it = children.listIterator(children.size()); it.hasPrevious(); ) {
             GraphicsObject obj = it.previous();
             GraphicsObject hit = obj.getElementAt(x, y);
