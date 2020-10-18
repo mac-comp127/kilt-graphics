@@ -185,16 +185,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    private FontMetrics getFontMetrics() {
-        if (metrics == null) {
-            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = (Graphics2D) img.getGraphics();
-            g.setFont(font);
-            metrics = g.getFontMetrics();
-        }
-        return metrics;
-    }
-
     @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
         return getTextShape().contains(x, y);
@@ -214,6 +204,34 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         Area area = new Area(getTextShape());
         area.transform(getTransform());
         return area;
+    }
+
+    /**
+     * Returns how far after this text any subsequent text should appear. This is distinct from getWidth()
+     * because some glyphs may overhang on either the left or the right, overlapping into the neighboring
+     * glyphs’ areas. While getWidth() returns the size of the entire bounding box, including such overhang,
+     * getAdvance() does not include the overhang.
+     */
+    public double getAdvance() {
+        return getFontMetrics().stringWidth(text);
+    }
+
+    /**
+     * Returns the standard spacing between lines of text in the current font, regardless of the height of
+     * the actual characters present.
+     */
+    public double getLineHeight() {
+        return getFontMetrics().getHeight();
+    }
+
+    private FontMetrics getFontMetrics() {
+        if (metrics == null) {
+            BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+            Graphics2D g = (Graphics2D) img.getGraphics();
+            g.setFont(font);
+            metrics = g.getFontMetrics();
+        }
+        return metrics;
     }
 
     @Override
