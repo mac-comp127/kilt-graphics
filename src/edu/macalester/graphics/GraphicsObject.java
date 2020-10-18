@@ -98,12 +98,16 @@ public abstract class GraphicsObject {
      * Returns the center of this shape's bounding box.
      */
     public final Point getCenter() {
-        Rectangle2D bounds = getBounds();
+        Rectangle2D bounds = getBoundsLocal();
         // width and height can sometimes be NaN, e.g. in an empty Path. If the bounds
         // have NaNs, just use the nominal position from getPosition().
         return new Point(
-            Double.isNaN(bounds.getCenterX()) ? getX() : bounds.getCenterX(),
-            Double.isNaN(bounds.getCenterY()) ? getY() : bounds.getCenterY());
+            getX() + zeroIfNaN(bounds.getCenterX()),
+            getY() + zeroIfNaN(bounds.getCenterY()));
+    }
+
+    private static double zeroIfNaN(double x) {
+        return Double.isNaN(x) ? 0 : x;
     }
 
     /**
@@ -168,6 +172,10 @@ public abstract class GraphicsObject {
         setScale(scale, scale);
     }
 
+    final AffineTransform getTransform() {
+        return transform;
+    }
+
     private void updateTransform() {
         Point center = getCenter();
         transform.setToTranslation(center.getX(), center.getY());
@@ -187,8 +195,16 @@ public abstract class GraphicsObject {
         changed();
     }
 
-    final AffineTransform getTransform() {
-        return transform;
+    private Point2D.Double convertToLocal(double x, double y) {
+        Point2D.Double pt = new Point2D.Double(x, y);
+        inverseTransform.transform(pt, pt);
+        return pt;
+    }
+
+    private Point2D.Double convertFromLocal(double x, double y) {
+        Point2D.Double pt = new Point2D.Double(x, y);
+        transform.transform(pt, pt);
+        return pt;
     }
 
     /**
@@ -200,12 +216,6 @@ public abstract class GraphicsObject {
     public final boolean testHit(double x, double y) {
         Point2D.Double pt = convertToLocal(x, y);
         return testHitInLocalCoordinates(pt.x, pt.y);
-    }
-
-    private Point2D.Double convertToLocal(double x, double y) {
-        Point2D.Double pt = new Point2D.Double(x, y);
-        inverseTransform.transform(pt, pt);
-        return pt;
     }
 
     /**
@@ -259,9 +269,24 @@ public abstract class GraphicsObject {
     public final Rectangle2D getBounds() {
         Rectangle2D.Double bounds = new Rectangle2D.Double();
         bounds.setRect(getBoundsLocal());
-        bounds.x += getX();
-        bounds.y += getY();
+        Point2D.Double
+            pt0 = convertFromLocal(bounds.getMinX(), bounds.getMinY()),
+            pt1 = convertFromLocal(bounds.getMaxX(), bounds.getMinY()),
+            pt2 = convertFromLocal(bounds.getMinX(), bounds.getMaxY()),
+            pt3 = convertFromLocal(bounds.getMaxX(), bounds.getMaxY());
+        bounds.x      = min(pt0.x, pt1.x, pt2.x, pt3.x);
+        bounds.y      = min(pt0.y, pt1.y, pt2.y, pt3.y);
+        bounds.width  = max(pt0.x, pt1.x, pt2.x, pt3.x) - bounds.x;
+        bounds.height = max(pt0.y, pt1.y, pt2.y, pt3.y) - bounds.y;
         return bounds;
+    }
+
+    private static double min(double a, double b, double c, double d) {
+        return Math.min(Math.min(Math.min(a, b), c), d);
+    }
+
+    private static double max(double a, double b, double c, double d) {
+        return Math.max(Math.max(Math.max(a, b), c), d);
     }
 
     /**
