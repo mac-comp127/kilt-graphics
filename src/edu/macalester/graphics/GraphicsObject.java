@@ -358,7 +358,7 @@ public abstract class GraphicsObject {
     /**
      * Returns the topmost graphical object that touches the given position in this object’s
      * coordinate space.
-     * @see getElementAt(x,y)
+     * @see getElementAt(double,double)
      */
     public GraphicsObject getElementAtLocalCoordinates(double x, double y) {
         if (testHitInLocalCoordinates(x, y)) {
