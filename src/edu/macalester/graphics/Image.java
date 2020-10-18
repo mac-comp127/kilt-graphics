@@ -185,7 +185,7 @@ public class Image extends GraphicsObject {
     }
 
     @Override
-    protected Rectangle2D getBoundsLocal() {
+    public Rectangle2D getBounds() {
         return new Rectangle2D.Double(
             0, 0,
             getImageWidth() * getScaleToFit(),

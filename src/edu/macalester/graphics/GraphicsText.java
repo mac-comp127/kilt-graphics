@@ -235,7 +235,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     @Override
-    protected Rectangle2D getBoundsLocal() {
+    public Rectangle2D getBounds() {
         getTextShape();
         return new Rectangle2D.Double(
             rawBounds.getX(),

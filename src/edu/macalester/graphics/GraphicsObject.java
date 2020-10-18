@@ -100,7 +100,7 @@ public abstract class GraphicsObject {
      * Returns the center of this shape's bounding box.
      */
     public final Point getCenter() {
-        Rectangle2D bounds = getBoundsLocal();
+        Rectangle2D bounds = getBounds();
         // width and height can sometimes be NaN, e.g. in an empty Path. If the bounds
         // have NaNs, just use the nominal position from getPosition().
         return new Point(
@@ -338,7 +338,7 @@ public abstract class GraphicsObject {
      * could return true for isInBounds(), but false for testHit().
      */
     public final boolean isInBounds(Point position) {
-        return getBounds().contains(position.getX(), position.getY());
+        return getBoundsInParent().contains(position.getX(), position.getY());
     }
 
     /**
@@ -367,7 +367,7 @@ public abstract class GraphicsObject {
      * does not account for any scaling and rotation of the object.
      */
     public final Point getSize() {
-        Rectangle2D bounds = getBoundsLocal();
+        Rectangle2D bounds = getBounds();
         return new Point(bounds.getWidth(), bounds.getHeight());
     }
 
@@ -386,23 +386,29 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * Returns an upper limit on the width and height of this graphics object in its parent’s
-     * coordinate space, <i>after</i> applying scaling and rotation of the object. Note that this
-     * may be an overestimate because it describes the size of the <i>transformed bounding box</i>,
-     * not the transformed shape. So, for example, a circle’s transformed size grows larger when it
-     * is rotated by 45°.
+     * Returns an upper limit on the width and height of this graphics object as it appears in
+     * its parent’s coordinate space, <i>after</i> applying this object’s scaling and rotation.
+     * <p>
+     * Note that this may be an overestimate because it describes the size of the <i>transformed
+     * bounding box</i>, not the transformed <i>shape</i>. So, for example, a circle’s transformed
+     * size grows larger when the circle is rotated 45°.
      */
-    public final Point getTransformedSize() {
-        Rectangle2D bounds = getBounds();
+    public final Point getSizeInParent() {
+        Rectangle2D bounds = getBoundsInParent();
         return new Point(bounds.getWidth(), bounds.getHeight());
     }
 
     /**
-     * Returns an axis-aligned bounding rectangle for this graphical object.
+     * Returns an axis-aligned bounding rectangle for this graphics object in its parent’s coordinate
+     * space, accounting for this object’s scaling and rotation.
+     * <p>
+     * Note that this may be an overestimate because it describes the size of the <i>transformed
+     * bounding box</i>, not the transformed <i>shape</i>. So, for example, a circle’s transformed
+     * bounding box grows larger when the circle is rotated 45°.
      */
-    public final Rectangle2D getBounds() {
+    public final Rectangle2D getBoundsInParent() {
         Rectangle2D.Double bounds = new Rectangle2D.Double();
-        bounds.setRect(getBoundsLocal());
+        bounds.setRect(getBounds());
         Point2D.Double
             pt0 = convertFromLocal(bounds.getMinX(), bounds.getMinY()),
             pt1 = convertFromLocal(bounds.getMaxX(), bounds.getMinY()),
@@ -426,7 +432,7 @@ public abstract class GraphicsObject {
     /**
      * Returns the bounding box of this graphics object in its local coordinates.
      */
-    protected abstract Rectangle2D getBoundsLocal();
+    public abstract Rectangle2D getBounds();
 
     void forEachDescendant(Point origin, BiConsumer<GraphicsObject,Point> callback) {
         callback.accept(this, origin.add(getPosition()));

@@ -158,7 +158,7 @@ public enum RenderingTestMode {
 
     /// Draws printer-style crop marks around the bounding box of the graphics object.
     private static void visualizeBounds(Graphics2D g, GraphicsObject gobj) {
-        var bounds = gobj.getBounds();
+        var bounds = gobj.getBoundsInParent();
         var cropMarks = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);
         for(int side = 0; side < 2; side++) {
             for (double y : List.of(bounds.getMinY() + 0.25, bounds.getMaxY() - 0.25)) {

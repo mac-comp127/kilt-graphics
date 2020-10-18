@@ -37,11 +37,11 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
 
     @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
-        return getBoundsLocal().contains(x, y);
+        return getBounds().contains(x, y);
     }
 
     @Override
-    protected Rectangle2D getBoundsLocal() {
+    public Rectangle2D getBounds() {
         Rectangle bounds = component.getBounds();
         return new Rectangle2D.Double(
             0,  // Actual JComponent is in canvas coordinates, and doesn't get positioned until next draw

@@ -177,11 +177,11 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     @Override
-    protected Rectangle2D getBoundsLocal() {
+    public Rectangle2D getBounds() {
         if (bounds == null) {
             Rectangle2D allBounds = null;
             for (GraphicsObject child : children) {
-                Rectangle2D bounds = child.getBounds();
+                Rectangle2D bounds = child.getBoundsInParent();
                 if(bounds != null) {
                     if (allBounds == null) {
                         allBounds = bounds;

@@ -208,7 +208,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    protected Rectangle2D getBoundsLocal() {
+    public Rectangle2D getBounds() {
         return shape.getBounds2D();
     }
 

@@ -159,15 +159,15 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         group.add(triangle, 20, 10);
         group.add(circle, 40, 60);
         assertEquals(new Point(36, 66), group.getSize());
-        assertEquals(new Point(36, 66), group.getTransformedSize());
+        assertEquals(new Point(36, 66), group.getSizeInParent());
 
         circle.setScale(2);
         assertEquals(new Point(44, 74), group.getSize());
-        assertEquals(new Point(44, 74), group.getTransformedSize());
+        assertEquals(new Point(44, 74), group.getSizeInParent());
 
         group.setScale(0.5);
         assertEquals(new Point(44, 74), group.getSize());
-        assertEquals(new Point(22, 37), group.getTransformedSize());
+        assertEquals(new Point(22, 37), group.getSizeInParent());
     }
 
     @RenderingTest
