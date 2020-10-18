@@ -20,7 +20,7 @@ import java.awt.image.BufferedImage;
  * <a href="https://en.wikipedia.org/wiki/Baseline_(typography)">baseline</a>. This means that text
  * largely extends <i>above</i> the position you specify with {@link setPosition(Point)}. To
  * position text relative to its top edge, use {@link getHeight()}. To format many GraphicsText
- * objects as a larger body of text, use the {@link getAdvance()} and {@getLineHeight()} methods.
+ * objects as a larger body of text, use the {@link getAdvance()} and {@link getLineHeight()} methods.
  *
  * @author Bret Jackson
  */
