@@ -110,20 +110,6 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the width of the rectangle.
-     */
-    public double getWidth() {
-        return shape.getWidth();
-    }
-
-    /**
-     * Returns the height of the rectangle.
-     */
-    public double getHeight() {
-        return shape.getHeight();
-    }
-
-    /**
      * Changes the width and height of the rectangle, preserving its upper left corner's position.
      */
     public void setSize(double width, double height) {
@@ -144,8 +130,8 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    public Rectangle2D getBoundsLocal() {
-        return new Rectangle2D.Double(0, 0, getWidth(), getHeight());
+    protected Rectangle2D getBoundsLocal() {
+        return shape.getBounds2D();
     }
 
     /**

@@ -363,9 +363,36 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * Returns the width and height of this graphics object.
+     * Returns the width and height of this graphics object, in its <b>local</b> coordinates. This
+     * does not account for any scaling and rotation of the object.
      */
     public final Point getSize() {
+        Rectangle2D bounds = getBoundsLocal();
+        return new Point(bounds.getWidth(), bounds.getHeight());
+    }
+
+    /**
+     * Returns the width of this graphics object, in its local coordinates.
+     */
+    public final double getWidth() {
+        return getSize().getX();
+    }
+
+    /**
+     * Returns the height of this graphics object, in its local coordinates.
+     */
+    public final double getHeight() {
+        return getSize().getY();
+    }
+
+    /**
+     * Returns an upper limit on the width and height of this graphics object in its parent’s
+     * coordinate space, <i>after</i> applying scaling and rotation of the object. Note that this
+     * may be an overestimate because it describes the size of the <i>transformed bounding box</i>,
+     * not the transformed shape. So, for example, a circle’s transformed size grows larger when it
+     * is rotated by 45°.
+     */
+    public final Point getTransformedSize() {
         Rectangle2D bounds = getBounds();
         return new Point(bounds.getWidth(), bounds.getHeight());
     }

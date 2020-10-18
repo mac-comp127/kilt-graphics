@@ -94,7 +94,7 @@ public class Arc extends GraphicsObject implements Strokable {
     }
 
     @Override
-    public Rectangle2D getBoundsLocal() {
+    protected Rectangle2D getBoundsLocal() {
         return shape.getBounds2D();
     }
 }

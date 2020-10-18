@@ -19,6 +19,10 @@ import java.util.function.BiConsumer;
  * center, or any other fixed relationship with the shapes inside the group. Instead, you determine
  * how the group’s graphics relate to the whole group’s position when you set the position of each
  * element within the group.
+ * <p>
+ * A graphics group’s size includes the extent of the bounding boxes of all its contents. The size
+ * does not necessarily include the origin: a group containing only a 1x1 rectangle at (100, 100)
+ * has a width and height of 1.
  *
  * @author Bret Jackson
  */
@@ -138,20 +142,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     }
 
     /**
-     * Get the width of the rectangle that encloses all the elements in the group.
-     */
-    public double getWidth() {
-        return getBounds().getWidth();
-    }
-
-    /**
-     * Get the height of the rectangle that encloses all the elements in the group.
-     */
-    public double getHeight() {
-        return getBounds().getHeight();
-    }
-
-    /**
      * Tests whether the point (x, y) hits some shape inside this group.
      */
     @Override
@@ -179,7 +169,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     @Override
     public String toString() {
-        return "A graphics group at position (" + getX() + ", " + getY() + ") with width=" + getWidth() + " and height=" + getHeight();
+        return "A graphics group at position (" + getX() + ", " + getY() + ") with size=" + getSize();
     }
 
     private void boundsNeedUpdate() {

@@ -15,11 +15,12 @@ import java.awt.image.BufferedImage;
 
 /**
  * A string of text that can be drawn to the screen.
- *
+ * <p>
  * A GraphicsText’s {@link getPosition() position} is the beginning of the first character at the
  * <a href="https://en.wikipedia.org/wiki/Baseline_(typography)">baseline</a>. This means that text
  * largely extends <i>above</i> the position you specify with {@link setPosition(Point)}. To
- * position text relative to its top edge, use {@link getHeight()}.
+ * position text relative to its top edge, use {@link getHeight()}. To format many GraphicsText
+ * objects as a larger body of text, use the {@link getAdvance()} and {@getLineHeight()} methods.
  *
  * @author Bret Jackson
  */
@@ -184,17 +185,6 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
-    public double getWidth() {
-        if (text == null) {
-            return 0;
-        }
-        return getFontMetrics().stringWidth(text);
-    }
-
-    public double getHeight() {
-        return getFontMetrics().getHeight();
-    }
-
     private FontMetrics getFontMetrics() {
         if (metrics == null) {
             BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
@@ -227,7 +217,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     }
 
     @Override
-    public Rectangle2D getBoundsLocal() {
+    protected Rectangle2D getBoundsLocal() {
         getTextShape();
         return new Rectangle2D.Double(
             rawBounds.getX(),

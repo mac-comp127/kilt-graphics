@@ -108,24 +108,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Get the width of the bounding rectangle of the ellipse
-     *
-     * @return bounding rectangle width
-     */
-    public double getWidth() {
-        return shape.getWidth();
-    }
-
-    /**
-     * Get the height of the bounding rectangle of the ellipse
-     *
-     * @return bounding rectangle height
-     */
-    public double getHeight() {
-        return shape.getHeight();
-    }
-
-    /**
      * Changes the width and height of the ellipse, preserving its upper left corner's position.
      */
     public void setSize(double width, double height) {
@@ -146,7 +128,7 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    public Rectangle2D getBoundsLocal() {
+    protected Rectangle2D getBoundsLocal() {
         return shape.getBounds2D();
     }
 
@@ -169,6 +151,6 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
 
     @Override
     public String toString() {
-        return "Ellipse at position " + getPosition() + " with width=" + getWidth() + " and height=" + getHeight();
+        return "Ellipse at position " + getPosition() + " with size=" + getSize();
     }
 }

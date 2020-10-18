@@ -27,7 +27,7 @@ import static java.lang.Float.NaN;
  * disable this by passing `false` to the second argument of setPoints().
  * <p>
  * A path’s {@link getPosition() position} is the upper left corner of the bounding box of all its
- * point.
+ * points, and its {@link getSize() size} is the size of that bounding box.
  *
  * @author Daniel Kluver
  */
@@ -41,8 +41,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     private boolean isClosed;
     private BasicStroke stroke;
 
-    private double width;
-    private double height;
     private int vertexCount;
 
     /**
@@ -123,8 +121,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         Rectangle shapeBounds = shape.getBounds();
         setPosition(shapeBounds.getX(), shapeBounds.getY());
         shape.transform(AffineTransform.getTranslateInstance(-getX(), -getY()));
-        width = shapeBounds.getWidth();
-        height = shapeBounds.getHeight();
 
         vertexCount = points.size();
 
@@ -204,22 +200,6 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     /**
-     * Returns the width of the shape, measured as the x distance from the leftmost
-     * point to the rightmost point.
-     */
-    public double getWidth() {
-        return width;
-    }
-
-    /**
-     * Returns the width of the shape, measured as the x distance from the topmost
-     * point to the bottommost point.
-     */
-    public double getHeight() {
-        return height;
-    }
-
-    /**
      * Tests whether the given point is on the interior of this path. Does not account for stroke width.
      */
     @Override
@@ -228,7 +208,7 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
     }
 
     @Override
-    public Rectangle2D getBoundsLocal() {
+    protected Rectangle2D getBoundsLocal() {
         return shape.getBounds2D();
     }
 

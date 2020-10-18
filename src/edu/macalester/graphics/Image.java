@@ -20,6 +20,8 @@ import javax.imageio.ImageIO;
  * A bitmap image that can be drawn to the screen.
  * <p>
  * An image’s {@link getPosition() position} is the upper left corner of its bounding box.
+ * Its size is the size of the underying image file by default, but you can shrink it using
+ * {@link setMaxWidth(double) setMaxWidth()} and {@link setMaxHeight(double) setMaxHeight()}.
  *
  * @author Bret Jackson
  */
@@ -157,30 +159,6 @@ public class Image extends GraphicsObject {
     }
 
     /**
-     * Get the width of the rendered image as it will appear on the screen. Affected by the size of
-     * the image as well as setMaxWidth() and setMaxHeight().
-     */
-    public double getWidth() {
-        return getImageWidth() * getScaleToFit();
-    }
-
-    /**
-     * Get the height of the rendered image as it will appear on the screen. Affected by the size of
-     * the image as well as setMaxWidth() and setMaxHeight().
-     */
-    public double getHeight() {
-        return getImageHeight() * getScaleToFit();
-    }
-
-    private double getScaleToFit() {
-        return Math.min(
-            1,
-            Math.min(
-                maxWidth / getImageWidth(),
-                maxHeight / getImageHeight()));
-    }
-
-    /**
      * Get the width of the underlying image.
      */
     public double getImageWidth() {
@@ -207,8 +185,19 @@ public class Image extends GraphicsObject {
     }
 
     @Override
-    public Rectangle2D getBoundsLocal() {
-        return new Rectangle2D.Double(0, 0, getWidth(), getHeight());
+    protected Rectangle2D getBoundsLocal() {
+        return new Rectangle2D.Double(
+            0, 0,
+            getImageWidth() * getScaleToFit(),
+            getImageHeight() * getScaleToFit());
+    }
+
+    private double getScaleToFit() {
+        return Math.min(
+            1,
+            Math.min(
+                maxWidth / getImageWidth(),
+                maxHeight / getImageHeight()));
     }
 
     /**
