@@ -52,13 +52,17 @@ If you get a CI test failure:
         git checkout main
         git status
 
+1. Change the line near the end of the README that references the current version number:
+
+        implementation group: 'com.github.mac-comp127', name: 'kilt-graphics', version: '🦄.🐉.🦋'  // ← add this
+
 1. Prepare the docs:
 
         ./gradlew clean test assemble -i -Pversion=🦄.🐉.🦋
 
 1. This will alter the contents of the `docs` directory. Create a new commit with those changes (which will update the [public javadocs](https://mac-comp127.github.io/kilt-graphics/)), and tag that commit with your release number:
 
-        git add docs
+        git add docs README.md
         git commit -m 'Version 🦄.🐉.🦋'
         git tag 🦄.🐉.🦋
 
