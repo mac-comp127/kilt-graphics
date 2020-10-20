@@ -465,6 +465,40 @@ public abstract class GraphicsObject {
         return null;
     }
 
+    /**
+     * Two GraphicsObjects are equal if are of the same class and have the same shape (position, rotation,
+     * scale, vertices), regardless of appearance (color and stroke width).
+     */
+    @Override
+    public final boolean equals(Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (getClass() != other.getClass()) {
+            return false;
+        }
+        GraphicsObject that = (GraphicsObject) other;
+        return transform.equals(that.transform)
+            && getEqualityAttributes().equals(that.getEqualityAttributes());
+    }
+
+    @Override
+    public final int hashCode() {
+        return transform.hashCode() + 173 * getEqualityAttributes().hashCode();
+    }
+
+    /**
+     * For internal use only.
+     * 
+     * Used to compute equals() and hashCode(). Returns an object whose equals() and hashCode() methods
+     * encompass the subclass-specific values that should be used to compute equality for the whole
+     * GraphicsObject.
+     */
+    protected abstract Object getEqualityAttributes();
+
     // ------ Observers ------
 
     /**

@@ -134,22 +134,9 @@ public class Rectangle extends GraphicsObject implements Strokable, Fillable {
         return shape.getBounds2D();
     }
 
-    /**
-     * Tests whether the given object is a Rectangle with the same position and size.
-     * Ignores appearance, i.e. color and stroke width.
-     */
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Rectangle)) {
-            return false;
-        }
-        Rectangle otherShape = (Rectangle) other;
-        return shape.equals(otherShape.shape);
-    }
-
-    @Override
-    public int hashCode() {
-        return shape.hashCode();
+    protected Object getEqualityAttributes() {
+        return shape;
     }
 
     /**

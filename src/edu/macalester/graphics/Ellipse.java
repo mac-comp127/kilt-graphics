@@ -132,21 +132,9 @@ public class Ellipse extends GraphicsObject implements Strokable, Fillable {
         return shape.getBounds2D();
     }
 
-    /**
-     * Two ellipses are equal if the have the same position and size, regardless of appearance.
-     */
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Ellipse)) {
-            return false;
-        }
-        Ellipse otherShape = (Ellipse) other;
-        return shape.equals(otherShape.shape);
-    }
-
-    @Override
-    public int hashCode() {
-        return shape.hashCode();
+    protected Object getEqualityAttributes() {
+        return shape;
     }
 
     @Override

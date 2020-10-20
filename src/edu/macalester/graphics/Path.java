@@ -212,22 +212,9 @@ public class Path extends GraphicsObject implements Strokable, Fillable {
         return shape.getBounds2D();
     }
 
-    /**
-     * Tests whether the given object is a Path with the same shape.
-     * Ignores appearance, i.e. color and stroke width.
-     */
     @Override
-    public boolean equals(Object other) {
-        if (other instanceof Path) {
-            Path otherShape = (Path) other;
-            return this.shape.equals(otherShape.shape);
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return shape.hashCode();
+    protected Object getEqualityAttributes() {
+        return shape;
     }
 
     /**
