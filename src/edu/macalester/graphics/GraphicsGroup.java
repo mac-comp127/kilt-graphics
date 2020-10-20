@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 /**
@@ -87,9 +86,8 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void remove(GraphicsObject gObject) {
         gObject.removeObserver(this);
         gObject.setCanvas(null);
-        boolean success = children.remove(gObject);
-        if (!success) {
-            throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
+        if (!children.removeIf(child -> child == gObject)) {
+            throw new NoSuchElementException("The object to remove is not part of this graphics group. Either it is already removed, or it was never originally added.");
         }
         changed();
     }
@@ -147,29 +145,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     @Override
     public boolean testHitInLocalCoordinates(double x, double y) {
         return getElementAtLocalCoordinates(x, y) != null;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        GraphicsGroup that = (GraphicsGroup) o;
-        return super.equals(o)
-            && children.equals(that.children);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), children);
-    }
-
-    @Override
-    public String toString() {
-        return "A graphics group at position (" + getX() + ", " + getY() + ") with size=" + getSize();
     }
 
     private void boundsNeedUpdate() {
@@ -236,5 +211,15 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void graphicChanged(GraphicsObject changedObject) {
         boundsNeedUpdate();
         changed();
+    }
+
+    @Override
+    protected Object getEqualityAttributes() {
+        return children;
+    }
+
+    @Override
+    public String toString() {
+        return "A graphics group at position (" + getX() + ", " + getY() + ") with size=" + getSize();
     }
 }

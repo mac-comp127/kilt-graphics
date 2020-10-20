@@ -200,7 +200,7 @@ public final class Point {
         }
         Point that = (Point) o;
         return Double.compare(this.x, that.x) == 0
-                && Double.compare(this.y, that.y) == 0;
+            && Double.compare(this.y, that.y) == 0;
     }
 
     @Override

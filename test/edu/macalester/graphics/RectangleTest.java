@@ -2,6 +2,11 @@ package edu.macalester.graphics;
 
 import static edu.macalester.graphics.testsupport.RenderingTestMode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+
+import java.awt.Color;
+
+import org.junit.jupiter.api.Test;
 
 import edu.macalester.graphics.testsupport.GraphicsObjectTestSuite;
 import edu.macalester.graphics.testsupport.RenderingTest;
@@ -39,5 +44,30 @@ public class RectangleTest implements GraphicsObjectTestSuite {
     @RenderingTest(modes = { STROKED, FILLED, HIT_TEST })
     void negativeSizeRect() {
         rect = new Rectangle(80, 70, -60, -50);
+    }
+
+    // Also tests shared GraphicsObject equality behavior
+    @Test
+    void equality() {
+        assertEquals(new Rectangle(0, 0, 10, 10), new Rectangle(0, 0, 10, 10));
+        assertNotEquals(new Rectangle(0, 0, 10, 10), new Rectangle(0, 0, 10, 11));
+        assertNotEquals(new Rectangle(0, 0, 10, 10), new Rectangle(0, 0, 11, 10));
+        assertNotEquals(new Rectangle(0, 0, 10, 10), new Rectangle(0, 1, 10, 10));
+        assertNotEquals(new Rectangle(0, 0, 10, 10), new Rectangle(1, 0, 10, 10));
+        Rectangle fancyFunRect = new Rectangle(0, 0, 10, 10);
+        fancyFunRect.setStrokeWidth(7);
+        fancyFunRect.setStrokeColor(Color.GREEN);
+        fancyFunRect.setFillColor(Color.RED);
+        assertEquals(fancyFunRect, new Rectangle(0, 0, 10, 10));
+
+        fancyFunRect.setAnchor(Point.ONE_ONE);
+        assertEquals(fancyFunRect, new Rectangle(0, 0, 10, 10));
+        fancyFunRect.setRotation(3);
+        assertNotEquals(fancyFunRect, new Rectangle(0, 0, 10, 10));
+        fancyFunRect.setRotation(0);
+        fancyFunRect.setScale(2, 1);
+        assertNotEquals(fancyFunRect, new Rectangle(0, 0, 10, 10));
+        fancyFunRect.setScale(1);
+        assertEquals(fancyFunRect, new Rectangle(0, 0, 10, 10));
     }
 }

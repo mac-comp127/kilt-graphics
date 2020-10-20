@@ -164,22 +164,9 @@ public class Line extends GraphicsObject implements Strokable {
         return new Rectangle2D.Double(left - getX(), top - getY(), Math.abs(getX2() - getX1()), Math.abs(getY1() - getY2()));
     }
 
-    /**
-     * Two lines are identical if the have the same start points and the same endpoints, regardless
-     * of appearance.
-     */
     @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof Line)) {
-            return false;
-        }
-        Line otherShape = (Line) other;
-        return shape.equals(otherShape.shape);
-    }
-
-    @Override
-    public int hashCode() {
-        return shape.hashCode();
+    protected Object getEqualityAttributes() {
+        return shape;
     }
 
     @Override

@@ -11,8 +11,8 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import javax.imageio.ImageIO;
 
@@ -200,25 +200,10 @@ public class Image extends GraphicsObject {
                 maxHeight / getImageHeight()));
     }
 
-    /**
-     * Two images are equal if they are the same file and are at the same position.
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Image image = (Image) o;
-        return super.equals(o)
-            && path.equals(image.path);
-    }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), path);
+    protected Object getEqualityAttributes() {
+        return List.of(path, maxWidth, maxHeight);  // Not ideally performant, but life goes on
     }
 
     @Override

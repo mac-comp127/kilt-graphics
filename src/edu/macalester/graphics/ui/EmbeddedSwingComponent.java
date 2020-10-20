@@ -49,4 +49,9 @@ abstract class EmbeddedSwingComponent extends GraphicsObject {
             bounds.getWidth(),
             bounds.getHeight());
     }
+
+    @Override
+    protected Object getEqualityAttributes() {
+        return component;
+    }
 }

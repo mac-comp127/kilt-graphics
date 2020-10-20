@@ -12,6 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 /**
  * A string of text that can be drawn to the screen.
@@ -242,5 +243,10 @@ public class GraphicsText extends GraphicsObject implements Fillable {
             rawBounds.getY(),
             rawBounds.getWidth(),
             rawBounds.getHeight());
+    }
+
+    @Override
+    protected Object getEqualityAttributes() {
+        return List.of(font, text);
     }
 }
