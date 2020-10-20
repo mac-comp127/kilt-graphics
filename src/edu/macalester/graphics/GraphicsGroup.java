@@ -86,7 +86,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void remove(GraphicsObject gObject) {
         gObject.removeObserver(this);
         gObject.setCanvas(null);
-        boolean success = children.remove(gObject);
+        boolean success = children.removeIf(child -> child == gObject);
         if (!success) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. It may have already been removed or was never originally added.");
         }

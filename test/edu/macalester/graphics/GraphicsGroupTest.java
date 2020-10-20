@@ -202,4 +202,17 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         rect.setSize(3, 5);
         assertEquals(new Point(3, 5), group.getSize());
     }
+
+    @RenderingTest
+    void removeUsesObjectIdentity() {
+        group = new GraphicsGroup();
+        Rectangle r1 = new Rectangle(20, 20, 60, 60);
+        Rectangle r2 = new Rectangle(20, 20, 60, 60);
+        Rectangle r3 = new Rectangle(20, 20, 60, 60);
+        group.add(r1);
+        group.add(r2);
+        group.add(r3);
+        group.remove(r2);
+        r2.setFillColor(Color.ORANGE);
+    }
 }
