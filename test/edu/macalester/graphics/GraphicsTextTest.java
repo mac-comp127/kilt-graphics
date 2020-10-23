@@ -108,4 +108,24 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
             () -> text.setWrappingWidth(200)
         );
     }
+
+    @RenderingTest(width = 160, height = 240)
+    void centered() {
+        text = new GraphicsText(POEM, 80, 20);
+        assertChangedAtEachStep(
+            () -> text.setFont("Verdana", FontStyle.BOLD, 16),
+            () -> text.setWrappingWidth(130),
+            () -> text.setAlignment(TextAlignment.CENTER)
+        );
+    }
+
+    @RenderingTest(width = 160, height = 240)
+    void rightAligned() {
+        text = new GraphicsText(POEM, 150, 20);
+        assertChangedAtEachStep(
+            () -> text.setFont("Verdana", FontStyle.BOLD, 16),
+            () -> text.setWrappingWidth(130),
+            () -> text.setAlignment(TextAlignment.RIGHT)
+        );
+    }
 }

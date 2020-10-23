@@ -36,9 +36,10 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     private String text;
     private Font font;
+    private TextAlignment alignment = TextAlignment.LEFT;
+    private double wrappingWidth = Double.POSITIVE_INFINITY;
     private Paint textColor;
     private boolean filled = true;
-    private double wrappingWidth = Double.POSITIVE_INFINITY;
     private FontMetrics metrics;
 
     // These are both expensive to compute, so we compute them lazily.
@@ -106,6 +107,9 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         Area result = new Area();
         AffineTransform transform = new AffineTransform();  // tracks vertical position
         lineLayouts.forEach(lineLayout -> {
+            transform.setToTranslation(
+                -lineLayout.getVisibleAdvance() * alignment.getFactor(),
+                transform.getTranslateY());  // preserve y
             result.add(new Area(
                 lineLayout.getOutline(transform)));
             transform.translate(0, getLineHeight());
@@ -192,6 +196,22 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     @Deprecated
     public void setFont(Font font) {
         this.font = font;
+        textShapeChanged();
+    }
+
+    /**
+     * Determines how each line of this text is aligned horizontally relative to the x coordinate
+     * of {@link getPosition()}. The default is {@link TextAlignment#LEFT}.
+     * <p>
+     * Note that this only affects <i>horizontal</i> position. The vertical position is always
+     * such that the baseline of the first line of text is at the position’s y coordinate.
+     */
+    public TextAlignment getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(TextAlignment alignment) {
+        this.alignment = alignment;
         textShapeChanged();
     }
 
