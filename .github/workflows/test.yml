@@ -29,6 +29,8 @@ jobs:
 
       - name: Build and run tests
         run: ./gradlew test -i --console=plain --no-daemon
+        env:
+          FAIL_ON_MISSING_IMAGE_COMPARISON: 1
 
       - name: Upload image comparisons (on failure only)
         if: ${{ failure() }}
