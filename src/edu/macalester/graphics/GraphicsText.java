@@ -138,6 +138,10 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
+    /**
+     * The text that will appear on the screen as graphics. Supports line breaks encoded with either
+     * CR, LF, or CRLF ("\r", "\n", or "\r\n"), regardless of the runtime platform.
+     */
     public String getText() {
         return text;
     }
@@ -191,12 +195,18 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         textShapeChanged();
     }
 
+    /**
+     * Inserts word wraps (soft line breaks) so that no line of text is wider than the given
+     * width. By default, text does not wrap, no matter how long. Note that this does not
+     * affect the hard line breaks created by newlines ("\n") in the text.
+     */
     public double getWrappingWidth() {
         return wrappingWidth;
     }
 
     public void setWrappingWidth(double wrappingWidth) {
         this.wrappingWidth = wrappingWidth;
+        textShapeChanged();
     }
 
     @Override

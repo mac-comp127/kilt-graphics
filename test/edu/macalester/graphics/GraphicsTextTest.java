@@ -103,7 +103,9 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
     @RenderingTest(width = 240, height = 240)
     void softLineBreaks() {
         text = new GraphicsText(POEM, 10, 20);
-        text.setFont("Verdana", FontStyle.BOLD, 16);
-        text.setWrappingWidth(200);
+        assertChangedAtEachStep(
+            () -> text.setFont("Verdana", FontStyle.BOLD, 16),
+            () -> text.setWrappingWidth(200)
+        );
     }
 }
