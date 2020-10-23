@@ -2,6 +2,7 @@ package edu.macalester.graphics.testsupport;
 
 import static edu.macalester.graphics.testsupport.RenderingTestMode.HIT_TEST;
 import static edu.macalester.graphics.testsupport.RenderingTestMode.PLAIN;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.awt.image.BufferedImage;
@@ -9,6 +10,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
@@ -29,7 +31,7 @@ import edu.macalester.graphics.Point;
 @ExtendWith(RenderingTestHandler.class)
 @Test
 public @interface RenderingTest {
-    public static final String OS_NAME = System.getProperty("os.name").split(" ")[0].toLowerCase();
+    public static final String OS_NAME = System.getProperty("os.name").toLowerCase().replaceAll("\\s+", "_");
 
     /**
      * A @RenderingTest can render the graphics object with a variety of different options.
@@ -54,22 +56,24 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
         RenderingTest renderingOptions = context.getRequiredTestMethod().getAnnotation(RenderingTest.class);
         String osSuffix = renderingOptions.osSpecificImageComparison() ? "-" + RenderingTest.OS_NAME : "";
 
-        for (var mode : renderingOptions.modes()) {
-            Point imageSize = new Point(renderingOptions.width(), renderingOptions.height());
-            var actualImage = new BufferedImage(
-                (int) Math.round(imageSize.getX()),
-                (int) Math.round(imageSize.getY()),
-                BufferedImage.TYPE_INT_ARGB);
+        assertAll(
+            Arrays.stream(renderingOptions.modes()).map(mode -> () -> {
+                Point imageSize = new Point(renderingOptions.width(), renderingOptions.height());
+                var actualImage = new BufferedImage(
+                    (int) Math.round(imageSize.getX()),
+                    (int) Math.round(imageSize.getY()),
+                    BufferedImage.TYPE_INT_ARGB);
 
-            mode.render(actualImage, suite.getGraphicsObject());
+                mode.render(actualImage, suite.getGraphicsObject());
 
-            new ImageComparison(
-                context.getRequiredTestClass().getSimpleName(),
-                context.getRequiredTestMethod().getName() + "-" + mode.name().toLowerCase() + osSuffix,
-                actualImage,
-                renderingOptions.tolerance()
-            ).compare();
-        }
+                new ImageComparison(
+                    context.getRequiredTestClass().getSimpleName(),
+                    context.getRequiredTestMethod().getName() + "-" + mode.name().toLowerCase() + osSuffix,
+                    actualImage,
+                    renderingOptions.tolerance()
+                ).compare();
+            })
+        );
     }
 
     private GraphicsObjectTestSuite getGraphicsObjectTestSuite(ExtensionContext context) {
