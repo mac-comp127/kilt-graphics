@@ -1,5 +1,6 @@
 package edu.macalester.graphics;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Color;
@@ -92,14 +93,21 @@ public class CanvasWindowTest {
         canvas.add(button, 6, 6);
         canvas.add(ellipse, 12, 12);
         canvas.add(field, 18, 18);
-        compareScreenShot("added-" + RenderingTest.OS_NAME);
 
-        ellipse.moveBy(0, -10);
-        field.moveBy(10, 0);
-        compareScreenShot("moved-" + RenderingTest.OS_NAME);
-
-        canvas.remove(field);
-        compareScreenShot("removed-" + RenderingTest.OS_NAME);
+        assertAll(
+            () -> {
+                compareScreenShot("added-" + RenderingTest.OS_NAME);
+            },
+            () -> {
+                ellipse.moveBy(0, -10);
+                field.moveBy(10, 0);
+                compareScreenShot("moved-" + RenderingTest.OS_NAME);
+            },
+            () -> {
+                canvas.remove(field);
+                compareScreenShot("removed-" + RenderingTest.OS_NAME);
+            }
+        );
     }
 
     private void compareScreenShot(String testName) throws IOException {
