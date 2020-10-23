@@ -94,13 +94,13 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         assertFalse(text1.intersects(text0));
     }
 
-    @RenderingTest(width = 240, height = 160)
+    @RenderingTest(width = 240, height = 160, osSpecificImageComparison = true)
     void hardLineBreaks() {
         text = new GraphicsText(POEM, 10, 20);
         text.setFont("Verdana", FontStyle.BOLD, 16);
     }
 
-    @RenderingTest(width = 240, height = 240)
+    @RenderingTest(width = 240, height = 240, osSpecificImageComparison = true)
     void softLineBreaks() {
         text = new GraphicsText(POEM, 10, 20);
         assertChangedAtEachStep(
@@ -109,7 +109,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         );
     }
 
-    @RenderingTest(width = 160, height = 240)
+    @RenderingTest(width = 160, height = 240, osSpecificImageComparison = true)
     void centered() {
         text = new GraphicsText(POEM, 80, 20);
         assertChangedAtEachStep(
@@ -119,7 +119,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         );
     }
 
-    @RenderingTest(width = 160, height = 240)
+    @RenderingTest(width = 160, height = 240, osSpecificImageComparison = true)
     void rightAligned() {
         text = new GraphicsText(POEM, 150, 20);
         assertChangedAtEachStep(
