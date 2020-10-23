@@ -31,7 +31,7 @@ import edu.macalester.graphics.Point;
 @ExtendWith(RenderingTestHandler.class)
 @Test
 public @interface RenderingTest {
-    public static final String OS_NAME = System.getProperty("os.name").split(" ")[0].toLowerCase();
+    public static final String OS_NAME = System.getProperty("os.name").toLowerCase().replaceAll("\\s+", "_");
 
     /**
      * A @RenderingTest can render the graphics object with a variety of different options.
