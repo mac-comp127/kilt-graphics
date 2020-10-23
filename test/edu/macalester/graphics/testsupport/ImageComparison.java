@@ -19,6 +19,8 @@ import javax.imageio.ImageIO;
  * the given threshold, the test suite fails.
  */
 public class ImageComparison {
+    private static final boolean FAIL_ON_MISSING_IMAGE_COMPARISON = System.getenv("FAIL_ON_MISSING_IMAGE_COMPARISON") != null;
+
     private final double totalDiffFailureThreshold;  // could allow customization in annotation
     private final String groupName, imageName;
     private final BufferedImage actualImage;
@@ -40,9 +42,13 @@ public class ImageComparison {
 
         File expectedFile = getImageFile("expected");
         if (!expectedFile.exists()) {
-            System.err.println("WARNING: Using generated image from new RenderingTest as the expected image for future runs: " + expectedFile);
-            writeImage(actualImage, expectedFile);
-            return;
+            if (FAIL_ON_MISSING_IMAGE_COMPARISON) {
+                fail("Missing expected image for image comparison: " + expectedFile);
+            } else {
+                writeImage(actualImage, expectedFile);
+                System.err.println("WARNING: Using generated image from new RenderingTest as the expected image for future runs: " + expectedFile);
+                return;
+            }
         }
         
         BufferedImage expectedImage = ImageIO.read(expectedFile);

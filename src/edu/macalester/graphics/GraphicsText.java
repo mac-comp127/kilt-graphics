@@ -6,13 +6,19 @@ import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Shape;
-import java.awt.font.FontRenderContext;
+import java.awt.font.LineBreakMeasurer;
+import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.text.AttributedString;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 /**
  * A string of text that can be drawn to the screen.
@@ -26,10 +32,12 @@ import java.util.List;
  * @author Bret Jackson
  */
 public class GraphicsText extends GraphicsObject implements Fillable {
-    private static final AffineTransform IDENTITY_TRANFORM = new AffineTransform();
+    private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("\r\n|\r|\n");
 
     private String text;
     private Font font;
+    private TextAlignment alignment = TextAlignment.LEFT;
+    private double wrappingWidth = Double.POSITIVE_INFINITY;
     private Paint textColor;
     private boolean filled = true;
     private FontMetrics metrics;
@@ -81,9 +89,32 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         if (text == null || text.isEmpty()) {  // textLayout doesn't like empty strings
             return new Rectangle2D.Double(0, 0, 0, 0);
         }
-        FontRenderContext frc = gc.getFontRenderContext();
-        TextLayout textLayout = new TextLayout(text, font, frc);
-        return textLayout.getOutline(IDENTITY_TRANFORM);
+
+        // Create a stream of lines of text, separated by either soft wraps (at wrappingWidth) or hard line breaks ("\n")
+        Stream<TextLayout> lineLayouts =
+            LINE_BREAK_PATTERN.splitAsStream(text)  // LineBreakMeasurer doesn't understand hard breaks, so we find them ourselves
+                .flatMap(paragraph -> {
+                    if (paragraph.isEmpty()) {
+                        paragraph = "\u200B";  // AttributedString can't format empty strings, so replace with a zero-width space
+                    }
+                    var measurer = new LineBreakMeasurer(
+                        new AttributedString(paragraph, Map.of(TextAttribute.FONT, font)).getIterator(),
+                        gc.getFontRenderContext());
+                    return Stream.generate(() -> measurer.nextLayout((float) wrappingWidth))
+                        .takeWhile(Objects::nonNull);
+                });
+
+        Area result = new Area();
+        AffineTransform transform = new AffineTransform();  // tracks vertical position
+        lineLayouts.forEach(lineLayout -> {
+            transform.setToTranslation(
+                -lineLayout.getVisibleAdvance() * alignment.getFactor(),
+                transform.getTranslateY());  // preserve y
+            result.add(new Area(
+                lineLayout.getOutline(transform)));
+            transform.translate(0, getLineHeight());
+        });
+        return result;
     }
 
     private Shape getTextShape() {
@@ -111,6 +142,10 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         changed();
     }
 
+    /**
+     * The text that will appear on the screen as graphics. Supports line breaks encoded with either
+     * CR, LF, or CRLF ("\r", "\n", or "\r\n"), regardless of the runtime platform.
+     */
     public String getText() {
         return text;
     }
@@ -161,6 +196,36 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     @Deprecated
     public void setFont(Font font) {
         this.font = font;
+        textShapeChanged();
+    }
+
+    /**
+     * Determines how each line of this text is aligned horizontally relative to the x coordinate
+     * of {@link getPosition()}. The default is {@link TextAlignment#LEFT}.
+     * <p>
+     * Note that this only affects <i>horizontal</i> position. The vertical position is always
+     * such that the baseline of the first line of text is at the position’s y coordinate.
+     */
+    public TextAlignment getAlignment() {
+        return alignment;
+    }
+
+    public void setAlignment(TextAlignment alignment) {
+        this.alignment = alignment;
+        textShapeChanged();
+    }
+
+    /**
+     * Inserts word wraps (soft line breaks) so that no line of text is wider than the given
+     * width. By default, text does not wrap, no matter how long. Note that this does not
+     * affect the hard line breaks created by newlines ("\n") in the text.
+     */
+    public double getWrappingWidth() {
+        return wrappingWidth;
+    }
+
+    public void setWrappingWidth(double wrappingWidth) {
+        this.wrappingWidth = wrappingWidth;
         textShapeChanged();
     }
 

@@ -8,12 +8,11 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import edu.macalester.graphics.testsupport.ImageComparison;
+import edu.macalester.graphics.testsupport.RenderingTest;
 import edu.macalester.graphics.ui.Button;
 import edu.macalester.graphics.ui.TextField;
 
 public class CanvasWindowTest {
-    private static final String OS_NAME = System.getProperty("os.name").toLowerCase().replaceAll("\\s+", "_");
-    
     private CanvasWindow canvas;
     
     @Test
@@ -93,14 +92,14 @@ public class CanvasWindowTest {
         canvas.add(button, 6, 6);
         canvas.add(ellipse, 12, 12);
         canvas.add(field, 18, 18);
-        compareScreenShot(OS_NAME + "-added");
+        compareScreenShot("added-" + RenderingTest.OS_NAME);
 
         ellipse.moveBy(0, -10);
         field.moveBy(10, 0);
-        compareScreenShot(OS_NAME + "-moved");
+        compareScreenShot("moved-" + RenderingTest.OS_NAME);
 
         canvas.remove(field);
-        compareScreenShot(OS_NAME + "-removed");
+        compareScreenShot("removed-" + RenderingTest.OS_NAME);
     }
 
     private void compareScreenShot(String testName) throws IOException {
