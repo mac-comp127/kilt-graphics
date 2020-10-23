@@ -37,6 +37,9 @@ public @interface RenderingTest {
      */
     RenderingTestMode[] modes() default { PLAIN, HIT_TEST };
 
+    int width() default 100;
+    int height() default 100;
+
     double tolerance() default 10;
 }
 
@@ -46,7 +49,7 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
         var suite = getGraphicsObjectTestSuite(context);
         RenderingTest renderingOptions = context.getRequiredTestMethod().getAnnotation(RenderingTest.class);
         for (var mode : renderingOptions.modes()) {
-            Point imageSize = suite.getCanvasSize();
+            Point imageSize = new Point(renderingOptions.width(), renderingOptions.height());
             var actualImage = new BufferedImage(
                 (int) Math.round(imageSize.getX()),
                 (int) Math.round(imageSize.getY()),

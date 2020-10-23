@@ -23,13 +23,6 @@ public interface GraphicsObjectTestSuite {
     GraphicsObject getGraphicsObject();
 
     /**
-     * The size of image to create in @RenderingTest methods.
-     */
-    default Point getCanvasSize() {
-        return new Point(100, 100);
-    }
-
-    /**
      * Checks for simple, generic errors in the GraphicsObject's equals() method.
      */
     @AfterEach
