@@ -29,6 +29,8 @@ import edu.macalester.graphics.Point;
 @ExtendWith(RenderingTestHandler.class)
 @Test
 public @interface RenderingTest {
+    public static final String OS_NAME = System.getProperty("os.name").split(" ")[0].toLowerCase();
+
     /**
      * A @RenderingTest can render the graphics object with a variety of different options.
      * Rendering mdoes run in the order the annotation specifies them. Note that some of the modes
@@ -41,6 +43,8 @@ public @interface RenderingTest {
     int height() default 100;
 
     double tolerance() default 10;
+
+    boolean osSpecificImageComparison() default false;
 }
 
 class RenderingTestHandler implements AfterTestExecutionCallback {
@@ -48,6 +52,8 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
     public void afterTestExecution(ExtensionContext context) throws Exception {
         var suite = getGraphicsObjectTestSuite(context);
         RenderingTest renderingOptions = context.getRequiredTestMethod().getAnnotation(RenderingTest.class);
+        String osSuffix = renderingOptions.osSpecificImageComparison() ? "-" + RenderingTest.OS_NAME : "";
+
         for (var mode : renderingOptions.modes()) {
             Point imageSize = new Point(renderingOptions.width(), renderingOptions.height());
             var actualImage = new BufferedImage(
@@ -59,7 +65,7 @@ class RenderingTestHandler implements AfterTestExecutionCallback {
 
             new ImageComparison(
                 context.getRequiredTestClass().getSimpleName(),
-                context.getRequiredTestMethod().getName() + "-" + mode.name().toLowerCase(),
+                context.getRequiredTestMethod().getName() + "-" + mode.name().toLowerCase() + osSuffix,
                 actualImage,
                 renderingOptions.tolerance()
             ).compare();
