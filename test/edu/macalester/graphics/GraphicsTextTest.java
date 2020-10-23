@@ -11,8 +11,10 @@ import edu.macalester.graphics.testsupport.GraphicsObjectTestSuite;
 import edu.macalester.graphics.testsupport.RenderingTest;
 
 public class GraphicsTextTest implements GraphicsObjectTestSuite {
-    private GraphicsText text;
     private static final boolean IS_MAC = System.getProperty("os.name").toLowerCase().contains("mac os");
+    private static final String POEM = "In all living things\nThe cell is ubiquitous\rIts outsides are filmy\r\nIts innards are liquidous\n\n—Young PPC";
+
+    private GraphicsText text;
 
     @Override
     public GraphicsObject getGraphicsObject() {
@@ -90,5 +92,18 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         text1.setPosition(89, 93);
         assertFalse(text0.intersects(text1));
         assertFalse(text1.intersects(text0));
+    }
+
+    @RenderingTest(width = 240, height = 160)
+    void hardLineBreaks() {
+        text = new GraphicsText(POEM, 10, 20);
+        text.setFont("Verdana", FontStyle.BOLD, 16);
+    }
+
+    @RenderingTest(width = 240, height = 240)
+    void softLineBreaks() {
+        text = new GraphicsText(POEM, 10, 20);
+        text.setFont("Verdana", FontStyle.BOLD, 16);
+        text.setWrappingWidth(200);
     }
 }
