@@ -75,8 +75,18 @@ public class Image extends GraphicsObject {
         gc.setStroke(new BasicStroke(1));
         gc.drawLine(0, 0, width, height);
         gc.drawLine(0, width, height, 0);
+
         gc.setColor(Color.BLACK);
-        gc.setFont(new Font("Tahoma", Font.PLAIN, 9));
+        if (System.getProperty("os.name").toLowerCase().contains("mac os")) {
+            // Unantialiased fonts look awful on Big Sur, and Tahoma looks nasty when
+            // antialiased at small sizes, so we use a Mac-specific alternative
+            gc.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+            gc.setFont(new Font("Helvetica", Font.PLAIN, 9));
+        } else {
+            gc.setFont(new Font("Tahoma", Font.PLAIN, 9));
+        }
         gc.drawString(path, 4, height - 4);
         return image;
     }
