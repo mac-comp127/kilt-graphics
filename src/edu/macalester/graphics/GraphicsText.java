@@ -1,5 +1,6 @@
 package edu.macalester.graphics;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -31,15 +32,18 @@ import java.util.stream.Stream;
  *
  * @author Bret Jackson
  */
-public class GraphicsText extends GraphicsObject implements Fillable {
+public class GraphicsText extends GraphicsObject implements Fillable, Strokable {
     private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("\r\n|\r|\n");
 
     private String text;
     private Font font;
     private TextAlignment alignment = TextAlignment.LEFT;
     private double wrappingWidth = Double.POSITIVE_INFINITY;
-    private Paint textColor;
+    private Paint fillColor;
+    private Paint strokeColor;
     private boolean filled = true;
+    private boolean isStroked;
+    private BasicStroke stroke;
     private FontMetrics metrics;
 
     // These are both expensive to compute, so we compute them lazily.
@@ -54,7 +58,7 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     public GraphicsText(String text, double x, double y) {
         setPosition(x, y);
         this.text = text;
-        textColor = Color.BLACK;
+        fillColor = Color.BLACK;
         setFont(Font.SANS_SERIF, FontStyle.PLAIN, 14);
     }
 
@@ -77,9 +81,16 @@ public class GraphicsText extends GraphicsObject implements Fillable {
         Font curFont = gc.getFont();
         Paint curColor = gc.getPaint();
         gc.setFont(font);
-        gc.setPaint(textColor);
+        gc.setPaint(fillColor);
 
-        gc.fill(getTextShape());
+        if (isFilled()) {
+            gc.fill(getTextShape());
+        }
+        if (isStroked()) {
+            gc.setStroke(stroke);
+            gc.setPaint(strokeColor);
+            gc.draw(getTextShape());
+        }
 
         gc.setFont(curFont);
         gc.setPaint(curColor);
@@ -231,12 +242,12 @@ public class GraphicsText extends GraphicsObject implements Fillable {
 
     @Override
     public Paint getFillColor() {
-        return textColor;
+        return fillColor;
     }
 
     @Override
     public void setFillColor(Paint textColor) {
-        this.textColor = textColor;
+        this.fillColor = textColor;
         setFilled(true);
     }
 
@@ -249,6 +260,35 @@ public class GraphicsText extends GraphicsObject implements Fillable {
     public void setFilled(boolean filled) {
         this.filled = filled;
         changed();
+    }
+
+    @Override
+    public Paint getStrokeColor() {
+        return strokeColor;
+    }
+
+    @Override
+    public void setStrokeColor(Paint strokeColor) {
+        this.strokeColor = strokeColor;
+        setStroked(true);
+    }
+
+    public boolean isStroked() {
+        return isStroked;
+    }
+
+    public void setStroked(boolean stroked) {
+        isStroked = stroked;
+        changed();
+    }
+
+    public double getStrokeWidth() {
+        return stroke.getLineWidth();
+    }
+
+    public void setStrokeWidth(double width) {
+        stroke = new BasicStroke((float) width);
+        setStroked(true);
     }
 
     @Override

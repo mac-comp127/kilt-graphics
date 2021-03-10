@@ -29,6 +29,15 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
         );
     }
 
+    @RenderingTest(modes = { FILLED, STROKED, FILLED_AND_STROKED, HIT_TEST }, tolerance = 170)
+    void big() {
+        text = new GraphicsText("π");
+        assertChangedAtEachStep(
+            () -> text.setFont("Times New Roman", FontStyle.PLAIN, 120),
+            () -> text.setCenter(50, 50)
+        );
+    }
+
     @RenderingTest(modes = { PLAIN }, tolerance = 120)
     void styled() {
         text = new GraphicsText("zonk");

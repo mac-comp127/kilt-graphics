@@ -64,7 +64,7 @@ public class ImageTest implements GraphicsObjectTestSuite {
         assertEquals(Point.ORIGIN, image.getSize());
     }
 
-    @RenderingTest
+    @RenderingTest(osSpecificImageComparison = true)
     void missing() {
         image = new Image(20, 20, "frotzle.png");
     }
