@@ -17,14 +17,14 @@ import javax.swing.JComponent;
  * @author Bret Jackson
  */
 public abstract class GraphicsObject {
-    private List<GraphicsObserver> observers = new ArrayList<GraphicsObserver>();
+    private final List<GraphicsObserver> observers = new ArrayList<>();
     private CanvasWindow canvas;
 
     private Point position = Point.ORIGIN;
     private double rotation = 0;
     private Point scale = Point.ONE_ONE;
     private Point anchor;
-    private AffineTransform transform = new AffineTransform(), inverseTransform = new AffineTransform();
+    private final AffineTransform transform = new AffineTransform(), inverseTransform = new AffineTransform();
 
     final void draw(Graphics2D gc) {
         AffineTransform oldTransform = gc.getTransform();
@@ -68,7 +68,7 @@ public abstract class GraphicsObject {
 
     /**
      * Returns the object's current horizontal position.
-     * @see getPosition()
+     * @see #getPosition()
      */
     public final double getX() {
         return getPosition().getX();
@@ -83,7 +83,7 @@ public abstract class GraphicsObject {
 
     /**
      * Returns the object's current vertical position.
-     * @see getPosition()
+     * @see #getPosition()
      */
     public final double getY() {
         return getPosition().getY();
@@ -142,7 +142,7 @@ public abstract class GraphicsObject {
 
     /**
      * This graphic object’s visual rotation in degrees from its neutral position.
-     * See {@link setRotation(double) setRotation()} for details.
+     * See {@link #setRotation(double) setRotation()} for details.
      */
     public final double getRotation() {
         return rotation;
@@ -156,12 +156,12 @@ public abstract class GraphicsObject {
      * parameters or child coordinates are within the rotated frame of reference.
      * <p>
      * By default, the object rotates around its center, but you can change this;
-     * see {@link setAnchor(Point) setAnchor()}.
+     * see {@link #setAnchor(Point) setAnchor()}.
      * <p>
      * This is an absolute rotation within the coordinate system of this object's parent. If you
      * want to adjust object’s rotation relative to its current value, use rotateBy().
      *
-     * @see setAnchor(Point)
+     * @see #setAnchor(Point)
      */
     public final void setRotation(double rotation) {
         this.rotation = rotation;
@@ -172,7 +172,7 @@ public abstract class GraphicsObject {
      * Rotates the object around its anchor point by the given number of degrees. Positive is
      * clockwise.
      *
-     * @see setRotation(double)
+     * @see #setRotation(double)
      */    
     public final void rotateBy(double angle) {
         setRotation(getRotation() + angle);
@@ -180,7 +180,7 @@ public abstract class GraphicsObject {
 
     /**
      * Returns the horizontal scaling factor for this graphics object.
-     * @see setScale(double,double)
+     * @see #setScale(double,double)
      */
     public final double getScaleX() {
         return scale.getX();
@@ -188,7 +188,7 @@ public abstract class GraphicsObject {
     
     /**
      * Returns the vertical scaling factor for this graphics object.
-     * @see setScale(double,double)
+     * @see #setScale(double,double)
      */
     public final double getScaleY() {
         return scale.getY();
@@ -196,7 +196,7 @@ public abstract class GraphicsObject {
 
     /**
      * Returns the scaling factor for this graphics object.
-     * @see setScale(double,double)
+     * @see #setScale(double,double)
      */
     public final Point getScale() {
         return scale;
@@ -204,7 +204,7 @@ public abstract class GraphicsObject {
 
     /**
      * Changes this graphics object's scaling factor.
-     * @see setScale(double,double)
+     * @see #setScale(double,double)
      */
     public final void setScale(Point scale) {
         setScale(scale.getX(), scale.getY());
@@ -218,7 +218,7 @@ public abstract class GraphicsObject {
      * parameters, stroke sizes, child coordinates, etc. are within the scaled frame of reference.
      * <p>
      * By default, the object scales around its center, but you can change this;
-     * see {@link setAnchor(Point) setAnchor()}.
+     * see {@link #setAnchor(Point) setAnchor()}.
      * <p>
      * Scaling always happens <i>before</i> rotation, so for example if you take a circle, call
      * {@code setRotation(45)}, then call {@code setScale(1, 0.1)}, you will see a narrow ellipse
@@ -226,7 +226,7 @@ public abstract class GraphicsObject {
      *
      * @param scaleX The horizontal scale factor. 1 = original size.
      * @param scaleY The vertical scale factor. 1 = original size.
-     * @see setAnchor(Point)
+     * @see #setAnchor(Point)
      */
     public final void setScale(double scaleX, double scaleY) {
         this.scale = new Point(scaleX, scaleY);
@@ -236,7 +236,7 @@ public abstract class GraphicsObject {
     /**
      * Scales this object uniformly, setting both the horizontal and vertical scaling factor to the
      * given value.
-     * @see setScale(double,double)
+     * @see #setScale(double,double)
      */
     public final void setScale(double scale) {
         setScale(scale, scale);
@@ -244,7 +244,7 @@ public abstract class GraphicsObject {
 
     /**
      * The point relative to which scaling and rotation occur.
-     * See {@link setAnchor(Point)} for details.
+     * See {@link #setAnchor(Point)} for details.
      */
     public Point getAnchor() {
         return anchor;
@@ -263,8 +263,8 @@ public abstract class GraphicsObject {
      * To set the anchor back to the default, call {@code setAnchor(null)}.
      *
      * @param anchor The new anchor point, or null to follow the object’s center.
-     * @see setRotation(double)
-     * @see setScale(double,double)
+     * @see #setRotation(double)
+     * @see #setScale(double,double)
      */
     public void setAnchor(Point anchor) {
         this.anchor = anchor;
@@ -273,7 +273,7 @@ public abstract class GraphicsObject {
 
     /**
      * Fixes scaling and rotation around the given coordinate.
-     * @see setAnchor(Point)
+     * @see #setAnchor(Point)
      */
     public void setAnchor(double x, double y) {
         setAnchor(new Point(x, y));
@@ -358,7 +358,7 @@ public abstract class GraphicsObject {
     /**
      * Returns the topmost graphical object that touches the given position in this object’s
      * coordinate space.
-     * @see getElementAt(double,double)
+     * @see #getElementAt(double,double)
      */
     public GraphicsObject getElementAtLocalCoordinates(double x, double y) {
         if (testHitInLocalCoordinates(x, y)) {
