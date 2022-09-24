@@ -54,7 +54,7 @@ If you get a CI test failure:
 
 1. Change the line near the end of the README that references the current version number:
 
-        implementation group: 'com.github.mac-comp127', name: 'kilt-graphics', version: '🦄.🐉.🦋'  // ← add this
+        implementation group: 'com.github.mac-comp127', name: 'kilt-graphics', version: '🦄.🐉.🦋'  // ← update this
 
 1. Prepare the docs:
 

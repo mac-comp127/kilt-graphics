@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"edu.macalester.graphics"},{"l":"edu.macalester.graphics.events"},{"l":"edu.macalester.graphics.ui"}]
+packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"edu.macalester.graphics"},{"l":"edu.macalester.graphics.events"},{"l":"edu.macalester.graphics.ui"}];updateSearchResults();
