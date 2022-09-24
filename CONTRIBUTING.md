@@ -70,7 +70,7 @@ If you get a CI test failure:
 
         git push && git push --tags
 
-1. Wait for the new release’s [CI job](https://github.com/mac-comp127/kilt-graphics/actions) to finish (~4 min), and double-check that is succeeded.
+1. Wait for the new release’s [CI job](https://github.com/mac-comp127/kilt-graphics/actions) to finish (~4 min), and double-check that it succeeded.
 1. Look for your new release [in JitPack](https://jitpack.io/#mac-comp127/kilt-graphics/), and wait for it to build. (Look for the status icon in the “Log” column.) Make sure the build finishes successfully. Note: JitPack **will not rebuild** an existing version number under any circumstances. If something goes wrong with the JitPack build, you will need to cut a release with a new patch number.
 1. Select your new release on the [project’s tags page](https://github.com/mac-comp127/kilt-graphics/tags) and add release notes by clicking the larger three-dot icon in the far right of your tag’s row (not the smaller three-dot icon right next to the release (mystery meat UI = 😠)) and selecting **Create release**.
 1. Specify your new version number in a client project’s dependencies — either your own project or the [127 welcome app](https://github.com/mac-comp127/welcome-app/) — and try your new changes!
