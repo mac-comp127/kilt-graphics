@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import static java.lang.Double.NaN;
 import static java.lang.Math.PI;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class PointTest {
@@ -78,6 +79,17 @@ public class PointTest {
         assertEquals(new Point(-2, 2), Point.min(q, p));
         assertEquals(new Point(1, 3), Point.max(p, q));
         assertEquals(new Point(1, 3), Point.max(q, p));
+    }
+
+    @Test
+    void wrapAround() {
+        Point p = new Point(5, 3);
+        Point q = new Point(-17, -8);
+        assertEquals(p, p.wrapAround(new Point(6, 4)));
+        assertEquals(Point.ORIGIN, p.wrapAround(p));
+        assertEquals(new Point(3, 1), q.wrapAround(p));
+        assertEquals(new Point(0, 2), new Point(1000, 2000).wrapAround(p));
+        assertEquals(new Point(-12, -2), new Point(1000, 2000).wrapAround(q, p));
     }
 
     @Test

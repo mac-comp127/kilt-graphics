@@ -158,6 +158,43 @@ public final class Point {
     }
 
     /**
+     * Makes the coordinates of the input point “wrap around” as if moving in a toroidal space
+     * extending from 0 to maxBounds.x, and from 0 to maxBounds.y: coordinates that go off one edge
+     * move to the other edge.
+     * 
+     * Unlike Java’s raw modular arithmetic, this method handles negative values as expected.
+     * 
+     * @param maxBounds The maximum x and y coordinates
+     * @return A new Point whose coordinates are each greater than or equal to zero, and less than
+     *         the coordinates of maxBounds
+     */
+    public Point wrapAround(Point maxBounds) {
+        return wrapAround(Point.ORIGIN, maxBounds);
+    }
+
+    /**
+     * Makes the coordinates of the input point “wrap around” as if moving in a toroidal space:
+     * coordinates that go off one side move to the other side.
+     * 
+     * Unlike Java’s raw modular arithmetic, this method handles negative values as expected.
+     * 
+     * @param minBounds The minimum x and y coordinates
+     * @param maxBounds The maximum x and y coordinates
+     * @return A new Point whose coordinates are each greater than or equal to the coordinates of
+     *         minBounds, and less than the coordinates of maxBounds
+     */
+    public Point wrapAround(Point minBounds, Point maxBounds) {
+        return new Point(
+            wrapAround(x, minBounds.x, maxBounds.x),
+            wrapAround(y, minBounds.y, maxBounds.y));
+    }
+
+    private static double wrapAround(double x, double x0, double x1) {
+        double range = x1 - x0;
+        return ((x - x0) % range + range) % range + x0;
+    }
+
+    /**
      * Returns the point rotated around the origin by the given angle in radians.
      */
     public Point rotate(double angle) {
