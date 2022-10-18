@@ -125,7 +125,7 @@ public class CanvasWindowTest {
     public static void main(String[] args) throws Exception {
         var rand = new Random();
         for (int n = 1; n < 200; n++) {
-            new CanvasWindow("Window " + n, rand.nextInt(200, 1000), rand.nextInt(100, 800));
+            new CanvasWindow("Window " + n, 200 + rand.nextInt(1000), 100 + rand.nextInt(800));
             Thread.sleep(100);
         }
     }
