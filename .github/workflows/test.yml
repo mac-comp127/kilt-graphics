@@ -17,10 +17,10 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set up JDK
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ matrix.java-version }}
           distribution: ${{ matrix.java-distro }}
@@ -37,7 +37,7 @@ jobs:
 
       - name: Upload image comparisons (on failure only)
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: imageComparisons
           path: test/imageComparisons/
