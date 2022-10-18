@@ -7,6 +7,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.RenderingHints;
+import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.FocusAdapter;
@@ -70,6 +71,8 @@ public class CanvasWindow {
     // when deferring tasks for _all_ CanvasWindows.
     private static final ThreadExitWatcher mainThreadWatcher = new ThreadExitWatcher();
 
+    private static int topmostWindowY = 0, nextWindowX = 0, nextWindowY = 0, windowSpacing = 30;
+
     private final Canvas canvas;
     private final JFrame windowFrame;
     private final GraphicsGroup content = new GraphicsGroup();
@@ -110,11 +113,16 @@ public class CanvasWindow {
         canvas.setBackground(Color.WHITE);
         canvas.setFocusable(true);  // enables key events
 
+        wrapNextWindowPositionIfNeeded(windowHeight);
+
         windowFrame = new JFrame(title);
-        windowFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        windowFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        windowFrame.setLocation(nextWindowX, nextWindowY);
         windowFrame.getContentPane().add(canvas);
         windowFrame.pack();
         windowFrame.setVisible(true);
+
+        updateNextWindowPosition();
 
         setUpMousePositionTracking();
         setUpKeyTracking();
@@ -144,6 +152,26 @@ public class CanvasWindow {
                 startRefreshTimer()
             );
         });
+    }
+
+    private static void wrapNextWindowPositionIfNeeded(int windowHeight) {
+        // If numerous windows are going off the bottom of the screen, pull back to the top and
+        // nudge over to the right a bit
+        var screenHeight = Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+        if (nextWindowY + windowHeight >= screenHeight && nextWindowY > screenHeight / 3) {
+            nextWindowX = (nextWindowX - nextWindowY + topmostWindowY) + windowSpacing;
+            nextWindowY = topmostWindowY;
+        }
+    }
+
+    private void updateNextWindowPosition() {
+        // Remember where topmost window actually ended up for proper spacing later on
+        windowSpacing = windowFrame.getInsets().top;
+        if (nextWindowY == topmostWindowY) {
+            topmostWindowY = (int) windowFrame.getY() + windowSpacing;
+        }
+        nextWindowX = windowFrame.getX() + windowSpacing;
+        nextWindowY = windowFrame.getY() + windowSpacing * 2;  // height of title bar + spacing for next = 2 * windowSpacing
     }
 
     /**

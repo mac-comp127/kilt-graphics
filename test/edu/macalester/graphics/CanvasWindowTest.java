@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
@@ -117,5 +118,15 @@ public class CanvasWindowTest {
             canvas.screenShot(),
             100
         ).compare();
+    }
+
+    // For testing window spacing and close behavior, which
+    // involves process exit and thus can't be unit tested
+    public static void main(String[] args) throws Exception {
+        var rand = new Random();
+        for (int n = 1; n < 200; n++) {
+            new CanvasWindow("Window " + n, rand.nextInt(200, 1000), rand.nextInt(100, 800));
+            Thread.sleep(100);
+        }
     }
 }
