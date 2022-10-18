@@ -97,16 +97,16 @@ public class CanvasWindowTest {
 
         assertAll(
             () -> {
-                compareScreenShot("added-" + RenderingTest.OS_NAME);
+                compareScreenShot("added-" + RenderingTest.OS_NAME_VERBOSE);
             },
             () -> {
                 ellipse.moveBy(0, -10);
                 field.moveBy(10, 0);
-                compareScreenShot("moved-" + RenderingTest.OS_NAME);
+                compareScreenShot("moved-" + RenderingTest.OS_NAME_VERBOSE);
             },
             () -> {
                 canvas.remove(field);
-                compareScreenShot("removed-" + RenderingTest.OS_NAME);
+                compareScreenShot("removed-" + RenderingTest.OS_NAME_VERBOSE);
             }
         );
     }
