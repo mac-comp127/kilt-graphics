@@ -22,7 +22,7 @@ public class LineTest implements GraphicsObjectTestSuite {
 
     @RenderingTest(modes = { STROKED, HIT_TEST })
     void diagonal() {
-        line = new Line(1, 2, 3, 4);
+        line = new Line(new Point(1, 2), new Point(3, 4));
         assertChangedAtEachStep(
             () -> line.setStartPosition(new Point(40, 32)),
             () -> line.setEndPosition(new Point(60, 20)),

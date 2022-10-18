@@ -43,6 +43,14 @@ public class Line extends GraphicsObject implements Strokable {
         stroke = new BasicStroke(1.0f);
     }
 
+    /**
+     * Creates a line starting at point1 and ending at point2.
+     * The line has a 1 pixel black stroke outline by default.
+     */
+    public Line(Point point1, Point point2) {
+        this(point1.getX(), point1.getY(), point2.getX(), point2.getY());
+    }
+
     @Override
     protected void drawInLocalCoordinates(Graphics2D gc) {
         if (isStroked) {
