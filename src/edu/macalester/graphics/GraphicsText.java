@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Paint;
 import java.awt.Shape;
 import java.awt.font.LineBreakMeasurer;
@@ -15,10 +16,14 @@ import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -191,12 +196,39 @@ public class GraphicsText extends GraphicsObject implements Fillable, Strokable 
     /**
      * Changes the font in which the text is rendered.
      *
-     * @param fontFamily A font family name, such as "Helvetica"
+     * @param fontFamilies A comma-separated list of font family names, in order of preference,
+     *                     e.g. "Helvetica Neue, Helvetica, Arial"
      */
-    public void setFont(String fontFamily, FontStyle style, double size) {
+    public void setFont(String fontFamilies, FontStyle style, double size) {
         // noinspection MagicConstant
-        this.font = new Font(fontFamily, style.getAwtCode(), 0).deriveFont((float) size);
+        this.font =
+            new Font(
+                resolveFontFamily(fontFamilies),
+                style.getAwtCode(),
+                0)
+            .deriveFont((float) size);
         textShapeChanged();
+    }
+
+    private static final Set<String> AVAILABLE_FONT_FAMILIES =
+        new TreeSet<>(
+            Arrays
+                .stream(GraphicsEnvironment.getLocalGraphicsEnvironment()
+                    .getAvailableFontFamilyNames())
+                .map(String::toLowerCase)
+                .toList());
+
+    private String resolveFontFamily(String fontFamilies) {
+        for (var familyName : fontFamilies.split("\\s*,\\s*")) {
+            familyName = familyName.toLowerCase();
+            if (AVAILABLE_FONT_FAMILIES.contains(familyName)) {
+                return familyName;
+            }
+        }
+        System.err.println(
+            "WARNING: Cannot find any font families matching \"" + fontFamilies
+            + "\"; available font families are: " + AVAILABLE_FONT_FAMILIES);
+        return null;
     }
 
     /**

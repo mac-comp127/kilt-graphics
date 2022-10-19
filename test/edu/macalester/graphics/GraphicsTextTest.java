@@ -33,7 +33,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
     void big() {
         text = new GraphicsText("π");
         assertChangedAtEachStep(
-            () -> text.setFont("Times New Roman", FontStyle.PLAIN, 120),
+            () -> text.setFont("fragbar, Times New Roman", FontStyle.PLAIN, 120),
             () -> text.setCenter(50, 50)
         );
     }
@@ -42,7 +42,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
     void styled() {
         text = new GraphicsText("zonk");
         assertChangedAtEachStep(
-            () -> text.setFont("Arial", FontStyle.ITALIC, 16),
+            () -> text.setFont("Arial, Georgia", FontStyle.ITALIC, 16),
             () -> text.setCenter(30, 40),
             () -> text.setFontSize(32),
             () -> text.setFontStyle(FontStyle.BOLD)
@@ -67,7 +67,7 @@ public class GraphicsTextTest implements GraphicsObjectTestSuite {
     void unicode() {
         text = new GraphicsText("Φ̟̽");
         assertChangedAtEachStep(
-            () -> text.setFont("Tahoma", FontStyle.PLAIN, 32),
+            () -> text.setFont(",,,,Tahoma,,,", FontStyle.PLAIN, 32),
             () -> text.setPosition(10, 60)
         );
         assertEquals("\u03a6\u033d\u031f", text.getText());
