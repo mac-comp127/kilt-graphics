@@ -97,16 +97,16 @@ public class CanvasWindowTest {
 
         assertAll(
             () -> {
-                compareScreenShot("added-" + RenderingTest.OS_NAME);
+                compareScreenShot("added-" + RenderingTest.OS_NAME_VERBOSE);
             },
             () -> {
                 ellipse.moveBy(0, -10);
                 field.moveBy(10, 0);
-                compareScreenShot("moved-" + RenderingTest.OS_NAME);
+                compareScreenShot("moved-" + RenderingTest.OS_NAME_VERBOSE);
             },
             () -> {
                 canvas.remove(field);
-                compareScreenShot("removed-" + RenderingTest.OS_NAME);
+                compareScreenShot("removed-" + RenderingTest.OS_NAME_VERBOSE);
             }
         );
     }
@@ -125,7 +125,7 @@ public class CanvasWindowTest {
     public static void main(String[] args) throws Exception {
         var rand = new Random();
         for (int n = 1; n < 200; n++) {
-            new CanvasWindow("Window " + n, rand.nextInt(200, 1000), rand.nextInt(100, 800));
+            new CanvasWindow("Window " + n, 200 + rand.nextInt(1000), 100 + rand.nextInt(800));
             Thread.sleep(100);
         }
     }
