@@ -16,6 +16,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -37,6 +38,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import edu.macalester.graphics.events.Key;
 import edu.macalester.graphics.events.KeyboardEvent;
@@ -71,6 +73,7 @@ public class CanvasWindow {
     // when deferring tasks for _all_ CanvasWindows.
     private static final ThreadExitWatcher mainThreadWatcher = new ThreadExitWatcher();
 
+    private static int openWindowCount = 0, totalWindowCount = 0;  // for closing app when all windows closed
     private static int topmostWindowY = 0, nextWindowX = 0, nextWindowY = 0, windowSpacing = 30;
 
     private final Canvas canvas;
@@ -122,6 +125,8 @@ public class CanvasWindow {
         windowFrame.pack();
         windowFrame.setVisible(true);
 
+        handleOpenWindowCounting();
+
         updateNextWindowPosition();
 
         setUpMousePositionTracking();
@@ -152,6 +157,34 @@ public class CanvasWindow {
                 startRefreshTimer()
             );
         });
+    }
+
+    private void handleOpenWindowCounting() {
+        SwingUtilities.invokeLater(() -> {
+            openWindowCount++;
+            totalWindowCount++;
+        });
+        windowFrame.addWindowListener(
+            new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent windowEvent) {
+                    openWindowCount--;
+                    if (openWindowCount == 0) {
+                        // No windows left, but give app a moment to see if it opens any new ones.
+                        var totalWhenWeReachedZero = totalWindowCount;
+                        var timer = new Timer(200, timerEvent -> {
+                            // OK, we waited. Anything new opened?
+                            if (totalWindowCount == totalWhenWeReachedZero) {
+                                System.out.println("All CanvasWindows closed; exiting");
+                                System.exit(0);
+                            }
+                        });
+                        timer.setRepeats(false);
+                        timer.start();
+                    }
+                }
+            }
+        );
     }
 
     private static void wrapNextWindowPositionIfNeeded(int windowHeight) {
