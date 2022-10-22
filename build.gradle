@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'jacoco'
     id 'maven-publish'
 }
 
@@ -55,7 +54,18 @@ java {
     withJavadocJar()
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+        }
+    }
 }
