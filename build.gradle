@@ -8,6 +8,12 @@ group 'com.github.mac-comp127'
 
 // External dependencies
 
+java {
+  toolchain {
+    languageVersion.set(JavaLanguageVersion.of(17))
+  }
+}
+
 repositories {
     mavenCentral()
 }
@@ -15,9 +21,6 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.+'
 }
-
-sourceCompatibility = 1.16
-targetCompatibility = 1.16
 
 compileJava.options.encoding = "UTF-8"
 compileTestJava.options.encoding = "UTF-8"
