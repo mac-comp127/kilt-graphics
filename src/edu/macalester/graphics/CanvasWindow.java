@@ -157,6 +157,12 @@ public class CanvasWindow {
                 startRefreshTimer()
             );
         });
+
+        // Clarify how to exit, in case app was invoked from the command line
+        mainThreadWatcher.afterThreadExits(() -> {
+            System.out.println();
+            System.out.println("To exit, close all CanvasWindows or press ctrl-C");
+        });
     }
 
     private void handleOpenWindowCounting() {
@@ -714,7 +720,6 @@ public class CanvasWindow {
             return;
         }
 
-        System.out.println("Starting CanvasWindow refresh timer");
         animationTimer = new AnimationTimer(TARGET_ANIMATION_RATE, dt -> {
             try {
                 SwingUtilities.invokeAndWait(() -> {  // waiting matters: AnimationTimer compensates for actual time taken
