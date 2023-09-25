@@ -41,7 +41,8 @@ public class Arc extends GraphicsObject implements Strokable {
      *                   create a 1/2 ellipse
      */
     public Arc(double x, double y, double width, double height, double startAngle, double sweepAngle) {
-        shape = new Arc2D.Double(x, y, width, height, startAngle, sweepAngle, Arc2D.OPEN);
+        shape = new Arc2D.Double(0, 0, width, height, startAngle, sweepAngle, Arc2D.OPEN);
+        setPosition(x, y);
         strokeColor = Color.black;
         stroke = new BasicStroke(1.0f);
     }
