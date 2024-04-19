@@ -5,6 +5,12 @@ import edu.macalester.graphics.testsupport.RenderingTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+
+import javax.imageio.ImageIO;
+
 public class ImageTest implements GraphicsObjectTestSuite {
     public static final String FOXFLOWER_IMAGE = "res/foxflower.png";
     public static final String FOXBOT_IMAGE = "res/foxbot.png";
@@ -56,6 +62,20 @@ public class ImageTest implements GraphicsObjectTestSuite {
     void pixelAlignment() {
         image = new Image(FOXBOT_IMAGE);
         image.setPosition(-1.2, -50.8);
+    }
+
+    @RenderingTest
+    void loadedFromBufferedImage() {
+        try{
+            InputStream resource = Image.class.getResourceAsStream("/" + FOXBOT_IMAGE);
+            if (resource == null) {
+                throw new IOException("No resource named /" + FOXBOT_IMAGE);
+            }
+            BufferedImage bufImg = ImageIO.read(resource);
+            image = new Image(bufImg);
+        } catch (IOException e) {
+            image = new Image(20, 20, "skirl.png");
+        }
     }
 
     @RenderingTest
