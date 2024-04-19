@@ -119,6 +119,31 @@ public class Image extends GraphicsObject {
         setImagePath(path);
     }
 
+    /**
+     * Creates a bitmap image from the given BufferedImage, positioned at (0, 0).
+     * Note that changing the BufferedImage externally does not automatically 
+     * force it to redraw. You will need to call {@link CanvasWindow#draw()}
+     * to see the changes.
+     * 
+     * @param image
+     */
+    public Image(BufferedImage image){
+        this(0, 0, image);
+    }
+
+    /**
+     * Creates a bitmap image from the given BufferedImage. Note that changing
+     * the BufferedImage externally does not automatically force it to redraw.
+     * You will need to call {@link CanvasWindow#draw()} to see the changes.
+     * 
+     * @param image
+     */
+    public Image(double x, double y, BufferedImage image){
+        setPosition(x, y);
+        this.path = "In memory BufferedImage@"+Integer.toHexString(image.hashCode());
+        this.img = image;
+    }
+
 	/**
      * Changes the image displayed by this graphics element.
      *
