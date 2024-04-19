@@ -29,7 +29,7 @@ Then add `kilt-graphics` to your `dependencies`:
 ```gradle
 dependencies {
     ...
-    implementation group: 'com.github.mac-comp127', name: 'kilt-graphics', version: '1.6'  // ← add this
+    implementation group: 'com.github.mac-comp127', name: 'kilt-graphics', version: '1.7'  // ← add this
     ...
 }
 ```
