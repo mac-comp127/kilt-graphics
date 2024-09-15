@@ -13,6 +13,13 @@ jobs:
         os: [macos-latest, windows-latest]
         java-version: [17, 21, 22]
         java-distro: [temurin, zulu]
+        # Gradle fails to detect JDK on GitHub CI on Windows when code asks for 17 and 21+ is
+        # installed. Revisit this when we bump the whole library from 17 to 21.
+        exclude:
+          - os: windows-latest
+            java-version: 21
+          - os: windows-latest
+            java-version: 22
 
     runs-on: ${{ matrix.os }}
 
