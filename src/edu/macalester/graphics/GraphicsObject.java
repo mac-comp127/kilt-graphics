@@ -1,9 +1,11 @@
 package edu.macalester.graphics;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -38,6 +40,18 @@ public abstract class GraphicsObject {
      * without rotation or scaling.
      */
     protected abstract void drawInLocalCoordinates(Graphics2D gc);
+
+    /**
+     * Renders this graphics object to an offscreen pixel buffer.
+     * @param image The destination buffer.
+     */
+    public void renderToBuffer(BufferedImage image) {
+        var gc = image.createGraphics();
+        gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        gc.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        gc.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        draw(gc);
+    }
 
     /**
      * Gets the position of the object on the canvas. The “position” is typically the upper left,
