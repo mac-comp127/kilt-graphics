@@ -137,27 +137,12 @@ public enum RenderingTestMode {
     public abstract void render(BufferedImage image, GraphicsObject gobj);
 
     private static void renderWithBounds(BufferedImage image, GraphicsObject gobj) {
-        var gc = image.createGraphics();
-        gc.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        gc.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        gc.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-
-        // This messy reflection code is secretly just `gobj.draw(gc)`. We could make
-        // GraphicsObject.draw() a public method, but it would confuse students by showing up in
-        // autocomplete. We could move this class into the same package as GraphicsObject, but
-        // that makes the tests harder to navigate. The mess thus lives here.
-        try {
-            var drawMethod = GraphicsObject.class.getDeclaredMethod("draw", new Class[] { Graphics2D.class });
-            drawMethod.setAccessible(true);
-            drawMethod.invoke(gobj, gc);
-        } catch (Exception e) {
-            throw new RuntimeException("Unable to draw " + gobj, e);
-        }
-        visualizeBounds(gc, gobj);
+        gobj.renderToBuffer(image);
+        visualizeBounds(image, gobj);
     }
 
     /// Draws printer-style crop marks around the bounding box of the graphics object.
-    private static void visualizeBounds(Graphics2D g, GraphicsObject gobj) {
+    private static void visualizeBounds(BufferedImage image, GraphicsObject gobj) {
         var bounds = gobj.getBoundsInParent();
         var cropMarks = new Path2D.Double(GeneralPath.WIND_EVEN_ODD);
         for(int side = 0; side < 2; side++) {
@@ -172,6 +157,9 @@ public enum RenderingTestMode {
                 cropMarks.lineTo(x, y + (side * 2 - 1) * 4);
             }
         }
+
+        var g = image.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.setStroke(new BasicStroke(0.5f));
         g.setPaint(new Color(0, 0, 0, 128));
         g.draw(cropMarks);
