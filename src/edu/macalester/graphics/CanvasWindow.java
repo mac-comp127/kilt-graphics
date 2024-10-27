@@ -78,7 +78,7 @@ public class CanvasWindow {
 
     private final Canvas canvas;
     private final JFrame windowFrame;
-    private final GraphicsGroup content = new GraphicsGroup();
+    private final GraphicsGroup content;
     private Set<JComponent> embeddedComponents = Set.of();
     private final Rectangle background;
 
@@ -101,7 +101,12 @@ public class CanvasWindow {
      * @param windowHeight The height of the window's content area
      */
     public CanvasWindow(String title, int windowWidth, int windowHeight) {
-        content.setCanvas(this);  // propagates to descendants
+        content = new GraphicsGroup() {
+            @Override
+            public CanvasWindow getCanvas() {
+                return CanvasWindow.this;
+            }
+        };
 
         // We use a Rectangle for the background because canvas.setBackground() triggers spurious
         // repaints, whereas this approach puts background color changes into the same paint cycle

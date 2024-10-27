@@ -20,7 +20,7 @@ import javax.swing.JComponent;
  */
 public abstract class GraphicsObject {
     private final List<GraphicsObserver> observers = new ArrayList<>();
-    private CanvasWindow canvas;
+    private GraphicsGroup parent;
 
     private Point position = Point.ORIGIN;
     private double rotation = 0;
@@ -459,17 +459,26 @@ public abstract class GraphicsObject {
     }
 
     /**
-     * Returns the window that this Object is inside, or null if it does not belong to a window.
+     * Returns the group that contains this graphics object, or null if it does not belong to a group.
      */
-    public final CanvasWindow getCanvas() {
-        return canvas;
+    public GraphicsGroup getParent() {
+        return parent;
     }
 
-    void setCanvas(CanvasWindow canvas) {
-        if (canvas != this.canvas && canvas != null && this.canvas != null) {
-            throw new IllegalStateException("Trying to add graphics object to two different windows");
+    /**
+     * Returns the window that this Object is inside, or null if it does not belong to a window.
+     */
+    public CanvasWindow getCanvas() {
+        return (parent == null) ? null : parent.getCanvas();
+    }
+
+    void setParent(GraphicsGroup parent) {
+        if (parent != this.parent && parent != null && this.parent != null) {
+            throw new IllegalStateException(
+                "Cannot add " + this.getClass().getSimpleName() + " to group,"
+                + " because it already belongs to a different group");
         }
-        this.canvas = canvas;
+        this.parent = parent;
     }
 
     /**

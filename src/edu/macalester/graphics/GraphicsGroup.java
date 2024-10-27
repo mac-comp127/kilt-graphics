@@ -13,7 +13,7 @@ import java.util.function.BiConsumer;
  * The group defines its own coordinate system, so the positions of objects added to it are relative
  * to the whole group's position.
  * <p>
- * Calling {@link setPosition(Point)} on a GraphicsGroup sets where the group’s local (0,0) shows up
+ * Calling {@link #setPosition(Point)} on a GraphicsGroup sets where the group’s local (0,0) shows up
  * within its parent. This means that a group’s position is not necessarily the upper left, the
  * center, or any other fixed relationship with the shapes inside the group. Instead, you determine
  * how the group’s graphics relate to the whole group’s position when you set the position of each
@@ -61,7 +61,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
     public void add(GraphicsObject gObject) {
         gObject.addObserver(this);
         children.add(gObject);
-        gObject.setCanvas(getCanvas());
+        gObject.setParent(this);
         changed();
     }
 
@@ -85,7 +85,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
      */
     public void remove(GraphicsObject gObject) {
         gObject.removeObserver(this);
-        gObject.setCanvas(null);
+        gObject.setParent(null);
         if (!children.removeIf(child -> child == gObject)) {
             throw new NoSuchElementException("The object to remove is not part of this graphics group. Either it is already removed, or it was never originally added.");
         }
@@ -100,7 +100,7 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         while (it.hasNext()) {
             GraphicsObject obj = it.next();
             obj.removeObserver(this);
-            obj.setCanvas(null);
+            obj.setParent(null);
             it.remove();
         }
         changed();
@@ -187,14 +187,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         Point groupOrigin = origin.add(getPosition());
         for (GraphicsObject child : children) {
             child.forEachDescendant(groupOrigin, callback);
-        }
-    }
-
-    @Override
-    void setCanvas(CanvasWindow canvas) {
-        super.setCanvas(canvas);
-        for (GraphicsObject child : children) {
-            child.setCanvas(canvas);
         }
     }
 
