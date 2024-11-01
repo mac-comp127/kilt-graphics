@@ -119,6 +119,10 @@ public class Image extends GraphicsObject {
         setImagePath(path);
     }
 
+    public Image(int width, int height, float[] pixels, PixelFormat format) {
+        this(format.makeBufferedImage(pixels, width, height));
+    }
+
     /**
      * Creates a bitmap image from the given BufferedImage, positioned at (0, 0).
      * Note that changing the BufferedImage externally does not automatically 
@@ -244,5 +248,48 @@ public class Image extends GraphicsObject {
     @Override
     public String toString() {
         return "Image at position " + getPosition() + " with file " + path;
+    }
+
+    public enum PixelFormat {
+        GRAYSCALE(BufferedImage.TYPE_BYTE_GRAY, 1, 3),
+        RGB(BufferedImage.TYPE_INT_RGB, 3, 3),
+        ARGB(BufferedImage.TYPE_INT_ARGB, 4, 4);
+
+        private final int bufferedImageType;
+        private final int inChannels, outChannels;
+
+        PixelFormat(int bufferedImageType, int inChannels, int outChannels) {
+            this.bufferedImageType = bufferedImageType;
+            this.inChannels = inChannels;
+            this.outChannels = outChannels;
+        }
+
+        public BufferedImage makeBufferedImage(float[] pixels, int width, int height) {
+            int expectedArrayLen = width * height * inChannels;
+            if (pixels.length != expectedArrayLen) {
+                throw new IllegalArgumentException(
+                    "Invalid input array length for " + this.name() + ": expected "
+                    + width + " w * " + height + " h * " + inChannels + " channels = "
+                    + expectedArrayLen + ", but got " + pixels.length);
+            }
+
+            int[] rawData = new int[width * height];
+            for (int i = 0; i < rawData.length; i++) {
+                int pix = 0;
+                for(int c = 0; c < outChannels; c++) {
+                    pix = pix << 8 | colorChannelToByte(
+                        pixels[i * inChannels + c % inChannels]);
+                }
+                rawData[i] = pix;
+            }
+
+            BufferedImage buf = new BufferedImage(width, height, bufferedImageType);
+            buf.setRGB(0, 0, width, height, rawData, 0, width);
+            return buf;
+        }
+
+        private static int colorChannelToByte(float value) {
+            return (int) (Math.min(1, Math.max(0, value)) * 255);
+        }
     }
 }
