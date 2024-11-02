@@ -202,16 +202,16 @@ public class Image extends GraphicsObject {
     }
 
     /**
-     * Get the width of the underlying image.
+     * Get the width of the underlying image in pixels.
      */
-    public double getImageWidth() {
+    public int getImageWidth() {
         return img == null ? 0 : img.getWidth();
     }
 
     /**
-     * Get the height of the underlying image.
+     * Get the height of the underlying image in pixels.
      */
-    public double getImageHeight() {
+    public int getImageHeight() {
         return img == null ? 0 : img.getHeight();
     }
 
