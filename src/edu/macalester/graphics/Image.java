@@ -119,10 +119,40 @@ public class Image extends GraphicsObject {
         setImagePath(path);
     }
 
+    /**
+     * Creates a new image using raw pixel data from the given array. The range for sample values
+     * is [0...1], and values outside that range are pinned to it when generating the image (i.e.
+     * any value ≥ 1 is full intensity, and any value ≤ 0 is zero intensity).
+     * There is one array element per color channel, with channels interleaved
+     * (see {@link PixelFormat}.)
+     * <p>
+     * For example, the array <code>{ 1, 0.5f, 0, 0, 0, 0.5f }</code> with the RGB pixel format
+     * specifies one orange pixel (R=1, G=0.5, B=0), then one dark blue pixel (R=0, G=0, B=0.5).
+     *
+     * @param width Image width in pixels
+     * @param height Image height in pixels
+     * @param pixels Raw pixel data. Length must exactly match the number of required samples.
+     * @param format Color space and format of channels in the pixels array
+     */
     public Image(int width, int height, float[] pixels, PixelFormat format) {
         this(format.makeBufferedImage(pixels, width, height));
     }
 
+    /**
+     * Creates a new image using raw pixel data from the given array. This method interprets bytes
+     * as unsigned: zero intensity is 0, and full intensity is 255 (but Java represents this as -1,
+     * because the language does not have unsigned primitive types).
+     * There is one array element per color channel, with channels interleaved
+     * (see {@link PixelFormat}.)
+     * <p>
+     * For example, the array <code>{ -1, 127, 0, 0, 0, 127 }</code> with the RGB pixel format
+     * specifies one orange pixel (R=1, G=0.5, B=0), then one dark blue pixel (R=0, G=0, B=0.5).
+     *
+     * @param width Image width in pixels
+     * @param height Image height in pixels
+     * @param pixels Raw pixel data. Length must exactly match the number of required samples.
+     * @param format Color space and format of channels in the pixels array
+     */
     public Image(int width, int height, byte[] pixels, PixelFormat format) {
         this(format.makeBufferedImage(pixels, width, height));
     }
@@ -266,18 +296,45 @@ public class Image extends GraphicsObject {
         return "Image at position " + getPosition() + " with file " + path;
     }
 
+    /**
+     * Describes the presence and order of color channels in an array of pixels.
+     * Used by the various methods for converting Images to and from arrays.
+     *
+     * @see Image#Image(int,int,float[],PixelFormat)
+     * @see Image#Image(int,int,byte[],PixelFormat)
+     * @see Image#toFloatArray(PixelFormat)
+     * @see Image#toByteArray(PixelFormat)
+     */
     public enum PixelFormat {
-        GRAYSCALE(BufferedImage.TYPE_INT_RGB, 1, 3),  // TODO: explain why not TYPE_BYTE_GRAY
+        /**
+         * One array element per pixel, mapping to shades of gray.
+         */
+        // NB: We use TYPE_INT_RGB internally instead of TYPE_BYTE_GRAY because the latter uses a
+        // linear gray color space -- no gamma! -- which causes two problems: (1) excessively dark
+        // images, and (2) severe precision loss in the conversion to / from array. Storing
+        // grayscale images as RBG internally is not memory-efficient, but does solve both of those
+        // colorspace issues.
+        //
+        GRAYSCALE(BufferedImage.TYPE_INT_RGB, 1, 3),
+
+        /**
+         * Three array elements per pixel: [red, green, blue, red, green, blue…].
+         */
         RGB(BufferedImage.TYPE_INT_RGB, 3, 3),
+
+        /**
+         * Four array elements per pixel: [alpha, red, green, blue, alpha, red, green, blue…].
+         */
         ARGB(BufferedImage.TYPE_INT_ARGB, 4, 4);
 
         private final int bufferedImageType;
-        private final int inChannels, outChannels;
+        private final int externalChans;  // Number of channels in the arrays API clients see
+        private final int internalChans;  // Number of packed channels we pass to Java APIs
 
-        PixelFormat(int bufferedImageType, int inChannels, int outChannels) {
+        PixelFormat(int bufferedImageType, int externalChans, int internalChans) {
             this.bufferedImageType = bufferedImageType;
-            this.inChannels = inChannels;
-            this.outChannels = outChannels;
+            this.externalChans = externalChans;
+            this.internalChans = internalChans;
         }
 
         private BufferedImage makeBufferedImage(byte[] pixels, int width, int height) {
@@ -298,19 +355,26 @@ public class Image extends GraphicsObject {
             int pixelArrayLen,
             PixelLookup pixelLookup
         ) {
-            int expectedArrayLen = width * height * inChannels;
+            int expectedArrayLen = width * height * externalChans;
             if (pixelArrayLen != expectedArrayLen) {
                 throw new IllegalArgumentException(
                     "Invalid input array length for " + this.name() + ": expected "
-                    + width + " w * " + height + " h * " + inChannels + " channels = "
+                    + width + " w * " + height + " h * " + externalChans + " channels = "
                     + expectedArrayLen + ", but got " + pixelArrayLen);
             }
+
+            // This conversation approach is not especially performant or memory-efficient, but it
+            // keeps the Kilt Graphics source code relative simple and uniform across pixel formats,
+            // and should be fast enough for the purposes of any project using this library. Clients
+            // who need more optimized performance can use the BufferedImage constructor to pass
+            // a WritableRaster they manage themselves.
 
             int[] rawData = new int[width * height];
             for (int i = 0; i < rawData.length; i++) {
                 int pix = 0;
-                for(int c = 0; c < outChannels; c++) {
-                    pix = pix << 8 | pixelLookup.pixelAtIndex(i * inChannels + c % inChannels);
+                for(int c = 0; c < internalChans; c++) {
+                    pix = pix << 8
+                        | pixelLookup.pixelAtIndex(i * externalChans + c % externalChans);
                 }
                 rawData[i] = pix;
             }
@@ -320,18 +384,18 @@ public class Image extends GraphicsObject {
             return buf;
         }
 
-        public byte[] makeByteArray(BufferedImage buf) {
+        private byte[] makeByteArray(BufferedImage buf) {
             int width = buf.getWidth(), height = buf.getHeight();
             int[] rawData = buf.getRGB(0, 0, width, height, null, 0, width);
 
-            byte[] pixels = new byte[width * height * inChannels];
+            byte[] pixels = new byte[width * height * externalChans];
             int i = 0;
             for(int pix : rawData) {
-                for(int c = inChannels - 1; c >= 0; c--) {
+                for(int c = externalChans - 1; c >= 0; c--) {
                     pixels[i + c] = (byte) (pix & 0xFF);
                     pix >>= 8;
                 }
-                i += inChannels;
+                i += externalChans;
             }
             return pixels;
         }

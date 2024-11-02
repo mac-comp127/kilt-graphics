@@ -125,6 +125,19 @@ public class ImageTest implements GraphicsObjectTestSuite {
         return image;
     }
 
+    private byte[] generateByteData(int w, int h, int chans) {
+        byte[] pixels = new byte[w * h * chans];
+        int i = 0;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                for (int c = 0; c < chans; c++) {
+                    pixels[i++] = (byte) (x * y * (c + 1));
+                }
+            }
+        }
+        return pixels;
+    }
+
     @RenderingTest(modes = { PLAIN })
     void pixelsFloatGrayscale() {
         image = testFloatPixels(70, 90, Image.PixelFormat.GRAYSCALE, 1);
@@ -164,19 +177,6 @@ public class ImageTest implements GraphicsObjectTestSuite {
 
     private static void replaceStart(float[] dest, float... values) {
         System.arraycopy(values, 0, dest, 0, values.length);
-    }
-
-    private byte[] generateByteData(int w, int h, int chans) {
-        byte[] pixels = new byte[w * h * chans];
-        int i = 0;
-        for (int y = 0; y < h; y++) {
-            for (int x = 0; x < w; x++) {
-                for (int c = 0; c < chans; c++) {
-                    pixels[i++] = (byte) (x * y * (c + 1));
-                }
-            }
-        }
-        return pixels;
     }
 
     private float[] generateFloatData(int w, int h, int chans) {
