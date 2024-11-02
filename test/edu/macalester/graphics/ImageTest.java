@@ -89,10 +89,26 @@ public class ImageTest implements GraphicsObjectTestSuite {
     void pixelsConstructorsCheckBounds() {
         for (var ctorCall : List.of((Executable)
             () -> new Image(2, 3, new float[18], Image.PixelFormat.GRAYSCALE),  // too large
-            () -> new Image(3, 2, new float[6], Image.PixelFormat.RGB)          // too small
+            () -> new Image(3, 2, new float[6], Image.PixelFormat.RGB),         // too small
+            () -> new Image(3, 2, new byte[18], Image.PixelFormat.ARGB)         // too small
         )) {
             assertThrows(IllegalArgumentException.class, ctorCall);
         }
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsByteGrayscale() {
+        image = new Image(70, 90, generateByteData(70, 90, 1), Image.PixelFormat.GRAYSCALE);
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsByteRGB() {
+        image = new Image(100, 80, generateByteData(100, 80, 3), Image.PixelFormat.RGB);
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsByteARGB() {
+        image = new Image(97, 93, generateByteData(97, 93, 4), Image.PixelFormat.ARGB);
     }
 
     @RenderingTest(modes = { PLAIN })
@@ -108,6 +124,19 @@ public class ImageTest implements GraphicsObjectTestSuite {
     @RenderingTest(modes = { PLAIN })
     void pixelsFloatARGB() {
         image = new Image(97, 93, generateFloatData(97, 93, 4), Image.PixelFormat.ARGB);
+    }
+
+    private byte[] generateByteData(int w, int h, int chans) {
+        byte[] pixels = new byte[w * h * chans];
+        int i = 0;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                for (int c = 0; c < chans; c++) {
+                    pixels[i++] = (byte) (x * y * (c + 1));
+                }
+            }
+        }
+        return pixels;
     }
 
     private float[] generateFloatData(int w, int h, int chans) {

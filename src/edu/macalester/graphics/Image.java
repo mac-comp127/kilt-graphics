@@ -13,6 +13,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+import java.util.function.IntFunction;
+import java.util.function.IntToLongFunction;
 
 import javax.imageio.ImageIO;
 
@@ -23,7 +26,7 @@ import javax.imageio.ImageIO;
  * Its size is the size of the underying image file by default, but you can shrink it using
  * {@link setMaxWidth(double) setMaxWidth()} and {@link setMaxHeight(double) setMaxHeight()}.
  *
- * @author Bret Jackson
+ * @author Bret Jackson, Paul Cantrell
  */
 public class Image extends GraphicsObject {
     private BufferedImage img;
@@ -120,6 +123,10 @@ public class Image extends GraphicsObject {
     }
 
     public Image(int width, int height, float[] pixels, PixelFormat format) {
+        this(format.makeBufferedImage(pixels, width, height));
+    }
+
+    public Image(int width, int height, byte[] pixels, PixelFormat format) {
         this(format.makeBufferedImage(pixels, width, height));
     }
 
@@ -264,21 +271,37 @@ public class Image extends GraphicsObject {
             this.outChannels = outChannels;
         }
 
-        public BufferedImage makeBufferedImage(float[] pixels, int width, int height) {
+        private BufferedImage makeBufferedImage(byte[] pixels, int width, int height) {
+            return makeBufferedImage(
+                width, height, pixels.length,
+                i -> 0xFF & pixels[i]);
+        }
+
+        private BufferedImage makeBufferedImage(float[] pixels, int width, int height) {
+            return makeBufferedImage(
+                width, height, pixels.length,
+                i -> (int) (255 * Math.min(1, Math.max(0, pixels[i]))));
+        }
+
+        private BufferedImage makeBufferedImage(
+            int width,
+            int height,
+            int pixelArrayLen,
+            PixelLookup pixelLookup
+        ) {
             int expectedArrayLen = width * height * inChannels;
-            if (pixels.length != expectedArrayLen) {
+            if (pixelArrayLen != expectedArrayLen) {
                 throw new IllegalArgumentException(
                     "Invalid input array length for " + this.name() + ": expected "
                     + width + " w * " + height + " h * " + inChannels + " channels = "
-                    + expectedArrayLen + ", but got " + pixels.length);
+                    + expectedArrayLen + ", but got " + pixelArrayLen);
             }
 
             int[] rawData = new int[width * height];
             for (int i = 0; i < rawData.length; i++) {
                 int pix = 0;
                 for(int c = 0; c < outChannels; c++) {
-                    pix = pix << 8 | colorChannelToByte(
-                        pixels[i * inChannels + c % inChannels]);
+                    pix = pix << 8 | pixelLookup.pixelAtIndex(i * inChannels + c % inChannels);
                 }
                 rawData[i] = pix;
             }
@@ -288,8 +311,8 @@ public class Image extends GraphicsObject {
             return buf;
         }
 
-        private static int colorChannelToByte(float value) {
-            return (int) (Math.min(1, Math.max(0, value)) * 255);
+        private interface PixelLookup {
+            int pixelAtIndex(int index);
         }
     }
 }
