@@ -197,6 +197,16 @@ public class ImageTest implements GraphicsObjectTestSuite {
         return pixels;
     }
 
+    @RenderingTest(height=200, modes = { PLAIN })
+    void colorPixelConversionToGrayscaleArray() {
+        Image colorImage = new Image(FOXBOT_IMAGE);
+        image = new Image(
+            colorImage.getImageWidth(),
+            colorImage.getImageHeight(),
+            colorImage.toByteArray(Image.PixelFormat.GRAYSCALE),
+            Image.PixelFormat.GRAYSCALE);
+    }
+
     @RenderingTest
     void empty() {
         image = new Image(1, 1);

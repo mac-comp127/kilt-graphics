@@ -391,9 +391,16 @@ public class Image extends GraphicsObject {
             byte[] pixels = new byte[width * height * externalChans];
             int i = 0;
             for(int pix : rawData) {
-                for(int c = externalChans - 1; c >= 0; c--) {
-                    pixels[i + c] = (byte) (pix & 0xFF);
-                    pix >>= 8;
+                for(int c = 0; c < externalChans; c++) {
+                    // Need to handle both color → grayscale and color → color:
+                    // Average channels if internalChans > externalChans, and extract channels
+                    // cyclically if internalChans < externalChans.
+                    int sum = 0, count = 0;
+                    for(int d = c; d < internalChans; d += externalChans) {
+                        sum += (pix >> (8 * (internalChans - d - 1))) & 0xFF;
+                        count++;
+                    }
+                    pixels[i + c] = (byte) (sum / count);
                 }
                 i += externalChans;
             }
