@@ -13,9 +13,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.function.IntFunction;
-import java.util.function.IntToLongFunction;
 
 import javax.imageio.ImageIO;
 
@@ -246,6 +243,18 @@ public class Image extends GraphicsObject {
                 maxHeight / getImageHeight()));
     }
 
+    public byte[] toByteArray(PixelFormat format) {
+        return format.makeByteArray(img);
+    }
+
+    public float[] toFloatArray(PixelFormat format) {
+        var bytes = toByteArray(format);
+        var floats = new float[bytes.length];
+        for(int i = 0; i < bytes.length; i++) {
+            floats[i] = (bytes[i] & 0xFF) / 255.0f;
+        }
+        return floats;
+    }
 
     @Override
     protected Object getEqualityAttributes() {
@@ -258,7 +267,7 @@ public class Image extends GraphicsObject {
     }
 
     public enum PixelFormat {
-        GRAYSCALE(BufferedImage.TYPE_BYTE_GRAY, 1, 3),
+        GRAYSCALE(BufferedImage.TYPE_INT_RGB, 1, 3),  // TODO: explain why not TYPE_BYTE_GRAY
         RGB(BufferedImage.TYPE_INT_RGB, 3, 3),
         ARGB(BufferedImage.TYPE_INT_ARGB, 4, 4);
 
@@ -309,6 +318,22 @@ public class Image extends GraphicsObject {
             BufferedImage buf = new BufferedImage(width, height, bufferedImageType);
             buf.setRGB(0, 0, width, height, rawData, 0, width);
             return buf;
+        }
+
+        public byte[] makeByteArray(BufferedImage buf) {
+            int width = buf.getWidth(), height = buf.getHeight();
+            int[] rawData = buf.getRGB(0, 0, width, height, null, 0, width);
+
+            byte[] pixels = new byte[width * height * inChannels];
+            int i = 0;
+            for(int pix : rawData) {
+                for(int c = inChannels - 1; c >= 0; c--) {
+                    pixels[i + c] = (byte) (pix & 0xFF);
+                    pix >>= 8;
+                }
+                i += inChannels;
+            }
+            return pixels;
         }
 
         private interface PixelLookup {

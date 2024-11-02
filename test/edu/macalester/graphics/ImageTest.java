@@ -14,6 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 
 import static edu.macalester.graphics.testsupport.RenderingTestMode.PLAIN;
+import static java.lang.Float.NaN;
+import static java.lang.Float.POSITIVE_INFINITY;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -98,32 +101,69 @@ public class ImageTest implements GraphicsObjectTestSuite {
 
     @RenderingTest(modes = { PLAIN })
     void pixelsByteGrayscale() {
-        image = new Image(70, 90, generateByteData(70, 90, 1), Image.PixelFormat.GRAYSCALE);
+        image = testBytePixels(70, 90, Image.PixelFormat.GRAYSCALE, 1);
     }
 
     @RenderingTest(modes = { PLAIN })
     void pixelsByteRGB() {
-        image = new Image(100, 80, generateByteData(100, 80, 3), Image.PixelFormat.RGB);
+        image = testBytePixels(100, 80, Image.PixelFormat.RGB, 3);
     }
 
     @RenderingTest(modes = { PLAIN })
     void pixelsByteARGB() {
-        image = new Image(97, 93, generateByteData(97, 93, 4), Image.PixelFormat.ARGB);
+        image = testBytePixels(97, 93, Image.PixelFormat.ARGB, 4);
+    }
+
+    private Image testBytePixels(int width, int height, Image.PixelFormat pixelFormat, int channels) {
+        byte[] pixels = generateByteData(width, height, channels);
+        Image image = new Image(width, height, pixels, pixelFormat);
+
+        // Bytes should be perfectly preserved in a round trip. If this fails, consider temporarily
+        // modifying the calling test to produce a 3x3 image that will produce an error you can
+        // inspect manually.
+        assertArrayEquals(pixels, image.toByteArray(pixelFormat));
+        return image;
     }
 
     @RenderingTest(modes = { PLAIN })
     void pixelsFloatGrayscale() {
-        image = new Image(70, 90, generateFloatData(70, 90, 1), Image.PixelFormat.GRAYSCALE);
+        image = testFloatPixels(70, 90, Image.PixelFormat.GRAYSCALE, 1);
     }
 
     @RenderingTest(modes = { PLAIN })
     void pixelsFloatRGB() {
-        image = new Image(100, 80, generateFloatData(100, 80, 3), Image.PixelFormat.RGB);
+        image = testFloatPixels(100, 80, Image.PixelFormat.RGB, 3);
     }
 
     @RenderingTest(modes = { PLAIN })
     void pixelsFloatARGB() {
-        image = new Image(97, 93, generateFloatData(97, 93, 4), Image.PixelFormat.ARGB);
+        image = testFloatPixels(97, 93, Image.PixelFormat.ARGB, 4);
+    }
+
+    private Image testFloatPixels(int width, int height, Image.PixelFormat pixelFormat, int channels) {
+        // In a round trip, floats should be preserved only within byte precision and valid range.
+        // We do a small test with hard-coded values to check this.
+
+        // Oversized zero-padded arrays save us from having to worry about number of test values
+        // being divisible by number of channels
+        float[] inFloats = new float[20 * channels];
+        float[] expected = new float[20 * channels];
+
+        final float INF = POSITIVE_INFINITY;
+        replaceStart(inFloats, 0, 1, 0.0039f, 0.004f, 0.5f, 0.99f, -1, 2, -INF, INF, NaN);
+        replaceStart(expected, 0, 1, 0.0039f, 0.004f, 0.5f, 0.99f,  0, 1,    0,   1,   0);
+
+        Image smallImage = new Image(20, 1, inFloats, pixelFormat);
+        assertArrayEquals(expected, smallImage.toFloatArray(pixelFormat), 1/255f);
+
+        // Now generate full-size test for image comparison
+
+        float[] pixels = generateFloatData(width, height, channels);
+        return new Image(width, height, pixels, pixelFormat);
+    }
+
+    private static void replaceStart(float[] dest, float... values) {
+        System.arraycopy(values, 0, dest, 0, values.length);
     }
 
     private byte[] generateByteData(int w, int h, int chans) {
