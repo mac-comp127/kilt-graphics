@@ -197,6 +197,22 @@ public class ImageTest implements GraphicsObjectTestSuite {
         return pixels;
     }
 
+    @RenderingTest(width=200, height=200, modes = { PLAIN })
+    void imageFileProcessing() {
+        Image original = new Image(FOXFLOWER_IMAGE);
+        float[] pixels = original.toFloatArray(Image.PixelFormat.RGB);
+
+        for(int i = 0; i < pixels.length; i++) {
+            pixels[i] = (float) (Math.sin(pixels[i] * Math.PI * 2) + 1) / 2;
+        }
+
+        image = new Image(
+            original.getImageWidth(),
+            original.getImageHeight(),
+            pixels,
+            Image.PixelFormat.RGB);
+    }
+
     @RenderingTest(height=200, modes = { PLAIN })
     void colorPixelConversionToGrayscaleArray() {
         Image colorImage = new Image(FOXBOT_IMAGE);

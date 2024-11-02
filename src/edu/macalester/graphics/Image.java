@@ -127,7 +127,7 @@ public class Image extends GraphicsObject {
      * (see {@link PixelFormat}.)
      * <p>
      * For example, the array <code>{ 1, 0.5f, 0, 0, 0, 0.5f }</code> with the RGB pixel format
-     * specifies one orange pixel (R=1, G=0.5, B=0), then one dark blue pixel (R=0, G=0, B=0.5).
+     * specifies one orange pixel (R=100%, G=50%, B=0%), then one dark blue pixel (R=0%, G=0%, B=50%).
      *
      * @param width Image width in pixels
      * @param height Image height in pixels
@@ -146,7 +146,7 @@ public class Image extends GraphicsObject {
      * (see {@link PixelFormat}.)
      * <p>
      * For example, the array <code>{ -1, 127, 0, 0, 0, 127 }</code> with the RGB pixel format
-     * specifies one orange pixel (R=1, G=0.5, B=0), then one dark blue pixel (R=0, G=0, B=0.5).
+     * specifies one orange pixel (R=100%, G=50%, B=0%), then one dark blue pixel (R=0%, G=0%, B=50%).
      *
      * @param width Image width in pixels
      * @param height Image height in pixels
@@ -273,10 +273,32 @@ public class Image extends GraphicsObject {
                 maxHeight / getImageHeight()));
     }
 
+    /**
+     * Returns the pixels in this image as an array of bytes, one byte per color channel per pixel,
+     * interleaved in the order specified by <code>format</code>. Zero is minimum intensity, and
+     * 255 (or -1, since bytes are signed) is full intensity.
+     * <p>
+     * Note that when requesting a grayscale image, this method averages the color channels, which
+     * produces results that correspond poorly to perceived brightness.
+     *
+     * @see #Image(int,int,byte[],PixelFormat)
+     * @see #toFloatArray(PixelFormat) 
+     */
     public byte[] toByteArray(PixelFormat format) {
         return format.makeByteArray(img);
     }
 
+    /**
+     * Returns the pixels in this image as an array of floats, one number per color channel per
+     * pixel, interleaved in the order specified by <code>format</code>. Zero is minimum intensity,
+     * and 1 is full intensity.
+     * <p>
+     * Note that when requesting a grayscale image, this method averages the color channels, which
+     * produces results that correspond poorly to perceived brightness.
+     *
+     * @see #Image(int,int,float[],PixelFormat)
+     * @see #toByteArray(PixelFormat)  
+     */
     public float[] toFloatArray(PixelFormat format) {
         var bytes = toByteArray(format);
         var floats = new float[bytes.length];
