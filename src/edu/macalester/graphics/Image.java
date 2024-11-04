@@ -23,7 +23,7 @@ import javax.imageio.ImageIO;
  * Its size is the size of the underying image file by default, but you can shrink it using
  * {@link setMaxWidth(double) setMaxWidth()} and {@link setMaxHeight(double) setMaxHeight()}.
  *
- * @author Bret Jackson
+ * @author Bret Jackson, Paul Cantrell
  */
 public class Image extends GraphicsObject {
     private BufferedImage img;
@@ -120,6 +120,44 @@ public class Image extends GraphicsObject {
     }
 
     /**
+     * Creates a new image using raw pixel data from the given array. The range for sample values
+     * is [0...1], and values outside that range are pinned to it when generating the image (i.e.
+     * any value ≥ 1 is full intensity, and any value ≤ 0 is zero intensity).
+     * There is one array element per color channel, with channels interleaved
+     * (see {@link PixelFormat}.)
+     * <p>
+     * For example, the array <code>{ 1, 0.5f, 0, 0, 0, 0.5f }</code> with the RGB pixel format
+     * specifies one orange pixel (R=100%, G=50%, B=0%), then one dark blue pixel (R=0%, G=0%, B=50%).
+     *
+     * @param width Image width in pixels
+     * @param height Image height in pixels
+     * @param pixels Raw pixel data. Length must exactly match the number of required samples.
+     * @param format Color space and format of channels in the pixels array
+     */
+    public Image(int width, int height, float[] pixels, PixelFormat format) {
+        this(format.makeBufferedImage(pixels, width, height));
+    }
+
+    /**
+     * Creates a new image using raw pixel data from the given array. This method interprets bytes
+     * as unsigned: zero intensity is 0, and full intensity is 255 (but Java represents this as -1,
+     * because the language does not have unsigned primitive types).
+     * There is one array element per color channel, with channels interleaved
+     * (see {@link PixelFormat}.)
+     * <p>
+     * For example, the array <code>{ -1, 127, 0, 0, 0, 127 }</code> with the RGB pixel format
+     * specifies one orange pixel (R=100%, G=50%, B=0%), then one dark blue pixel (R=0%, G=0%, B=50%).
+     *
+     * @param width Image width in pixels
+     * @param height Image height in pixels
+     * @param pixels Raw pixel data. Length must exactly match the number of required samples.
+     * @param format Color space and format of channels in the pixels array
+     */
+    public Image(int width, int height, byte[] pixels, PixelFormat format) {
+        this(format.makeBufferedImage(pixels, width, height));
+    }
+
+    /**
      * Creates a bitmap image from the given BufferedImage, positioned at (0, 0).
      * Note that changing the BufferedImage externally does not automatically 
      * force it to redraw. You will need to call {@link CanvasWindow#draw()}
@@ -194,16 +232,16 @@ public class Image extends GraphicsObject {
     }
 
     /**
-     * Get the width of the underlying image.
+     * Get the width of the underlying image in pixels.
      */
-    public double getImageWidth() {
+    public int getImageWidth() {
         return img == null ? 0 : img.getWidth();
     }
 
     /**
-     * Get the height of the underlying image.
+     * Get the height of the underlying image in pixels.
      */
-    public double getImageHeight() {
+    public int getImageHeight() {
         return img == null ? 0 : img.getHeight();
     }
 
@@ -235,6 +273,40 @@ public class Image extends GraphicsObject {
                 maxHeight / getImageHeight()));
     }
 
+    /**
+     * Returns the pixels in this image as an array of bytes, one byte per color channel per pixel,
+     * interleaved in the order specified by <code>format</code>. Zero is minimum intensity, and
+     * 255 (or -1, since bytes are signed) is full intensity.
+     * <p>
+     * Note that when requesting a grayscale image, this method averages the color channels, which
+     * produces results that correspond poorly to perceived brightness.
+     *
+     * @see #Image(int,int,byte[],PixelFormat)
+     * @see #toFloatArray(PixelFormat) 
+     */
+    public byte[] toByteArray(PixelFormat format) {
+        return format.makeByteArray(img);
+    }
+
+    /**
+     * Returns the pixels in this image as an array of floats, one number per color channel per
+     * pixel, interleaved in the order specified by <code>format</code>. Zero is minimum intensity,
+     * and 1 is full intensity.
+     * <p>
+     * Note that when requesting a grayscale image, this method averages the color channels, which
+     * produces results that correspond poorly to perceived brightness.
+     *
+     * @see #Image(int,int,float[],PixelFormat)
+     * @see #toByteArray(PixelFormat)  
+     */
+    public float[] toFloatArray(PixelFormat format) {
+        var bytes = toByteArray(format);
+        var floats = new float[bytes.length];
+        for(int i = 0; i < bytes.length; i++) {
+            floats[i] = (bytes[i] & 0xFF) / 255.0f;
+        }
+        return floats;
+    }
 
     @Override
     protected Object getEqualityAttributes() {
@@ -244,5 +316,121 @@ public class Image extends GraphicsObject {
     @Override
     public String toString() {
         return "Image at position " + getPosition() + " with file " + path;
+    }
+
+    /**
+     * Describes the presence and order of color channels in an array of pixels.
+     * Used by the various methods for converting Images to and from arrays.
+     *
+     * @see Image#Image(int,int,float[],PixelFormat)
+     * @see Image#Image(int,int,byte[],PixelFormat)
+     * @see Image#toFloatArray(PixelFormat)
+     * @see Image#toByteArray(PixelFormat)
+     */
+    public enum PixelFormat {
+        /**
+         * One array element per pixel, mapping to shades of gray.
+         */
+        // NB: We use TYPE_INT_RGB internally instead of TYPE_BYTE_GRAY because the latter uses a
+        // linear gray color space -- no gamma! -- which causes two problems: (1) excessively dark
+        // images, and (2) severe precision loss in the conversion to / from array. Storing
+        // grayscale images as RBG internally is not memory-efficient, but does solve both of those
+        // colorspace issues.
+        //
+        GRAYSCALE(BufferedImage.TYPE_INT_RGB, 1, 3),
+
+        /**
+         * Three array elements per pixel: [red, green, blue, red, green, blue…].
+         */
+        RGB(BufferedImage.TYPE_INT_RGB, 3, 3),
+
+        /**
+         * Four array elements per pixel: [alpha, red, green, blue, alpha, red, green, blue…].
+         */
+        ARGB(BufferedImage.TYPE_INT_ARGB, 4, 4);
+
+        private final int bufferedImageType;
+        private final int externalChans;  // Number of channels in the arrays API clients see
+        private final int internalChans;  // Number of packed channels we pass to Java APIs
+
+        PixelFormat(int bufferedImageType, int externalChans, int internalChans) {
+            this.bufferedImageType = bufferedImageType;
+            this.externalChans = externalChans;
+            this.internalChans = internalChans;
+        }
+
+        private BufferedImage makeBufferedImage(byte[] pixels, int width, int height) {
+            return makeBufferedImage(
+                width, height, pixels.length,
+                i -> 0xFF & pixels[i]);
+        }
+
+        private BufferedImage makeBufferedImage(float[] pixels, int width, int height) {
+            return makeBufferedImage(
+                width, height, pixels.length,
+                i -> (int) (255 * Math.min(1, Math.max(0, pixels[i]))));
+        }
+
+        private BufferedImage makeBufferedImage(
+            int width,
+            int height,
+            int pixelArrayLen,
+            PixelLookup pixelLookup
+        ) {
+            int expectedArrayLen = width * height * externalChans;
+            if (pixelArrayLen != expectedArrayLen) {
+                throw new IllegalArgumentException(
+                    "Invalid input array length for " + this.name() + ": expected "
+                    + width + " w * " + height + " h * " + externalChans + " channels = "
+                    + expectedArrayLen + ", but got " + pixelArrayLen);
+            }
+
+            // This conversation approach is not especially performant or memory-efficient, but it
+            // keeps the Kilt Graphics source code relative simple and uniform across pixel formats,
+            // and should be fast enough for the purposes of any project using this library. Clients
+            // who need more optimized performance can use the BufferedImage constructor to pass
+            // a WritableRaster they manage themselves.
+
+            int[] rawData = new int[width * height];
+            for (int i = 0; i < rawData.length; i++) {
+                int pix = 0;
+                for(int c = 0; c < internalChans; c++) {
+                    pix = pix << 8
+                        | pixelLookup.pixelAtIndex(i * externalChans + c % externalChans);
+                }
+                rawData[i] = pix;
+            }
+
+            BufferedImage buf = new BufferedImage(width, height, bufferedImageType);
+            buf.setRGB(0, 0, width, height, rawData, 0, width);
+            return buf;
+        }
+
+        private byte[] makeByteArray(BufferedImage buf) {
+            int width = buf.getWidth(), height = buf.getHeight();
+            int[] rawData = buf.getRGB(0, 0, width, height, null, 0, width);
+
+            byte[] pixels = new byte[width * height * externalChans];
+            int i = 0;
+            for(int pix : rawData) {
+                for(int c = 0; c < externalChans; c++) {
+                    // Need to handle both color → grayscale and color → color:
+                    // Average channels if internalChans > externalChans, and extract channels
+                    // cyclically if internalChans < externalChans.
+                    int sum = 0, count = 0;
+                    for(int d = c; d < internalChans; d += externalChans) {
+                        sum += (pix >> (8 * (internalChans - d - 1))) & 0xFF;
+                        count++;
+                    }
+                    pixels[i + c] = (byte) (sum / count);
+                }
+                i += externalChans;
+            }
+            return pixels;
+        }
+
+        private interface PixelLookup {
+            int pixelAtIndex(int index);
+        }
     }
 }

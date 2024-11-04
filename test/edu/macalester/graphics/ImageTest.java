@@ -3,13 +3,23 @@ package edu.macalester.graphics;
 import edu.macalester.graphics.testsupport.GraphicsObjectTestSuite;
 import edu.macalester.graphics.testsupport.RenderingTest;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
+
+import static edu.macalester.graphics.testsupport.RenderingTestMode.PLAIN;
+import static java.lang.Float.NaN;
+import static java.lang.Float.POSITIVE_INFINITY;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ImageTest implements GraphicsObjectTestSuite {
     public static final String FOXFLOWER_IMAGE = "res/foxflower.png";
@@ -66,7 +76,7 @@ public class ImageTest implements GraphicsObjectTestSuite {
 
     @RenderingTest
     void loadedFromBufferedImage() {
-        try{
+        try {
             InputStream resource = Image.class.getResourceAsStream("/" + FOXBOT_IMAGE);
             if (resource == null) {
                 throw new IOException("No resource named /" + FOXBOT_IMAGE);
@@ -76,6 +86,141 @@ public class ImageTest implements GraphicsObjectTestSuite {
         } catch (IOException e) {
             image = new Image(20, 20, "skirl.png");
         }
+    }
+
+    @Test
+    void pixelsConstructorsCheckBounds() {
+        for (var ctorCall : List.of((Executable)
+            () -> new Image(2, 3, new float[18], Image.PixelFormat.GRAYSCALE),  // too large
+            () -> new Image(3, 2, new float[6], Image.PixelFormat.RGB),         // too small
+            () -> new Image(3, 2, new byte[18], Image.PixelFormat.ARGB)         // too small
+        )) {
+            assertThrows(IllegalArgumentException.class, ctorCall);
+        }
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsByteGrayscale() {
+        image = testBytePixels(70, 90, Image.PixelFormat.GRAYSCALE, 1);
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsByteRGB() {
+        image = testBytePixels(100, 80, Image.PixelFormat.RGB, 3);
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsByteARGB() {
+        image = testBytePixels(97, 93, Image.PixelFormat.ARGB, 4);
+    }
+
+    private Image testBytePixels(int width, int height, Image.PixelFormat pixelFormat, int channels) {
+        byte[] pixels = generateByteData(width, height, channels);
+        Image image = new Image(width, height, pixels, pixelFormat);
+
+        // Bytes should be perfectly preserved in a round trip. If this fails, consider temporarily
+        // modifying the calling test to produce a 3x3 image that will produce an error you can
+        // inspect manually.
+        assertArrayEquals(pixels, image.toByteArray(pixelFormat));
+        return image;
+    }
+
+    private byte[] generateByteData(int w, int h, int chans) {
+        byte[] pixels = new byte[w * h * chans];
+        int i = 0;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                for (int c = 0; c < chans; c++) {
+                    pixels[i++] = (byte) (x * y * (c + 1));
+                }
+            }
+        }
+        return pixels;
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsFloatGrayscale() {
+        image = testFloatPixels(70, 90, Image.PixelFormat.GRAYSCALE, 1);
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsFloatRGB() {
+        image = testFloatPixels(100, 80, Image.PixelFormat.RGB, 3);
+    }
+
+    @RenderingTest(modes = { PLAIN })
+    void pixelsFloatARGB() {
+        image = testFloatPixels(97, 93, Image.PixelFormat.ARGB, 4);
+    }
+
+    private Image testFloatPixels(int width, int height, Image.PixelFormat pixelFormat, int channels) {
+        // In a round trip, floats should be preserved only within byte precision and valid range.
+        // We do a small test with hard-coded values to check this.
+
+        // Oversized zero-padded arrays save us from having to worry about number of test values
+        // being divisible by number of channels
+        float[] inFloats = new float[20 * channels];
+        float[] expected = new float[20 * channels];
+
+        final float INF = POSITIVE_INFINITY;
+        replaceStart(inFloats, 0, 1, 0.0039f, 0.004f, 0.5f, 0.99f, -1, 2, -INF, INF, NaN);
+        replaceStart(expected, 0, 1, 0.0039f, 0.004f, 0.5f, 0.99f,  0, 1,    0,   1,   0);
+
+        Image smallImage = new Image(20, 1, inFloats, pixelFormat);
+        assertArrayEquals(expected, smallImage.toFloatArray(pixelFormat), 1/255f);
+
+        // Now generate full-size test for image comparison
+
+        float[] pixels = generateFloatData(width, height, channels);
+        return new Image(width, height, pixels, pixelFormat);
+    }
+
+    private static void replaceStart(float[] dest, float... values) {
+        System.arraycopy(values, 0, dest, 0, values.length);
+    }
+
+    private float[] generateFloatData(int w, int h, int chans) {
+        float[] pixels = new float[w * h * chans];
+        int i = 0;
+        for (int y = 0; y < h; y++) {
+            for (int x = 0; x < w; x++) {
+                for (int c = 0; c < chans; c++) {
+                    // This is engineered to include a mix of 0, NaN, out of bounds, and values
+                    // that are very different per channel
+                    pixels[i++] = (float)
+                        ( Math.sin(x * 3.0 * (c * 2.7 + 1) / w)
+                        / Math.sin(y * 4.0 * (c * 1.9 + 1) / w));
+                }
+            }
+        }
+        assertTrue(Float.isNaN(pixels[0]));
+        return pixels;
+    }
+
+    @RenderingTest(width=200, height=200, modes = { PLAIN })
+    void imageFileProcessing() {
+        Image original = new Image(FOXFLOWER_IMAGE);
+        float[] pixels = original.toFloatArray(Image.PixelFormat.RGB);
+
+        for(int i = 0; i < pixels.length; i++) {
+            pixels[i] = (float) (Math.sin(pixels[i] * Math.PI * 2) + 1) / 2;
+        }
+
+        image = new Image(
+            original.getImageWidth(),
+            original.getImageHeight(),
+            pixels,
+            Image.PixelFormat.RGB);
+    }
+
+    @RenderingTest(height=200, modes = { PLAIN })
+    void colorPixelConversionToGrayscaleArray() {
+        Image colorImage = new Image(FOXBOT_IMAGE);
+        image = new Image(
+            colorImage.getImageWidth(),
+            colorImage.getImageHeight(),
+            colorImage.toByteArray(Image.PixelFormat.GRAYSCALE),
+            Image.PixelFormat.GRAYSCALE);
     }
 
     @RenderingTest
