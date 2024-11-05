@@ -6,7 +6,7 @@ public class FrameRateReporter {
     private int framesSinceLastReport = 0;
     private long timeOfLastReport = System.currentTimeMillis();
 
-    public void tick() {
+    public synchronized void tick() {
         if (!enabled) {
             return;
         }

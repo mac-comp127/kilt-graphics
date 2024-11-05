@@ -80,6 +80,29 @@ public class CanvasWindowTest {
     }
 
     @Test
+    void getCanvas() {
+        GraphicsGroup g1 = new GraphicsGroup();
+        GraphicsGroup g2 = new GraphicsGroup();
+        GraphicsGroup g3 = new GraphicsGroup();
+        canvas = new CanvasWindow("getCanvas", 10, 10);
+
+        assertEquals(null, g1.getCanvas());  // Never added
+
+        g1.add(g2);
+        canvas.add(g1);
+        assertEquals(canvas, g1.getCanvas());  // Added directly
+        assertEquals(canvas, g2.getCanvas());  // Added indirectly via existing relationship
+
+        g2.add(g3);
+        assertEquals(canvas, g3.getCanvas());  // Added indirectly after parent already in canvas
+
+        g1.remove(g2);
+        assertEquals(canvas, g1.getCanvas());
+        assertEquals(null, g2.getCanvas());
+        assertEquals(null, g3.getCanvas());
+    }
+
+    @Test
     void embeddedComponentHandling() throws IOException {
         canvas = new CanvasWindow("embeddedComponentHandling", 320, 60);
         Button button = new Button("I am a button");

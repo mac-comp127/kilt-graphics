@@ -36,6 +36,26 @@ public class GraphicsGroupTest implements GraphicsObjectTestSuite {
         return group;
     }
 
+    @Test
+    void parentRelationships() {
+        group = new GraphicsGroup();
+        assertEquals(null, group.getParent());
+        assertEquals(null, circle.getParent());
+
+        group.add(circle);
+        assertEquals(group, circle.getParent());
+        assertEquals(null, group.getParent());
+
+        GraphicsGroup group2 = new GraphicsGroup();
+        assertThrows(IllegalStateException.class, () -> group2.add(circle));
+
+        group.remove(circle);
+        assertEquals(null, circle.getParent());
+
+        group2.add(circle);
+        assertEquals(group2, circle.getParent());
+    }
+
     @RenderingTest
     void simple() {
         group = new GraphicsGroup();
