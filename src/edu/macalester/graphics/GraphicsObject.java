@@ -26,9 +26,11 @@ public abstract class GraphicsObject {
     private double rotation = 0;
     private Point scale = Point.ONE_ONE;
     private Point anchor;
+    private Object interpolationMode = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
     private final AffineTransform transform = new AffineTransform(), inverseTransform = new AffineTransform();
 
     final void draw(Graphics2D gc) {
+        gc.setRenderingHint(RenderingHints.KEY_INTERPOLATION, interpolationMode);
         AffineTransform oldTransform = gc.getTransform();
         gc.transform(transform);
         drawInLocalCoordinates(gc);
@@ -254,6 +256,27 @@ public abstract class GraphicsObject {
      */
     public final void setScale(double scale) {
         setScale(scale, scale);
+    }
+
+
+    /**
+     * Sets the interpolation mode used when rendering this object. Has no effect unless the
+     * object is scaled or rotated. "Bilinear" is the default. "Nearest Neighbor" looks best 
+     * for pixel art. "Bicubic" may look better than bilinear in certain situations.
+     * @param mode "Nearest Neighbor", "Bilinear", or "Bicubic". Case-insensitive.
+     */
+    public final void setInterpolationMode(String mode) {
+        switch (mode.toLowerCase()) {
+            case "nearest neighbor":
+                interpolationMode = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;
+                break;
+            case "bicubic":
+                interpolationMode = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
+                break;
+            default:
+                interpolationMode = RenderingHints.VALUE_INTERPOLATION_BILINEAR;
+                break;
+        }
     }
 
     /**
