@@ -18,7 +18,8 @@ repositories {
 }
 
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.+'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.+'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 compileJava.options.encoding = "UTF-8"
