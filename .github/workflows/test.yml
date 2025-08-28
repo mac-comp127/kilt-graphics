@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload image comparisons (on failure only)
         if: ${{ failure() }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: imageComparisons
           path: test/imageComparisons/
