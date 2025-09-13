@@ -10,7 +10,7 @@ assignees: ''
 > This is a template. Delete lines starting with '>'.
 >
 > If you are new to filing GitHub issues, please read this guide:
-> https://docs.google.com/document/d/1QHHtojju-m-gYsMSHop354kHwoR77COXS-iCLw2dee0/edit?usp=sharing
+> https://comp127.innig.net/resources/filing-issues
 >
 > Please remember to be *clear* and *concise*.
 
