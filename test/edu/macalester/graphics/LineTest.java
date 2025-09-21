@@ -19,7 +19,6 @@ public class LineTest implements GraphicsObjectTestSuite {
         line = new Line(10, 50, 90, 50);
     }
 
-
     @RenderingTest(modes = { STROKED, HIT_TEST })
     void diagonal() {
         line = new Line(new Point(1, 2), new Point(3, 4));
@@ -32,5 +31,7 @@ public class LineTest implements GraphicsObjectTestSuite {
         assertEquals(21, line.getY1());
         assertEquals(51, line.getX2());
         assertEquals(9,  line.getY2());
+        assertEquals(new Point(31, 21), line.getStartPosition());
+        assertEquals(new Point(51, 9), line.getEndPosition());
     }
 }
