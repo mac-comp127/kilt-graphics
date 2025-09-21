@@ -11,12 +11,12 @@ import java.awt.geom.Rectangle2D;
  * A line segment that can be drawn on the screen.
  * <p>
  * A line has a "start point" and an "end point". The only distinction is that the start point is
- * the line’s {@link getPosition() position}. If you call {@link setPosition(Point) setPosition()}
- * or {@link moveBy(Point) moveBy()}, both endpoints will move so the line segment has the same
+ * the line’s {@link #getPosition() position}. If you call {@link #setPosition(Point) setPosition()}
+ * or {@link #moveBy(Point) moveBy()}, both endpoints will move so the line segment has the same
  * length and angle, and the start point will end up at the position you specify.
  * <p>
- * To move one endpoint without affecting the other, use {@link setStartPosition(Point) setStartPosition()}
- * and {@link setEndPosition(Point) setEndPosition()}.
+ * To move one endpoint without affecting the other, use {@link #setStartPosition(Point) setStartPosition()}
+ * and {@link #setEndPosition(Point) setEndPosition()}.
  *
  * @author Bret Jackson
  */
@@ -130,6 +130,20 @@ public class Line extends GraphicsObject implements Strokable {
     }
 
     /**
+     * Returns the endpoint of the line segment marked as the “start,” which is (x1, y1). This
+     * method is equivalent to getPosition(), but note that calling {@link #setStartPosition(Point)}
+     * moves only that endpoint, whereas calling {@link #setPosition(Point)} moves the entire line
+     * (i.e. it moves both endpoints by the same amount).
+     *
+     * @see #getX1()
+     * @see #getY1()
+     * @see #setStartPosition(Point)
+     */
+    public Point getStartPosition() {
+        return getPosition();
+    }
+
+    /**
      * Sets the line's starting position to (x, y) without affecting the end position.
      */
     public void setStartPosition(double x, double y) {
@@ -143,6 +157,17 @@ public class Line extends GraphicsObject implements Strokable {
      */
     public void setStartPosition(Point p) {
         setStartPosition(p.getX(), p.getY());
+    }
+
+    /**
+     * Returns the endpoint of the line segment marked as the “end,” which is (x2, y2).
+     *
+     * @see #getX2()
+     * @see #getY2()
+     * @see #getStartPosition()
+     */
+    public Point getEndPosition() {
+        return new Point(getX2(), getY2());
     }
 
     /**
