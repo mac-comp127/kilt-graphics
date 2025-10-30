@@ -19,9 +19,9 @@ import javax.imageio.ImageIO;
 /**
  * A bitmap image that can be drawn to the screen.
  * <p>
- * An image’s {@link getPosition() position} is the upper left corner of its bounding box.
+ * An image’s {@link #getPosition() position} is the upper left corner of its bounding box.
  * Its size is the size of the underying image file by default, but you can shrink it using
- * {@link setMaxWidth(double) setMaxWidth()} and {@link setMaxHeight(double) setMaxHeight()}.
+ * {@link #setMaxWidth(double) setMaxWidth()} and {@link #setMaxHeight(double) setMaxHeight()}.
  *
  * @author Bret Jackson, Paul Cantrell
  */
@@ -166,8 +166,6 @@ public class Image extends GraphicsObject {
      * Note that changing the BufferedImage externally does not automatically 
      * force it to redraw. You will need to call {@link CanvasWindow#draw()}
      * to see the changes.
-     * 
-     * @param image
      */
     public Image(BufferedImage image){
         this(0, 0, image);
@@ -177,12 +175,10 @@ public class Image extends GraphicsObject {
      * Creates a bitmap image from the given BufferedImage. Note that changing
      * the BufferedImage externally does not automatically force it to redraw.
      * You will need to call {@link CanvasWindow#draw()} to see the changes.
-     * 
-     * @param image
      */
     public Image(double x, double y, BufferedImage image){
         setPosition(x, y);
-        this.path = "In memory BufferedImage@"+Integer.toHexString(image.hashCode());
+        this.path = "In-memory BufferedImage@"+Integer.toHexString(image.hashCode());
         this.img = image;
     }
 
