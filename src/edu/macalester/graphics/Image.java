@@ -139,7 +139,7 @@ public class Image extends GraphicsObject {
     }
 
     /**
-     * Creates a new image using raw pixel data from the given array. This method interprets bytes
+     * Creates a new image using raw pixel data from the given array. This interprets bytes
      * as unsigned: zero intensity is 0, and full intensity is 255 (but Java represents this as -1,
      * because the language does not have unsigned primitive types).
      * There is one array element per color channel, with channels interleaved
@@ -157,6 +157,14 @@ public class Image extends GraphicsObject {
         this(format.makeBufferedImage(pixels, width, height));
     }
 
+    /**
+     * Creates a new image using raw pixel data from the given array, one int per pixel. Each pixel
+     * is in 32-bit ARGB format.
+     *
+     * @param width Image width in pixels
+     * @param height Image height in pixels
+     * @param pixels Raw pixel data. Length must exactly match the number of required samples.
+     */
     public Image(int width, int height, int[] pixels) {
         this(createBufferFromRawPixelData(width, height, pixels));
     }
@@ -328,6 +336,13 @@ public class Image extends GraphicsObject {
     }
 
     private static BufferedImage createBufferFromRawPixelData(int width, int height, int[] pixels) {
+        int expectedArrayLen = width * height;
+        if (pixels.length != expectedArrayLen) {
+            throw new IllegalArgumentException(
+                "Invalid input array length: expected "  + width + " w * " + height + " h = "
+                + expectedArrayLen + ", but got " + pixels.length);
+        }
+
         BufferedImage buf = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         buf.setRGB(0, 0, width, height, pixels, 0, width);
         return buf;
