@@ -93,7 +93,9 @@ public class ImageTest implements GraphicsObjectTestSuite {
         for (var ctorCall : List.of((Executable)
             () -> new Image(2, 3, new float[18], Image.PixelFormat.GRAYSCALE),  // too large
             () -> new Image(3, 2, new float[6], Image.PixelFormat.RGB),         // too small
-            () -> new Image(3, 2, new byte[18], Image.PixelFormat.ARGB)         // too small
+            () -> new Image(3, 2, new byte[18], Image.PixelFormat.ARGB),        // too small
+            () -> new Image(3, 2, new int[7]),                                  // too large
+            () -> new Image(3, 2, new int[5])                                   // too small
         )) {
             assertThrows(IllegalArgumentException.class, ctorCall);
         }
@@ -211,6 +213,22 @@ public class ImageTest implements GraphicsObjectTestSuite {
             original.getImageHeight(),
             pixels,
             Image.PixelFormat.RGB);
+    }
+
+    @RenderingTest(width=200, height=200, modes = { PLAIN })
+    void imageFileProcessingWithInts() {
+        Image original = new Image(FOXFLOWER_IMAGE);
+        int[] src = original.toIntArray();
+        int[] dst = new int[src.length];
+
+        for(int i = 0; i < src.length; i++) {
+            dst[i] = src[src.length - i - 1] ^ (i * 17);
+        }
+
+        image = new Image(
+            original.getImageWidth(),
+            original.getImageHeight(),
+            dst);
     }
 
     @RenderingTest(height=200, modes = { PLAIN })
