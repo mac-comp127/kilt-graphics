@@ -157,6 +157,10 @@ public class Image extends GraphicsObject {
         this(format.makeBufferedImage(pixels, width, height));
     }
 
+    public Image(int width, int height, int[] pixels) {
+        this(createBufferFromRawPixelData(width, height, pixels));
+    }
+
     /**
      * Creates a bitmap image from the given BufferedImage, positioned at (0, 0).
      * Note that changing the BufferedImage externally does not automatically 
@@ -282,7 +286,8 @@ public class Image extends GraphicsObject {
      * produces results that correspond poorly to perceived brightness.
      *
      * @see #Image(int,int,byte[],PixelFormat)
-     * @see #toFloatArray(PixelFormat) 
+     * @see #toFloatArray(PixelFormat)
+     * @see #toIntArray()
      */
     public byte[] toByteArray(PixelFormat format) {
         return format.makeByteArray(img);
@@ -306,6 +311,30 @@ public class Image extends GraphicsObject {
             floats[i] = (bytes[i] & 0xFF) / 255.0f;
         }
         return floats;
+    }
+
+    /**
+     * Returns the pixels in this image as an array of ints, one int per <b>pixel</b>. Pixels use
+     * 32-bit ARGB encoding.
+     * <p>
+     * Note that the other methods that convert images to arrays return one array entry per
+     * <b>color channel</b>, while this method returns one array entry <b>per pixel</b>.
+     *
+     * @see #Image(int,int,byte[],PixelFormat)
+     * @see #toFloatArray(PixelFormat)
+     */
+    public int[] toIntArray() {
+        return getRawPixelData(img);
+    }
+
+    private static int[] getRawPixelData(BufferedImage buf) {
+        return buf.getRGB(0, 0, buf.getWidth(), buf.getHeight(), null, 0, buf.getWidth());
+    }
+
+    private static BufferedImage createBufferFromRawPixelData(int width, int height, int[] pixels) {
+        BufferedImage buf = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        buf.setRGB(0, 0, width, height, pixels, 0, width);
+        return buf;
     }
 
     @Override
@@ -407,9 +436,9 @@ public class Image extends GraphicsObject {
         }
 
         private byte[] makeByteArray(BufferedImage buf) {
-            int width = buf.getWidth(), height = buf.getHeight();
-            int[] rawData = buf.getRGB(0, 0, width, height, null, 0, width);
+            int[] rawData = getRawPixelData(buf);
 
+            int width = buf.getWidth(), height = buf.getHeight();
             byte[] pixels = new byte[width * height * externalChans];
             int i = 0;
             for(int pix : rawData) {

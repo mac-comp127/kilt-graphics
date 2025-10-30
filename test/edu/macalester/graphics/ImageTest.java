@@ -213,6 +213,22 @@ public class ImageTest implements GraphicsObjectTestSuite {
             Image.PixelFormat.RGB);
     }
 
+    @RenderingTest(width=200, height=200, modes = { PLAIN })
+    void imageFileProcessingWithInts() {
+        Image original = new Image(FOXFLOWER_IMAGE);
+        int[] src = original.toIntArray();
+        int[] dst = new int[src.length];
+
+        for(int i = 0; i < src.length; i++) {
+            dst[i] = src[src.length - i - 1] ^ (i * 17);
+        }
+
+        image = new Image(
+            original.getImageWidth(),
+            original.getImageHeight(),
+            dst);
+    }
+
     @RenderingTest(height=200, modes = { PLAIN })
     void colorPixelConversionToGrayscaleArray() {
         Image colorImage = new Image(FOXBOT_IMAGE);
