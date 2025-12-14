@@ -103,4 +103,9 @@ public class Arc extends GraphicsObject implements Strokable {
     protected Object getEqualityAttributes() {
         return shape;
     }
+
+    @Override
+    public String toString() {
+        return "Arc at position " + getX() + ", " + getY() + ", of size " + (int)getWidth() + " by " + (int)getHeight() + " starting at angle " + shape.getAngleStart() + " sweeping through an angle of " + shape.getAngleExtent();
+    }
 }

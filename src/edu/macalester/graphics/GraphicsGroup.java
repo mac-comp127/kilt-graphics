@@ -132,6 +132,10 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
         return null;
     }
 
+    public int numChildren() {
+        return children.size();
+    }
+
     @Override
     protected void drawInLocalCoordinates(Graphics2D gc) {
         for (GraphicsObject obj : children) {
@@ -212,6 +216,6 @@ public class GraphicsGroup extends GraphicsObject implements GraphicsObserver {
 
     @Override
     public String toString() {
-        return "A graphics group at position (" + getX() + ", " + getY() + ") with size=" + getSize();
+        return "GraphicsGroup at position (" + getX() + ", " + getY() + ") with size=" + getSize();
     }
 }
