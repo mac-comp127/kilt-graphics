@@ -750,4 +750,9 @@ public class CanvasWindow {
             draw();
         });
     }
+
+    public String toString() {
+        return "CanvasWindow of size " + canvas.getWidth() + " by " + canvas.getHeight() +
+                " containing " + content.numChildren() + " GraphicsObjects";
+    }
 }

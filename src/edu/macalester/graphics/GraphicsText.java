@@ -385,4 +385,9 @@ public class GraphicsText extends GraphicsObject implements Fillable, Strokable 
     protected Object getEqualityAttributes() {
         return List.of(font, text);
     }
+
+    @Override
+    public String toString() {
+        return "GraphicsText at " + getPosition() + " with text '" + text + "'";
+    }
 }
