@@ -28,6 +28,10 @@ public class TextField extends EmbeddedSwingComponent {
         }
     }
 
+    /**
+     * Calls the given closure immediately every time the content of the TextField changes.
+     * The callback closure receives the full text of the TextField as its argument.
+     */
     public void onChange(Consumer<String> callback) {
         field.getDocument().addDocumentListener(
             new DocumentListener() {
